@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AlertCircle, CalendarClock, Eye, EyeOff, FileSearch, Lock, Mail, ShieldCheck } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { ApiError } from "../api/auth";
 import { Button } from "../components/ui/Button";
 import { Field, Input } from "../components/ui/Field";
 import { BrandMark } from "../components/layout/BrandMark";
@@ -67,6 +68,14 @@ export default function LoginPage() {
       await login(values.email, values.password);
       navigate(from, { replace: true });
     } catch (err) {
+      const unreachable =
+        err instanceof TypeError || (err instanceof ApiError && err.status >= 500);
+      if (unreachable) {
+        setServerError(
+          "The FDR Sentinel server is unavailable. Make sure the API and its PostgreSQL database are running, then try again.",
+        );
+        return;
+      }
       setServerError(err instanceof Error && err.message ? err.message : "Invalid email or password.");
     }
   }
