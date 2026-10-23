@@ -1,30 +1,32 @@
-/**
- * src/pages/NotFoundPage.tsx
- * 404 fallback route.
- */
-import { Link } from "react-router-dom";
 import { FileQuestion } from "lucide-react";
-import AppShell from "../components/layout/AppShell";
+import { ButtonLink } from "../components/ui/Button";
+import { BrandMark } from "../components/layout/BrandMark";
 
 export default function NotFoundPage() {
   return (
-    <AppShell>
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
-        <FileQuestion
-          className="h-12 w-12 text-slate-400"
-          aria-hidden="true"
-        />
-        <h1 className="text-3xl font-bold text-slate-700">404 – Not Found</h1>
-        <p className="text-slate-500">
-          The page you're looking for doesn't exist.
+    <div className="min-h-dvh flex flex-col bg-canvas">
+      <header className="border-b border-line bg-surface">
+        <div className="mx-auto flex h-16 max-w-[1440px] items-center px-4 sm:px-6">
+          <BrandMark />
+        </div>
+      </header>
+      <main className="flex flex-1 flex-col items-center justify-center px-6 py-16 text-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-ink-muted">
+          <FileQuestion className="h-6 w-6" aria-hidden="true" />
+        </span>
+        <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-ink-muted">Error 404</p>
+        <h1 className="mt-1 text-2xl font-semibold text-navy-900">Page not found</h1>
+        <p className="mt-2 max-w-md text-sm text-ink-muted">
+          The address may be mistyped, or the page may have moved. Check the URL or return to your
+          dashboard.
         </p>
-        <Link
-          to="/dashboard"
-          className="mt-2 px-4 py-2 rounded-md bg-blue-700 text-white text-sm font-medium hover:bg-blue-800 transition-colors"
-        >
-          Go to Dashboard
-        </Link>
-      </div>
-    </AppShell>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <ButtonLink to="/dashboard">Go to dashboard</ButtonLink>
+          <ButtonLink to="/instruments" variant="secondary">
+            Open FDR registry
+          </ButtonLink>
+        </div>
+      </main>
+    </div>
   );
 }

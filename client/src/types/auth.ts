@@ -30,6 +30,8 @@ export interface InstrumentSummary {
   favouringDetails: string;
   status: string;
   institutionId: string;
+  createdAt?: string;
+  updatedAt?: string;
   institution?: {
     id: string;
     name: string;

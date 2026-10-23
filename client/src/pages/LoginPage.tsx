@@ -5,213 +5,215 @@
  */
 
 import { useState } from "react";
-import type { FormEvent } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { AlertCircle, CalendarClock, Eye, EyeOff, FileSearch, Lock, Mail, ShieldCheck } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { Shield, Lock, Mail, AlertCircle, Loader2 } from "lucide-react";
+import { Button } from "../components/ui/Button";
+import { Field, Input } from "../components/ui/Field";
+import { BrandMark } from "../components/layout/BrandMark";
+import { ROLE_LABELS } from "../lib/roles";
+import type { Role } from "../types/auth";
 
-const DEMO_ACCOUNTS = [
-  {
-    label: "Delhi Engineering (Institution)",
-    email: "inst.delhi@demo.fdr-sentinel.gov.in",
-    role: "INSTITUTION_USER",
-    institution: "Delhi Institute of Advanced Eng.",
-  },
-  {
-    label: "Pune Pharmacy (Institution)",
-    email: "inst.pune@demo.fdr-sentinel.gov.in",
-    role: "INSTITUTION_USER",
-    institution: "Maharashtra Inst. of Pharm.",
-  },
-  {
-    label: "AICTE Officer (Scrutiny)",
-    email: "officer.sharma@demo.fdr-sentinel.gov.in",
-    role: "AICTE_OFFICER",
-    institution: "AICTE HQ",
-  },
-  {
-    label: "System Administrator",
-    email: "admin.sentinel@demo.fdr-sentinel.gov.in",
-    role: "SYSTEM_ADMIN",
-    institution: "System Admin",
-  },
+const DEMO_PASSWORD = "Demo@FDR2026!";
+
+const DEMO_ACCOUNTS: { label: string; email: string; role: Role }[] = [
+  { label: "Delhi Institute of Advanced Eng.", email: "inst.delhi@demo.fdr-sentinel.gov.in", role: "INSTITUTION_USER" },
+  { label: "Maharashtra Inst. of Pharmacy", email: "inst.pune@demo.fdr-sentinel.gov.in", role: "INSTITUTION_USER" },
+  { label: "AICTE Scrutiny Officer", email: "officer.sharma@demo.fdr-sentinel.gov.in", role: "AICTE_OFFICER" },
+  { label: "System Administrator", email: "admin.sentinel@demo.fdr-sentinel.gov.in", role: "SYSTEM_ADMIN" },
+];
+
+const loginSchema = z.object({
+  email: z.string().trim().min(1, "Enter your registered email address.").email("Enter a valid email address."),
+  password: z.string().min(1, "Enter your password."),
+});
+
+type LoginValues = z.infer<typeof loginSchema>;
+
+const HIGHLIGHTS = [
+  { icon: FileSearch, title: "Status at every stage", text: "Follow each FDR from submission through scrutiny to release." },
+  { icon: CalendarClock, title: "Maturity tracking", text: "See deposits approaching maturity well before they lapse." },
+  { icon: ShieldCheck, title: "Role-scoped access", text: "Institutions see their own records; officers see the full registry." },
 ];
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [localError, setLocalError] = useState<string | null>(null);
-
   const { login, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const from = (location.state as any)?.from?.pathname || "/dashboard";
+  const from =
+    (location.state as { from?: { pathname?: string } } | null)?.from?.pathname || "/dashboard";
 
-  // Redirect if already logged in
-  if (user) {
-    navigate(from, { replace: true });
-  }
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setLocalError(null);
+  if (user) return <Navigate to={from} replace />;
 
-    if (!email.trim() || !password) {
-      setLocalError("Please enter both email and password.");
-      return;
-    }
-
-    setIsSubmitting(true);
+  async function onSubmit(values: LoginValues) {
+    setServerError(null);
     try {
-      await login(email.trim(), password);
+      await login(values.email, values.password);
       navigate(from, { replace: true });
-    } catch (err: any) {
-      setLocalError(err.message || "Invalid email or password.");
-    } finally {
-      setIsSubmitting(false);
+    } catch (err) {
+      setServerError(err instanceof Error && err.message ? err.message : "Invalid email or password.");
     }
   }
 
-  function handleQuickFill(demoEmail: string) {
-    setEmail(demoEmail);
-    setPassword("Demo@FDR2026!");
-    setLocalError(null);
+  function quickFill(email: string) {
+    setValue("email", email, { shouldValidate: true });
+    setValue("password", DEMO_PASSWORD, { shouldValidate: true });
+    setServerError(null);
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center items-center gap-2">
-          <div className="bg-blue-900 p-2.5 rounded-xl shadow-md">
-            <Shield className="h-8 w-8 text-sky-400" aria-hidden="true" />
-          </div>
-          <span className="text-2xl font-bold text-slate-900 tracking-tight">
-            FDR Sentinel
-          </span>
+    <div className="min-h-dvh flex flex-col lg:flex-row bg-canvas">
+      {/* Context panel */}
+      <section className="relative bg-navy-900 text-white lg:w-[44%] lg:min-h-dvh flex flex-col">
+        <div className="h-[3px] flex" aria-hidden="true">
+          <span className="flex-1 bg-saffron" />
+          <span className="flex-1 bg-white" />
+          <span className="flex-1 bg-green-accent" />
         </div>
-        <h2 className="mt-4 text-center text-xl font-semibold text-slate-800">
-          Security Deposit & FDR Portal
-        </h2>
-        <p className="mt-1 text-center text-xs text-slate-500">
-          AICTE National Prototype · Problem Statement PS26265
-        </p>
-      </div>
+        <div className="flex flex-1 flex-col px-6 py-8 sm:px-10 lg:px-12 lg:py-12">
+          <BrandMark inverted />
+          <div className="mt-8 lg:mt-auto">
+            <h1 className="text-2xl sm:text-3xl font-semibold leading-tight text-balance">
+              Security deposits for technical institutions, tracked in one place.
+            </h1>
+            <p className="mt-3 text-sm sm:text-[15px] text-white/75 leading-relaxed max-w-md">
+              FDR Sentinel keeps Fixed Deposit Receipts lodged with AICTE visible, verifiable and
+              accounted for throughout their lifecycle.
+            </p>
+          </div>
+          <ul className="mt-8 hidden sm:flex flex-col gap-5 lg:mb-auto lg:mt-10">
+            {HIGHLIGHTS.map(({ icon: Icon, title, text }) => (
+              <li key={title} className="flex gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
+                  <Icon className="h-[18px] w-[18px] text-saffron" aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="block text-sm font-medium">{title}</span>
+                  <span className="block text-[13px] text-white/70 mt-0.5">{text}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-8 text-[12px] text-white/55">
+            SIH 2026 prototype (PS26265). All records are synthetic demonstration data.
+          </p>
+        </div>
+      </section>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-sm sm:rounded-xl sm:px-10 border border-slate-200">
-          {localError && (
-            <div className="mb-5 p-3 rounded-lg bg-red-50 border border-red-200 flex items-start gap-2.5 text-sm text-red-700">
-              <AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
-              <span>{localError}</span>
-            </div>
-          )}
+      {/* Form */}
+      <main className="flex flex-1 items-start lg:items-center justify-center px-4 py-8 sm:px-6 sm:py-12">
+        <div className="w-full max-w-md">
+          <div className="rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-8 shadow-[var(--shadow-card)]">
+            <h2 className="text-xl font-semibold text-navy-900">Sign in to your account</h2>
+            <p className="mt-1 text-sm text-ink-muted">
+              Use the credentials issued to your institution or office.
+            </p>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-slate-700"
+            {serverError && (
+              <div
+                role="alert"
+                className="mt-5 flex items-start gap-2.5 rounded-lg border border-danger/25 bg-danger-soft p-3 text-sm text-danger"
               >
-                Official Email Address
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                </div>
-                <input
+                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" aria-hidden="true" />
+                <span className="break-words">{serverError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-6 flex flex-col gap-5">
+              <Field id="email" label="Email address" error={errors.email?.message}>
+                <Input
                   id="email"
-                  name="email"
                   type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="username"
+                  inputMode="email"
                   placeholder="name@institution.edu.in"
-                  className="block w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                  leadingIcon={<Mail className="h-4 w-4" aria-hidden="true" />}
+                  invalid={!!errors.email}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                  {...register("email")}
                 />
-              </div>
-            </div>
+              </Field>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-slate-700"
-              >
-                Password
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                </div>
-                <input
+              <Field id="password" label="Password" error={errors.password?.message}>
+                <Input
                   id="password"
-                  name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="block w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                  placeholder="Enter your password"
+                  leadingIcon={<Lock className="h-4 w-4" aria-hidden="true" />}
+                  invalid={!!errors.password}
+                  aria-describedby={errors.password ? "password-error" : undefined}
+                  trailing={
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      className="flex h-11 w-11 items-center justify-center rounded-r-lg text-ink-muted hover:text-ink"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-pressed={showPassword}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
+                    </button>
+                  }
+                  {...register("password")}
                 />
-              </div>
-            </div>
+              </Field>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full flex justify-center items-center gap-2 py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 shadow-sm transition-colors disabled:opacity-60 cursor-pointer"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Authenticating…
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </button>
-          </form>
-
-          {/* ── Demo Accounts Quick-Fill Section (Development Only) ── */}
-          <div className="mt-8 pt-6 border-t border-slate-200">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Demo Accounts (Development Only)
-              </span>
-              <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-medium">
-                Synthetic Data
-              </span>
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              {DEMO_ACCOUNTS.map((acc) => (
-                <button
-                  key={acc.email}
-                  type="button"
-                  onClick={() => handleQuickFill(acc.email)}
-                  className="w-full text-left p-2.5 rounded-lg border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 transition-colors text-xs flex justify-between items-center group cursor-pointer"
-                >
-                  <div>
-                    <p className="font-medium text-slate-800 group-hover:text-blue-700">
-                      {acc.label}
-                    </p>
-                    <p className="text-[11px] text-slate-500">{acc.email}</p>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">
-                    Fill
-                  </span>
-                </button>
-              ))}
-            </div>
+              <Button type="submit" size="lg" loading={isSubmitting} loadingText="Signing in…" className="w-full">
+                Sign in
+              </Button>
+            </form>
           </div>
-        </div>
 
-        <p className="mt-4 text-center text-xs text-slate-400">
-          Protected by HttpOnly JWT cookies & server-side role validation.
-        </p>
-      </div>
+          {import.meta.env.DEV && (
+            <section
+              aria-labelledby="demo-heading"
+              className="mt-5 rounded-[var(--radius-card)] border border-dashed border-line-strong bg-surface/60 p-4 sm:p-5"
+            >
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 id="demo-heading" className="text-sm font-semibold text-ink">
+                  Demo accounts
+                </h2>
+                <span className="text-[11px] font-medium uppercase tracking-wider text-ink-subtle">
+                  Development only
+                </span>
+              </div>
+              <p className="mt-1 text-[13px] text-ink-muted">
+                Fills in seeded test credentials. You still sign in normally.
+              </p>
+              <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                {DEMO_ACCOUNTS.map((acc) => (
+                  <li key={acc.email}>
+                    <button
+                      type="button"
+                      onClick={() => quickFill(acc.email)}
+                      className="flex w-full min-h-11 flex-col items-start rounded-lg border border-line bg-surface px-3 py-2 text-left hover:border-navy-700 hover:bg-navy-50 transition-colors duration-150"
+                    >
+                      <span className="text-[13px] font-medium text-ink leading-snug">{acc.label}</span>
+                      <span className="text-[11px] text-ink-muted">{ROLE_LABELS[acc.role]}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

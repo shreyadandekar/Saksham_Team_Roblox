@@ -8,7 +8,9 @@ import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import type { Role } from "../../types/auth";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldAlert } from "lucide-react";
+import { ROLE_LABELS } from "../../lib/roles";
+import { ButtonLink } from "../ui/Button";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -24,11 +26,12 @@ export default function ProtectedRoute({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-3">
-        <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
-        <p className="text-sm text-slate-500 font-medium">
-          Verifying security credentials…
-        </p>
+      <div
+        className="min-h-dvh flex flex-col items-center justify-center bg-canvas gap-3"
+        role="status"
+      >
+        <Loader2 className="h-7 w-7 text-navy-800 animate-spin" aria-hidden="true" />
+        <p className="text-sm text-ink-muted font-medium">Verifying your session…</p>
       </div>
     );
   }
@@ -39,13 +42,18 @@ export default function ProtectedRoute({
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4 text-center p-6">
-        <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
-        <p className="text-slate-600 max-w-md">
-          Your role ({user.role}) is not authorized to access this section of FDR
+      <div className="min-h-dvh flex flex-col items-center justify-center bg-canvas gap-4 text-center p-6">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-danger-soft text-danger">
+          <ShieldAlert className="h-6 w-6" aria-hidden="true" />
+        </span>
+        <h1 className="text-xl font-semibold text-navy-900">Access restricted</h1>
+        <p className="text-sm text-ink-muted max-w-md">
+          Your role ({ROLE_LABELS[user.role]}) is not authorised to access this section of FDR
           Sentinel.
         </p>
-        <Navigate to="/dashboard" replace />
+        <ButtonLink to="/dashboard" replace>
+          Return to dashboard
+        </ButtonLink>
       </div>
     );
   }
