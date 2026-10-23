@@ -15,12 +15,15 @@ import {
   Eye,
   AlertCircle,
   CheckCircle2,
+  AlertTriangle,
+  XCircle,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { getScrutinyQueue, startScrutiny } from "../api/instruments";
 import type { Instrument, InstrumentStatus } from "../types/instrument";
 import AppShell from "../components/layout/AppShell";
 import StatusBadge from "../components/common/StatusBadge";
+import ScrutinyDecisionModal from "../components/scrutiny/ScrutinyDecisionModal";
 import { formatINR, formatDateTime } from "../utils/format";
 
 export default function ScrutinyQueuePage() {
@@ -35,6 +38,11 @@ export default function ScrutinyQueuePage() {
   const [error, setError] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+
+  // Scrutiny Decision Modal state
+  const [selectedInstrument, setSelectedInstrument] = useState<Instrument | null>(null);
+  const [selectedDecision, setSelectedDecision] = useState<"APPROVE" | "REQUEST_CORRECTION" | "REJECT">("APPROVE");
+  const [isDecisionModalOpen, setIsDecisionModalOpen] = useState(false);
 
   // Filters & Search
   const [search, setSearch] = useState("");
@@ -78,6 +86,24 @@ export default function ScrutinyQueuePage() {
     } finally {
       setActionLoadingId(null);
     }
+  }
+
+  const isOfficer = Boolean(user && (user.role === "AICTE_OFFICER" || user.role === "SYSTEM_ADMIN"));
+
+  function handleOpenDecision(
+    item: Instrument,
+    defaultDecision: "APPROVE" | "REQUEST_CORRECTION" | "REJECT" = "APPROVE"
+  ) {
+    setSelectedInstrument(item);
+    setSelectedDecision(defaultDecision);
+    setIsDecisionModalOpen(true);
+  }
+
+  function handleDecisionSuccess(message?: string) {
+    setIsDecisionModalOpen(false);
+    setSelectedInstrument(null);
+    setActionSuccess(message || "Scrutiny decision recorded successfully.");
+    loadQueue();
   }
 
   // Frontend guard: Only AICTE_OFFICER and SYSTEM_ADMIN can access scrutiny queue
@@ -282,28 +308,66 @@ export default function ScrutinyQueuePage() {
                       </td>
 
                       <td className="py-3 px-4 text-center whitespace-nowrap">
-                        <div className="flex items-center justify-center gap-2">
+                        <div className="flex items-center justify-center gap-1.5 flex-wrap">
                           {/* Inspect details button */}
                           <Link
                             to={`/instruments/${item.id}`}
-                            className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
                           >
                             <span>Inspect</span>
                             <ExternalLink className="h-3 w-3" />
                           </Link>
 
-                          {/* Quick Start Scrutiny button */}
-                          {item.status === "SUBMITTED" && (
+                          {/* Quick Start Scrutiny button (if still SUBMITTED) */}
+                          {isOfficer && item.status === "SUBMITTED" && (
                             <button
                               type="button"
                               onClick={(e) => handleStartScrutiny(item.id, e)}
                               disabled={actionLoadingId === item.id}
-                              className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-slate-900 bg-amber-400 hover:bg-amber-300 rounded-md transition-colors cursor-pointer disabled:opacity-50"
-                              title="Begin scrutiny"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-slate-900 bg-amber-400 hover:bg-amber-300 rounded-md transition-colors cursor-pointer disabled:opacity-50"
+                              title="Begin scrutiny examination"
                             >
                               <Eye className="h-3 w-3" />
                               <span>{actionLoadingId === item.id ? "Updating..." : "Start Scrutiny"}</span>
                             </button>
+                          )}
+
+                          {/* Officer Scrutiny Decisions (Approve, Request Correction, Reject) */}
+                          {isOfficer && (item.status === "SUBMITTED" || item.status === "UNDER_SCRUTINY") && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenDecision(item, "APPROVE")}
+                                disabled={actionLoadingId === item.id}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-md transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+                                title="Approve and activate deposit"
+                              >
+                                <CheckCircle2 className="h-3 w-3" />
+                                <span>Approve</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleOpenDecision(item, "REQUEST_CORRECTION")}
+                                disabled={actionLoadingId === item.id}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-500 rounded-md transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+                                title="Request corrections from institution"
+                              >
+                                <AlertTriangle className="h-3 w-3" />
+                                <span>Correction</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleOpenDecision(item, "REJECT")}
+                                disabled={actionLoadingId === item.id}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-500 rounded-md transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+                                title="Reject deposit submission"
+                              >
+                                <XCircle className="h-3 w-3" />
+                                <span>Reject</span>
+                              </button>
+                            </>
                           )}
                         </div>
                       </td>
@@ -314,6 +378,20 @@ export default function ScrutinyQueuePage() {
             </div>
           )}
         </div>
+
+        {/* Scrutiny Decision Modal */}
+        {selectedInstrument && (
+          <ScrutinyDecisionModal
+            instrument={selectedInstrument}
+            isOpen={isDecisionModalOpen}
+            initialDecision={selectedDecision}
+            onClose={() => {
+              setIsDecisionModalOpen(false);
+              setSelectedInstrument(null);
+            }}
+            onSuccess={handleDecisionSuccess}
+          />
+        )}
       </main>
     </AppShell>
   );

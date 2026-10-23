@@ -4,16 +4,19 @@
  * with mandatory regulatory observations.
  */
 
-import { useState } from "react";
-import { X, ShieldCheck, CheckCircle2, AlertTriangle, XCircle, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, ShieldCheck, CheckCircle2, AlertTriangle, XCircle, RefreshCw, Building2 } from "lucide-react";
 import { submitScrutinyDecision } from "../../api/relationships";
-import type { Instrument } from "../../types/instrument";
+import type { Instrument, InstrumentStatus } from "../../types/instrument";
+import StatusBadge from "../common/StatusBadge";
+import { formatINR } from "../../utils/format";
 
 interface ScrutinyDecisionModalProps {
   instrument: Instrument;
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (message?: string) => void;
+  initialDecision?: "APPROVE" | "REQUEST_CORRECTION" | "REJECT";
 }
 
 export default function ScrutinyDecisionModal({
@@ -21,11 +24,20 @@ export default function ScrutinyDecisionModal({
   isOpen,
   onClose,
   onSuccess,
+  initialDecision = "APPROVE",
 }: ScrutinyDecisionModalProps) {
-  const [decision, setDecision] = useState<"APPROVE" | "REQUEST_CORRECTION" | "REJECT">("APPROVE");
+  const [decision, setDecision] = useState<"APPROVE" | "REQUEST_CORRECTION" | "REJECT">(initialDecision);
   const [remarks, setRemarks] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setDecision(initialDecision || "APPROVE");
+      setRemarks("");
+      setError(null);
+    }
+  }, [isOpen, initialDecision]);
 
   if (!isOpen) return null;
 
@@ -40,11 +52,11 @@ export default function ScrutinyDecisionModal({
     setError(null);
 
     try {
-      await submitScrutinyDecision(instrument.id, {
+      const res = await submitScrutinyDecision(instrument.id, {
         decision,
         remarks: remarks.trim(),
       });
-      onSuccess();
+      onSuccess(res?.message || `Scrutiny decision '${decision}' successfully applied.`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to record scrutiny decision.");
     } finally {
@@ -91,10 +103,39 @@ export default function ScrutinyDecisionModal({
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors p-1 rounded-md"
+            disabled={loading}
+            className="text-slate-400 hover:text-white transition-colors p-1 rounded-md disabled:opacity-50 cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
+        </div>
+
+        {/* Instrument Summary Card */}
+        <div className="mx-6 mt-4 p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-2 border-b border-slate-200 text-xs">
+            <div className="flex items-center gap-1.5 text-slate-700">
+              <Building2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+              <span className="font-semibold text-slate-900">{instrument.institution?.name}</span>
+              {instrument.institution?.code && (
+                <span className="font-mono text-slate-500 text-[11px]">({instrument.institution.code})</span>
+              )}
+            </div>
+            <StatusBadge status={instrument.status as InstrumentStatus} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <span className="text-[11px] text-slate-500 block">Bank & Branch</span>
+              <span className="font-medium text-slate-800">{instrument.bankName}</span>
+              {instrument.branchName && (
+                <span className="text-slate-500 text-[11px] block">{instrument.branchName}</span>
+              )}
+            </div>
+            <div className="text-right">
+              <span className="text-[11px] text-slate-500 block">Principal Amount</span>
+              <span className="font-bold font-mono text-slate-900">{formatINR(instrument.amount)}</span>
+            </div>
+          </div>
         </div>
 
         {error && (

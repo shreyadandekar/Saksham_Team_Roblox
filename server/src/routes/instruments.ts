@@ -356,6 +356,8 @@ router.post(
             entityType: "Instrument",
             entityId: instrument.id,
             metadata: {
+              previousStatus: null,
+              newStatus: initialStatus,
               instrumentNumber: instrument.instrumentNumber,
               bankName: instrument.bankName,
               amount: data.amount,
@@ -712,6 +714,8 @@ router.post(
             entityType: "Instrument",
             entityId: successor.id,
             metadata: {
+              previousStatus: null,
+              newStatus: initialStatus,
               predecessorInstrumentId: source.id,
               predecessorInstrumentNumber: source.instrumentNumber,
               relationshipType: data.relationshipType,
@@ -729,6 +733,8 @@ router.post(
             entityType: "Instrument",
             entityId: source.id,
             metadata: {
+              previousStatus: source.status,
+              newStatus: source.status,
               successorInstrumentId: successor.id,
               successorInstrumentNumber: successor.instrumentNumber,
               relationshipType: data.relationshipType,
@@ -977,6 +983,8 @@ router.post(
                 entityType: "Instrument",
                 entityId: source.id,
                 metadata: {
+                  previousStatus: source.status,
+                  newStatus: source.status === InstrumentStatus.ACTIVE ? InstrumentStatus.MATURED : source.status,
                   supersededByInstrumentId: id,
                   supersededByInstrumentNumber: instrument.instrumentNumber,
                   relationshipType: pendingRelationship.relationshipType,

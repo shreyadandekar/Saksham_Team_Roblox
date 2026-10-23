@@ -78,7 +78,11 @@ export async function submitScrutinyDecision(
   const responseData = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    throw new Error(responseData.message || `Scrutiny decision failed (HTTP ${res.status})`);
+    if (responseData.issues && Array.isArray(responseData.issues)) {
+      const messages = responseData.issues.map((i: { message: string }) => i.message).join(", ");
+      throw new Error(messages || responseData.message || "Validation failed.");
+    }
+    throw new Error(responseData.message || responseData.error || `Scrutiny decision failed (HTTP ${res.status})`);
   }
 
   return responseData;

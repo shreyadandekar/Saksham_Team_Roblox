@@ -174,3 +174,9 @@ export async function startScrutiny(
 
   return responseData;
 }
+
+/**
+ * Submit an official regulatory scrutiny decision (Officer / Admin only).
+ * Re-exported from api/relationships for unified instrument API access.
+ */
+export { submitScrutinyDecision } from "./relationships";
