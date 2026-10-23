@@ -1,0 +1,114 @@
+// Prisma schema for FDR Sentinel (SIH 2026 PS26265)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  INSTITUTION_USER
+  AICTE_OFFICER
+  SYSTEM_ADMIN
+}
+
+enum InstrumentStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_SCRUTINY
+  CORRECTION_REQUIRED
+  ACTIVE
+  REJECTED
+  MATURED
+  RELEASE_REQUESTED
+  RELEASED
+}
+
+model Institution {
+  id              String       @id @default(cuid())
+  name            String
+  code            String       @unique
+  institutionType String
+  address         String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  users           User[]
+  instruments     Instrument[]
+
+  @@map("institutions")
+}
+
+model User {
+  id            String       @id @default(cuid())
+  fullName      String
+  email         String       @unique
+  passwordHash  String
+  role          Role
+  institutionId String?
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Avoid cascading delete: if an institution is removed or altered,
+  // we do not automatically purge users
+  institution   Institution? @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+
+  // Track instruments created by this user; restrict deletion if instruments exist
+  createdInstruments Instrument[] @relation("CreatedInstruments")
+
+  // Audit events where this user was the actor
+  actorAuditEvents   AuditEvent[] @relation("ActorAuditEvents")
+
+  @@index([institutionId])
+  @@index([role])
+  @@map("users")
+}
+
+model Instrument {
+  id               String           @id @default(cuid())
+  instrumentNumber String
+  bankName         String
+  branchName       String
+  amount           Decimal          @db.Decimal(15, 2)
+  issueDate        DateTime
+  maturityDate     DateTime
+  favouringDetails String
+  status           InstrumentStatus @default(DRAFT)
+  institutionId    String
+  createdById      String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  // Strict relations: delete restricted to preserve financial and regulatory audit trails
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Restrict)
+  createdBy   User        @relation("CreatedInstruments", fields: [createdById], references: [id], onDelete: Restrict)
+
+  // Instrument reference numbers are unique within each institution
+  @@unique([institutionId, instrumentNumber])
+  @@index([institutionId])
+  @@index([status])
+  @@index([createdById])
+  @@map("instruments")
+}
+
+model AuditEvent {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  // Actor may be null for system-generated actions; SetNull if actor user is ever deleted
+  actor User? @relation("ActorAuditEvents", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([actorId])
+  @@index([createdAt])
+  @@map("audit_events")
+}
