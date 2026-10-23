@@ -1,0 +1,50 @@
+# ──────────────────────────────────────────────
+#  FDR Sentinel – .gitignore
+# ──────────────────────────────────────────────
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+dist/
+build/
+client/dist/
+server/dist/
+
+# Environment secrets (keep .env.example files)
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Prisma generated client
+server/node_modules/.prisma/
+
+# Vite cache
+client/.vite/
+.vite/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test coverage
+coverage/
