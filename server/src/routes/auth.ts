@@ -7,8 +7,8 @@ import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { prisma } from "../db/prisma";
 import { comparePassword } from "../utils/password";
-import { signAccessToken } from "../utils/jwt";
-import { requireAuth } from "../middleware/auth";
+import { signAccessToken, verifyAccessToken } from "../utils/jwt";
+import { requireAuth, extractToken } from "../middleware/auth";
 import { env } from "../config/env";
 import { SafeUser } from "../types/auth";
 
@@ -21,7 +21,7 @@ const loginSchema = z.object({
 
 /**
  * POST /api/auth/login
- * Validates credentials, sets HttpOnly access cookie, and returns safe user.
+ * Validates credentials, sets HttpOnly access cookie, records audit event, and returns safe user.
  */
 router.post(
   "/login",
@@ -48,6 +48,22 @@ router.post(
 
       // Constant-time check / generic message to avoid email enumeration
       if (!user) {
+        // Record failed attempt without revealing account existence or exposing passwords
+        await prisma.auditEvent.create({
+          data: {
+            actorId: null,
+            action: "LOGIN_FAILED",
+            entityType: "User",
+            entityId: "UNKNOWN",
+            metadata: {
+              email: email.toLowerCase(),
+              reason: "INVALID_CREDENTIALS",
+            },
+          },
+        }).catch((err) => {
+          console.error("Failed to record login failure audit event:", err);
+        });
+
         res.status(401).json({
           error: "Unauthorized",
           message: "Invalid email or password",
@@ -56,6 +72,21 @@ router.post(
       }
 
       if (!user.isActive) {
+        await prisma.auditEvent.create({
+          data: {
+            actorId: user.id,
+            action: "LOGIN_FAILED",
+            entityType: "User",
+            entityId: user.id,
+            metadata: {
+              email: user.email,
+              reason: "ACCOUNT_DEACTIVATED",
+            },
+          },
+        }).catch((err) => {
+          console.error("Failed to record login failure audit event:", err);
+        });
+
         res.status(401).json({
           error: "Unauthorized",
           message: "Account has been deactivated. Please contact support.",
@@ -68,12 +99,43 @@ router.post(
         user.passwordHash
       );
       if (!passwordMatches) {
+        await prisma.auditEvent.create({
+          data: {
+            actorId: user.id,
+            action: "LOGIN_FAILED",
+            entityType: "User",
+            entityId: user.id,
+            metadata: {
+              email: user.email,
+              reason: "INVALID_CREDENTIALS",
+            },
+          },
+        }).catch((err) => {
+          console.error("Failed to record login failure audit event:", err);
+        });
+
         res.status(401).json({
           error: "Unauthorized",
           message: "Invalid email or password",
         });
         return;
       }
+
+      // Record successful login audit event
+      await prisma.auditEvent.create({
+        data: {
+          actorId: user.id,
+          action: "LOGIN_SUCCESS",
+          entityType: "User",
+          entityId: user.id,
+          metadata: {
+            email: user.email,
+            role: user.role,
+          },
+        },
+      }).catch((err) => {
+        console.error("Failed to record login audit event:", err);
+      });
 
       const safeUser: SafeUser = {
         id: user.id,
@@ -112,11 +174,32 @@ router.post(
 
 /**
  * POST /api/auth/logout
- * Clears the HttpOnly authentication cookie.
+ * Clears the HttpOnly authentication cookie and records LOGOUT audit event if token present.
  * Semantics: With short-lived JWTs, the cookie is purged from the browser
  * so subsequent browser requests cannot authenticate.
  */
-router.post("/logout", (_req: Request, res: Response) => {
+router.post("/logout", async (req: Request, res: Response): Promise<void> => {
+  const token = extractToken(req);
+  if (token) {
+    const payload = verifyAccessToken(token);
+    if (payload) {
+      await prisma.auditEvent.create({
+        data: {
+          actorId: payload.sub,
+          action: "LOGOUT",
+          entityType: "User",
+          entityId: payload.sub,
+          metadata: {
+            email: payload.email,
+            role: payload.role,
+          },
+        },
+      }).catch((err) => {
+        console.error("Failed to record logout audit event:", err);
+      });
+    }
+  }
+
   res.clearCookie("fdr_token", {
     httpOnly: true,
     secure: env.NODE_ENV === "production",

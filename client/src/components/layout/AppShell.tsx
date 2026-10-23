@@ -49,7 +49,7 @@ export default function AppShell({ children }: AppShellProps) {
               </span>
             </div>
 
-            <nav className="ml-6 flex gap-1" aria-label="Main navigation">
+            <nav className="ml-6 flex items-center gap-1" aria-label="Main navigation">
               <NavLink
                 to="/dashboard"
                 className={({ isActive }) =>
@@ -61,6 +61,62 @@ export default function AppShell({ children }: AppShellProps) {
                 }
               >
                 Dashboard
+              </NavLink>
+
+              <NavLink
+                to="/instruments"
+                className={({ isActive }) =>
+                  `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-blue-800 text-white"
+                      : "text-blue-200 hover:bg-blue-800/60 hover:text-white"
+                  }`
+                }
+              >
+                FDR Registry
+              </NavLink>
+
+              {user?.role === "INSTITUTION_USER" && (
+                <NavLink
+                  to="/instruments/new"
+                  className={({ isActive }) =>
+                    `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      isActive
+                        ? "bg-blue-800 text-white"
+                        : "text-blue-200 hover:bg-blue-800/60 hover:text-white"
+                    }`
+                  }
+                >
+                  Register FDR
+                </NavLink>
+              )}
+
+              {(user?.role === "AICTE_OFFICER" || user?.role === "SYSTEM_ADMIN") && (
+                <NavLink
+                  to="/scrutiny"
+                  className={({ isActive }) =>
+                    `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      isActive
+                        ? "bg-amber-600 text-white font-bold"
+                        : "text-amber-200 hover:bg-blue-800/60 hover:text-amber-100"
+                    }`
+                  }
+                >
+                  Scrutiny Queue
+                </NavLink>
+              )}
+
+              <NavLink
+                to="/audit"
+                className={({ isActive }) =>
+                  `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-blue-800 text-white font-semibold"
+                      : "text-blue-200 hover:bg-blue-800/60 hover:text-white"
+                  }`
+                }
+              >
+                Audit Log
               </NavLink>
             </nav>
           </div>

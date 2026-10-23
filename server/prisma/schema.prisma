@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -25,6 +26,23 @@ enum InstrumentStatus {
   MATURED
   RELEASE_REQUESTED
   RELEASED
+}
+
+// ── Milestone 5: Physical Custody Enums ─────────────────────────────────────
+enum CustodyStatus {
+  NOT_RECEIVED
+  IN_OFFICE_CUSTODY
+  SAFE_STORAGE
+  TEMPORARY_RELEASE
+  PERMANENTLY_RELEASED
+}
+
+enum CustodyEventType {
+  ORIGINAL_RECEIVED
+  LOCATION_UPDATED
+  CUSTODY_CONFIRMED
+  ORIGINAL_RELEASED
+  OTHER
 }
 
 model Institution {
@@ -63,6 +81,23 @@ model User {
   // Audit events where this user was the actor
   actorAuditEvents   AuditEvent[] @relation("ActorAuditEvents")
 
+  // Documents uploaded by this user
+  uploadedDocuments  Document[]   @relation("UploadedDocuments")
+
+  // Custody events recorded by this officer
+  recordedCustodyEvents CustodyEvent[] @relation("RecordedCustodyEvents")
+
+  // Milestone 6: Relationships initiated by this user
+  initiatedRelationships InstrumentRelationship[] @relation("InitiatedRelationships")
+
+  // Milestone 7: Release request back-relations
+  requestedReleases   ReleaseRequest[] @relation("RequestedReleases")
+  decidedReleases     ReleaseRequest[] @relation("DecidedReleases")
+  confirmedRefunds    ReleaseRequest[] @relation("ConfirmedRefunds")
+
+  // Milestone 9: OCR extraction reviews
+  reviewedOcrExtractions OcrExtraction[] @relation("ReviewedOcrExtractions")
+
   @@index([institutionId])
   @@index([role])
   @@map("users")
@@ -78,20 +113,45 @@ model Instrument {
   maturityDate     DateTime
   favouringDetails String
   status           InstrumentStatus @default(DRAFT)
+  documentMetadata Json?
   institutionId    String
   createdById      String
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 
+  // ── Milestone 5: Current Physical Custody State ──────────────────────────
+  custodyStatus      CustodyStatus    @default(NOT_RECEIVED)
+  originalReceived   Boolean          @default(false)
+  originalReceivedAt DateTime?
+  physicalLocation   String?
+
   // Strict relations: delete restricted to preserve financial and regulatory audit trails
   institution Institution @relation(fields: [institutionId], references: [id], onDelete: Restrict)
   createdBy   User        @relation("CreatedInstruments", fields: [createdById], references: [id], onDelete: Restrict)
+
+  // Documents attached to this instrument
+  documents      Document[]
+
+  // Custody events and maturity alerts
+  custodyEvents  CustodyEvent[]
+  maturityAlerts MaturityAlert[]
+
+  // Milestone 6: Successor and Predecessor relationships
+  successorRelationships   InstrumentRelationship[] @relation("SourceInstrument")
+  predecessorRelationships InstrumentRelationship[] @relation("TargetInstrument")
+
+  // Milestone 7: Release requests
+  releaseRequests ReleaseRequest[]
+
+  // Milestone 9: OCR extractions
+  ocrExtractions  OcrExtraction[]
 
   // Instrument reference numbers are unique within each institution
   @@unique([institutionId, instrumentNumber])
   @@index([institutionId])
   @@index([status])
   @@index([createdById])
+  @@index([custodyStatus])
   @@map("instruments")
 }
 
@@ -111,4 +171,239 @@ model AuditEvent {
   @@index([actorId])
   @@index([createdAt])
   @@map("audit_events")
+}
+
+// ── Milestone 4: per-instrument document records ──────────────────────────
+model Document {
+  id           String   @id @default(cuid())
+  instrumentId String
+  uploadedById String
+  originalName String
+  storagePath  String   // server-generated path inside the Supabase bucket
+  mimeType     String
+  sizeBytes    Int
+  category     String   @default("FDR Receipt")
+  createdAt    DateTime @default(now())
+
+  instrument   Instrument @relation(fields: [instrumentId], references: [id], onDelete: Restrict)
+  uploadedBy   User       @relation("UploadedDocuments", fields: [uploadedById], references: [id], onDelete: Restrict)
+
+  // Milestone 9: OCR extractions for this document
+  ocrExtractions OcrExtraction[]
+
+  @@index([instrumentId])
+  @@index([uploadedById])
+  @@map("documents")
+}
+
+// ── Milestone 5: Custody Events ───────────────────────────────────────────
+model CustodyEvent {
+  id               String           @id @default(cuid())
+  instrumentId     String
+  eventType        CustodyEventType
+  eventTimestamp   DateTime         @default(now())
+  recordedById     String
+  recordedLocation String?
+  custodyStatus    CustodyStatus
+  remarks          String?
+  createdAt        DateTime         @default(now())
+
+  instrument   Instrument @relation(fields: [instrumentId], references: [id], onDelete: Restrict)
+  recordedBy   User       @relation("RecordedCustodyEvents", fields: [recordedById], references: [id], onDelete: Restrict)
+
+  @@index([instrumentId])
+  @@index([recordedById])
+  @@index([createdAt])
+  @@map("custody_events")
+}
+
+// ── Milestone 5: Maturity Monitoring Alerts ───────────────────────────────
+model MaturityAlert {
+  id            String    @id @default(cuid())
+  instrumentId  String
+  alertType     String    // e.g. "MATURITY_REMINDER", "MATURED_OVERDUE", "ACTION_REQUIRED"
+  window        String    // e.g. "90_DAYS", "60_DAYS", "30_DAYS", "15_DAYS", "MATURED"
+  referenceDate DateTime
+  score         Int
+  priorityBand  String    // "CRITICAL", "HIGH", "MEDIUM", "LOW"
+  message       String
+  isResolved    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+
+  instrument    Instrument @relation(fields: [instrumentId], references: [id], onDelete: Restrict)
+
+  @@unique([instrumentId, alertType, window])
+  @@index([instrumentId])
+  @@index([priorityBand])
+  @@index([createdAt])
+  @@map("maturity_alerts")
+}
+
+// ── Milestone 5: Scheduled Job Run History ────────────────────────────────
+model JobRun {
+  id               String    @id @default(cuid())
+  jobName          String
+  startTime        DateTime
+  finishTime       DateTime?
+  status           String    // "RUNNING", "COMPLETED", "FAILED", "PARTIAL_SUCCESS"
+  recordsProcessed Int       @default(0)
+  alertsCreated    Int       @default(0)
+  recordsFailed    Int       @default(0)
+  errorSummary     String?
+  metadata         Json?
+  createdAt        DateTime  @default(now())
+
+  @@index([jobName])
+  @@index([createdAt])
+  @@map("job_runs")
+}
+
+// ── Milestone 6: Renewal and Replacement Relationships ───────────────────
+enum InstrumentRelationshipType {
+  RENEWAL
+  REPLACEMENT
+}
+
+enum RelationshipStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model InstrumentRelationship {
+  id                   String                     @id @default(cuid())
+  sourceInstrumentId   String                     // Original instrument
+  targetInstrumentId   String                     // Proposed successor (renewal / replacement)
+  relationshipType     InstrumentRelationshipType
+  status               RelationshipStatus         @default(PENDING)
+  initiatedById        String
+  remarks              String?
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
+
+  sourceInstrument     Instrument                 @relation("SourceInstrument", fields: [sourceInstrumentId], references: [id], onDelete: Restrict)
+  targetInstrument     Instrument                 @relation("TargetInstrument", fields: [targetInstrumentId], references: [id], onDelete: Restrict)
+  initiatedBy          User                       @relation("InitiatedRelationships", fields: [initiatedById], references: [id], onDelete: Restrict)
+
+  @@index([sourceInstrumentId])
+  @@index([targetInstrumentId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("instrument_relationships")
+}
+
+// ── Milestone 7: Release and Refund Processing ────────────────────────────
+
+enum ReleaseRequestStatus {
+  PENDING          // Submitted by institution; awaiting officer decision
+  APPROVED         // Officer approved — instrument transitions to RELEASED
+  REJECTED         // Officer rejected — instrument reverts to previousInstrumentStatus
+  REFUND_CONFIRMED // Refund payment separately confirmed by officer/admin
+}
+
+model ReleaseRequest {
+  id             String               @id @default(cuid())
+  instrumentId   String
+
+  // Snapshot of instrument status at the time of submission.
+  // Used on rejection to restore the correct prior status (ACTIVE or MATURED).
+  previousInstrumentStatus InstrumentStatus
+
+  requestedById  String
+  reason         String               // Institution's stated reason for release
+
+  status         ReleaseRequestStatus @default(PENDING)
+
+  // Officer decision (populated when status moves to APPROVED or REJECTED)
+  decidedById    String?
+  decidedAt      DateTime?
+  officerRemarks String?
+
+  // Refund confirmation (populated when status moves to REFUND_CONFIRMED)
+  // Kept separate from approval so that approval ≠ payment received.
+  refundReference     String?          // Bank transfer reference / cheque number / NEFT UTR
+  refundConfirmedAt   DateTime?
+  refundConfirmedById String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  instrument        Instrument @relation(fields: [instrumentId], references: [id], onDelete: Restrict)
+  requestedBy       User       @relation("RequestedReleases", fields: [requestedById], references: [id], onDelete: Restrict)
+  decidedBy         User?      @relation("DecidedReleases", fields: [decidedById], references: [id], onDelete: SetNull)
+  refundConfirmedBy User?      @relation("ConfirmedRefunds", fields: [refundConfirmedById], references: [id], onDelete: SetNull)
+
+  // Standard indexes for common query patterns
+  @@index([instrumentId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([requestedById])
+
+  // NOTE: A partial unique index (instrumentId WHERE status = 'PENDING') is created
+  // in the migration SQL to enforce that only one PENDING request exists per instrument
+  // at the database level. This cannot be expressed in Prisma schema syntax and is
+  // therefore applied as a raw statement in the migration file.
+
+  @@map("release_requests")
+}
+
+// ── Milestone 9: Document Intelligence & OCR Extraction ───────────────────
+
+enum OcrExtractionStatus {
+  PENDING    // Extraction queued or in progress
+  EXTRACTED  // Text and candidate fields extracted, rule-checked, awaiting officer review
+  FAILED     // Extraction failed (unreadable scan, corrupt file, timeout)
+  REVIEWED   // Human review completed by authorized AICTE officer
+}
+
+model OcrExtraction {
+  id                    String              @id @default(cuid())
+  documentId            String
+  instrumentId          String
+  attemptNumber         Int                 @default(1)
+
+  status                OcrExtractionStatus @default(PENDING)
+
+  // ── Extracted candidate values (evidence label: Extracted) ──────────────
+  extractedFdrNumber    String?
+  extractedBankName     String?
+  extractedBranchName   String?
+  extractedAmount       Decimal?            @db.Decimal(15, 2)
+  extractedIssueDate    DateTime?
+  extractedMaturityDate DateTime?
+
+  // ── Extraction evidence and telemetry ────────────────────────────────────
+  rawText               String?             @db.Text
+  confidenceScores      Json?               // Per-field and overall confidence metrics
+  ocrEngine             String?             // e.g. "pdf-parse/1.1.1", "tesseract.js/5.1.0"
+  ocrDurationMs         Int?
+  errorMessage          String?             // Sanitized failure description (no paths/secrets)
+
+  // ── Rule-check comparison results (evidence label: Rule-checked) ─────────
+  hasMismatches         Boolean?
+  ruleCheckResults      Json?               // Field-by-field entered vs extracted comparison
+
+  // ── Human review & provenance (evidence label: Independently confirmed) ─
+  reviewedById          String?
+  reviewedAt            DateTime?
+  reviewRemarks         String?
+  acceptedValues        Json?               // Preserves provenance per field (ENTERED / EXTRACTED / OVERRIDE)
+
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  // Relations
+  document              Document            @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  instrument            Instrument          @relation(fields: [instrumentId], references: [id], onDelete: Restrict)
+  reviewedBy            User?               @relation("ReviewedOcrExtractions", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@unique([documentId, attemptNumber])
+  @@index([instrumentId])
+  @@index([documentId])
+  @@index([status])
+  @@index([reviewedById])
+  @@index([createdAt])
+  @@map("ocr_extractions")
 }

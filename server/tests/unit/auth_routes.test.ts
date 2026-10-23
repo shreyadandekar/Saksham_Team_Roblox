@@ -14,6 +14,9 @@ vi.mock("../../src/db/prisma", () => ({
     instrument: {
       findMany: vi.fn(),
     },
+    auditEvent: {
+      create: vi.fn().mockResolvedValue({ id: "audit-1" }),
+    },
   },
 }));
 
@@ -119,10 +122,125 @@ describe("Authentication Routes (/api/auth)", () => {
       expect(cookieString).toContain("fdr_token=");
       expect(cookieString.toLowerCase()).toContain("httponly");
     });
+
+    it("should record LOGIN_SUCCESS audit event without sensitive tokens", async () => {
+      const hashedPassword = await hashPassword("CorrectPassword123");
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: "user-123",
+        fullName: "Dr. Vikram Patel",
+        email: "vikram@engineering.edu",
+        passwordHash: hashedPassword,
+        role: Role.INSTITUTION_USER,
+        institutionId: "inst-eng-1",
+        isActive: true,
+      });
+
+      await request(app)
+        .post("/api/auth/login")
+        .send({
+          email: "vikram@engineering.edu",
+          password: "CorrectPassword123",
+        });
+
+      expect(prisma.auditEvent.create).toHaveBeenCalledWith({
+        data: {
+          actorId: "user-123",
+          action: "LOGIN_SUCCESS",
+          entityType: "User",
+          entityId: "user-123",
+          metadata: {
+            email: "vikram@engineering.edu",
+            role: Role.INSTITUTION_USER,
+          },
+        },
+      });
+    });
+
+    it("should record LOGIN_FAILED audit event when user is not found, without leaking credentials", async () => {
+      (prisma.user.findUnique as any).mockResolvedValue(null);
+
+      await request(app)
+        .post("/api/auth/login")
+        .send({
+          email: "unknown@example.com",
+          password: "SuperSecretPassword!",
+        });
+
+      expect(prisma.auditEvent.create).toHaveBeenCalledWith({
+        data: {
+          actorId: null,
+          action: "LOGIN_FAILED",
+          entityType: "User",
+          entityId: "UNKNOWN",
+          metadata: {
+            email: "unknown@example.com",
+            reason: "INVALID_CREDENTIALS",
+          },
+        },
+      });
+
+      // Confirm passwords are NEVER in the audit call
+      const auditCall = vi.mocked(prisma.auditEvent.create).mock.calls[0][0];
+      expect(JSON.stringify(auditCall)).not.toContain("SuperSecretPassword!");
+    });
+
+    it("should record LOGIN_FAILED audit event on deactivated account", async () => {
+      const hashedPassword = await hashPassword("ValidPassword123");
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: "inactive-1",
+        email: "inactive@college.edu",
+        passwordHash: hashedPassword,
+        isActive: false,
+      });
+
+      await request(app)
+        .post("/api/auth/login")
+        .send({ email: "inactive@college.edu", password: "ValidPassword123" });
+
+      expect(prisma.auditEvent.create).toHaveBeenCalledWith({
+        data: {
+          actorId: "inactive-1",
+          action: "LOGIN_FAILED",
+          entityType: "User",
+          entityId: "inactive-1",
+          metadata: {
+            email: "inactive@college.edu",
+            reason: "ACCOUNT_DEACTIVATED",
+          },
+        },
+      });
+    });
+
+    it("should record LOGIN_FAILED audit event on wrong password", async () => {
+      const hashedPassword = await hashPassword("CorrectPassword123");
+      (prisma.user.findUnique as any).mockResolvedValue({
+        id: "user-1",
+        email: "user@college.edu",
+        passwordHash: hashedPassword,
+        isActive: true,
+      });
+
+      await request(app)
+        .post("/api/auth/login")
+        .send({ email: "user@college.edu", password: "WrongPassword" });
+
+      expect(prisma.auditEvent.create).toHaveBeenCalledWith({
+        data: {
+          actorId: "user-1",
+          action: "LOGIN_FAILED",
+          entityType: "User",
+          entityId: "user-1",
+          metadata: {
+            email: "user@college.edu",
+            reason: "INVALID_CREDENTIALS",
+          },
+        },
+      });
+    });
   });
 
   describe("POST /api/auth/logout", () => {
-    it("should clear the fdr_token cookie and return 200", async () => {
+    it("should clear the fdr_token cookie and return 200 without token", async () => {
       const res = await request(app).post("/api/auth/logout");
 
       expect(res.status).toBe(200);
@@ -133,6 +251,34 @@ describe("Authentication Routes (/api/auth)", () => {
       expect(cookies).toBeDefined();
       const cookieString = Array.isArray(cookies) ? cookies.join("; ") : cookies;
       expect(cookieString).toContain("fdr_token=;");
+      expect(prisma.auditEvent.create).not.toHaveBeenCalled();
+    });
+
+    it("should record LOGOUT audit event when user logs out with valid token", async () => {
+      const token = signAccessToken({
+        sub: "user-logged-in",
+        email: "user@college.edu",
+        role: Role.INSTITUTION_USER,
+        institutionId: "inst-1",
+      });
+
+      const res = await request(app)
+        .post("/api/auth/logout")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.status).toBe(200);
+      expect(prisma.auditEvent.create).toHaveBeenCalledWith({
+        data: {
+          actorId: "user-logged-in",
+          action: "LOGOUT",
+          entityType: "User",
+          entityId: "user-logged-in",
+          metadata: {
+            email: "user@college.edu",
+            role: Role.INSTITUTION_USER,
+          },
+        },
+      });
     });
   });
 

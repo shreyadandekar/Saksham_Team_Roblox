@@ -137,4 +137,21 @@ describe("GET /api/instruments - Institution Access Control", () => {
       })
     );
   });
+
+  describe("Runtime & Health Probe Verification", () => {
+    it("should respond with 200 OK and service status on GET /api/health", async () => {
+      const res = await request(app).get("/api/health");
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe("ok");
+      expect(res.body.service).toBe("fdr-sentinel-api");
+      expect(res.body.timestamp).toBeDefined();
+    });
+
+    it("should respond with 404 Not Found on unhandled routes", async () => {
+      const res = await request(app).get("/api/nonexistent-endpoint");
+      expect(res.status).toBe(404);
+      expect(res.body.error).toBe("Not found");
+      expect(res.body.message).toBe("Resource not found");
+    });
+  });
 });
