@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { fetchInstruments } from "../api/auth";
 import type { InstrumentSummary } from "../types/auth";
 import { useAuth } from "../context/AuthContext";
+import { getPreviewInstruments, isPreviewUser } from "../lib/preview";
 
 interface CacheEntry {
   userId: string;
@@ -14,6 +15,9 @@ let cache: CacheEntry | null = null;
 export function useInstruments() {
   const { user } = useAuth();
   const userId = user?.id ?? "";
+  if (user && isPreviewUser(user) && (!cache || cache.userId !== userId)) {
+    cache = { userId, data: getPreviewInstruments(user) };
+  }
   const cached = cache && cache.userId === userId ? cache.data : null;
 
   const [instruments, setInstruments] = useState<InstrumentSummary[]>(cached ?? []);

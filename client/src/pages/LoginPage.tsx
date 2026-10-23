@@ -41,7 +41,7 @@ const HIGHLIGHTS = [
 ];
 
 export default function LoginPage() {
-  const { login, user } = useAuth();
+  const { login, user, enterPreview } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [serverError, setServerError] = useState<string | null>(null);
@@ -219,6 +219,29 @@ export default function LoginPage() {
                   </li>
                 ))}
               </ul>
+              <div className="mt-4 border-t border-line pt-4">
+                <h3 className="text-sm font-semibold text-ink">Preview without the server</h3>
+                <p className="mt-1 text-[13px] text-ink-muted">
+                  Opens the app with sample records so you can review the screens before the API and
+                  database are connected.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {(["INSTITUTION_USER", "AICTE_OFFICER", "SYSTEM_ADMIN"] as Role[]).map((role) => (
+                    <Button
+                      key={role}
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => {
+                        enterPreview(role);
+                        navigate(from, { replace: true });
+                      }}
+                    >
+                      Preview as {ROLE_LABELS[role]}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </section>
           )}
         </div>

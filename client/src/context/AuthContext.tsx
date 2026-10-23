@@ -12,7 +12,14 @@ import {
   useCallback,
 } from "react";
 import type { ReactNode } from "react";
-import type { User } from "../types/auth";
+import type { Role, User } from "../types/auth";
+import {
+  PREVIEW_ENABLED,
+  PREVIEW_USERS,
+  isPreviewUser,
+  readPreviewRole,
+  writePreviewRole,
+} from "../lib/preview";
 import { loginUser, logoutUser, fetchCurrentUser } from "../api/auth";
 
 interface AuthContextType {
@@ -21,6 +28,7 @@ interface AuthContextType {
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  enterPreview: (role: Role) => void;
   clearError: () => void;
 }
 
@@ -36,14 +44,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let isMounted = true;
 
     async function initAuth() {
+      const storedPreview = readPreviewRole();
+      if (storedPreview) {
+        setUser(PREVIEW_USERS[storedPreview]);
+        setLoading(false);
+        return;
+      }
       try {
         const currentUser = await fetchCurrentUser();
         if (isMounted) {
-          setUser(currentUser);
+          setUser((prev) => (isPreviewUser(prev) ? prev : currentUser));
         }
       } catch {
         if (isMounted) {
-          setUser(null);
+          setUser((prev) => (isPreviewUser(prev) ? prev : null));
         }
       } finally {
         if (isMounted) {
@@ -71,14 +85,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const enterPreview = useCallback((role: Role) => {
+    if (!PREVIEW_ENABLED) return;
+    setError(null);
+    writePreviewRole(role);
+    setUser(PREVIEW_USERS[role]);
+    setLoading(false);
+  }, []);
+
   const logout = useCallback(async () => {
     try {
-      await logoutUser();
+      if (!isPreviewUser(user)) await logoutUser();
     } finally {
+      writePreviewRole(null);
       setUser(null);
       setError(null);
     }
-  }, []);
+  }, [user]);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -92,6 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error,
         login,
         logout,
+        enterPreview,
         clearError,
       }}
     >
