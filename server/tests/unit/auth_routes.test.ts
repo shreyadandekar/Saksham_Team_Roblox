@@ -5,6 +5,7 @@ import { prisma } from "../../src/db/prisma";
 import { hashPassword } from "../../src/utils/password";
 import { signAccessToken } from "../../src/utils/jwt";
 import { Role } from "@prisma/client";
+import { resetLoginRateLimiter } from "../../src/middleware/rateLimit";
 
 vi.mock("../../src/db/prisma", () => ({
   prisma: {
@@ -25,6 +26,10 @@ describe("Authentication Routes (/api/auth)", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Re-apply the resolved value after clearAllMocks wipes it
+    vi.mocked(prisma.auditEvent.create).mockResolvedValue({ id: "audit-1" } as any);
+    // Reset rate-limit state so tests don't bleed into each other
+    resetLoginRateLimiter();
   });
 
   describe("POST /api/auth/login", () => {

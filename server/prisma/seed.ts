@@ -102,7 +102,7 @@ async function main() {
     where: { email: "officer.sharma@demo.fdr-sentinel.gov.in" },
     update: {
       fullName: "Anil Sharma (Scrutiny Officer)",
-      role: Role.AICTE_OFFICER,
+      role: Role.SCRUTINY_OFFICER,
       institutionId: null,
       isActive: true,
       passwordHash,
@@ -110,7 +110,26 @@ async function main() {
     create: {
       email: "officer.sharma@demo.fdr-sentinel.gov.in",
       fullName: "Anil Sharma (Scrutiny Officer)",
-      role: Role.AICTE_OFFICER,
+      role: Role.SCRUTINY_OFFICER,
+      institutionId: null,
+      isActive: true,
+      passwordHash,
+    },
+  });
+
+  const approverUser = await prisma.user.upsert({
+    where: { email: "approver.verma@demo.fdr-sentinel.gov.in" },
+    update: {
+      fullName: "Dr. Sanjay Verma (Regulatory Approver)",
+      role: Role.APPROVER,
+      institutionId: null,
+      isActive: true,
+      passwordHash,
+    },
+    create: {
+      email: "approver.verma@demo.fdr-sentinel.gov.in",
+      fullName: "Dr. Sanjay Verma (Regulatory Approver)",
+      role: Role.APPROVER,
       institutionId: null,
       isActive: true,
       passwordHash,
@@ -121,7 +140,7 @@ async function main() {
     where: { email: "admin.sentinel@demo.fdr-sentinel.gov.in" },
     update: {
       fullName: "Pooja Kulkarni (System Administrator)",
-      role: Role.SYSTEM_ADMIN,
+      role: Role.ADMIN,
       institutionId: null,
       isActive: true,
       passwordHash,
@@ -129,14 +148,52 @@ async function main() {
     create: {
       email: "admin.sentinel@demo.fdr-sentinel.gov.in",
       fullName: "Pooja Kulkarni (System Administrator)",
-      role: Role.SYSTEM_ADMIN,
+      role: Role.ADMIN,
       institutionId: null,
       isActive: true,
       passwordHash,
     },
   });
 
-  console.log("✓ Seeded 4 demo accounts (INSTITUTION_USER x2, AICTE_OFFICER, SYSTEM_ADMIN)");
+  const auditorUser = await prisma.user.upsert({
+    where: { email: "auditor.patel@demo.fdr-sentinel.gov.in" },
+    update: {
+      fullName: "Kavita Patel (Compliance Auditor)",
+      role: Role.AUDITOR,
+      institutionId: null,
+      isActive: true,
+      passwordHash,
+    },
+    create: {
+      email: "auditor.patel@demo.fdr-sentinel.gov.in",
+      fullName: "Kavita Patel (Compliance Auditor)",
+      role: Role.AUDITOR,
+      institutionId: null,
+      isActive: true,
+      passwordHash,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: "auditor.sen@demo.fdr-sentinel.gov.in" },
+    update: {
+      fullName: "Meera Sen (Compliance Auditor)",
+      role: Role.AUDITOR,
+      institutionId: null,
+      isActive: true,
+      passwordHash,
+    },
+    create: {
+      email: "auditor.sen@demo.fdr-sentinel.gov.in",
+      fullName: "Meera Sen (Compliance Auditor)",
+      role: Role.AUDITOR,
+      institutionId: null,
+      isActive: true,
+      passwordHash,
+    },
+  });
+
+  console.log("✓ Seeded 6 demo accounts (INSTITUTION_USER x2, SCRUTINY_OFFICER, APPROVER, ADMIN, AUDITOR)");
 
   // ── 3. Synthetic Instruments ────────────────────────────────────────────
   // Institution 1 instruments
@@ -261,10 +318,14 @@ async function main() {
   console.log("   Email: inst.delhi@demo.fdr-sentinel.gov.in");
   console.log("2. Institution User 2 (Pune):");
   console.log("   Email: inst.pune@demo.fdr-sentinel.gov.in");
-  console.log("3. AICTE Scrutiny Officer:");
+  console.log("3. Scrutiny Officer:");
   console.log("   Email: officer.sharma@demo.fdr-sentinel.gov.in");
-  console.log("4. System Administrator:");
+  console.log("4. Regulatory Approver:");
+  console.log("   Email: approver.verma@demo.fdr-sentinel.gov.in");
+  console.log("5. System Administrator:");
   console.log("   Email: admin.sentinel@demo.fdr-sentinel.gov.in");
+  console.log("6. Compliance Auditor:");
+  console.log("   Email: auditor.sen@demo.fdr-sentinel.gov.in");
   console.log("=======================================================\n");
 }
 

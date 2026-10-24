@@ -88,7 +88,9 @@ export default function ScrutinyQueuePage() {
     }
   }
 
-  const isOfficer = Boolean(user && (user.role === "AICTE_OFFICER" || user.role === "SYSTEM_ADMIN"));
+  const isOfficer = Boolean(
+    user && (user.role === "SCRUTINY_OFFICER" || user.role === "AICTE_OFFICER" || user.role === "SYSTEM_ADMIN")
+  );
 
   function handleOpenDecision(
     item: Instrument,

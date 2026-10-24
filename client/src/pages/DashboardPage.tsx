@@ -71,6 +71,30 @@ export default function DashboardPage() {
         "Manage, register, and monitor Fixed Deposit Receipts strictly for your institution.",
       icon: Building,
     },
+    SCRUTINY_OFFICER: {
+      title: "AICTE Scrutiny & Regulatory Verification",
+      subtitle:
+        "Regulatory inspection desk, Attention Priority scoring, and document verification across institutions.",
+      icon: ShieldCheck,
+    },
+    APPROVER: {
+      title: "Competent Authority Release Approvals",
+      subtitle:
+        "Executive oversight, four-eyes release decision determinations, and refund confirmation.",
+      icon: ShieldCheck,
+    },
+    ADMIN: {
+      title: "System Administration & Oversight",
+      subtitle:
+        "Global portal audit, user credential management, and security oversight.",
+      icon: Database,
+    },
+    AUDITOR: {
+      title: "Regulatory Oversight & Audit Log",
+      subtitle:
+        "Independent cryptographic audit log verification and immutable export inspection.",
+      icon: ShieldCheck,
+    },
     AICTE_OFFICER: {
       title: "AICTE Scrutiny & Regulatory Verification",
       subtitle:
@@ -162,6 +186,23 @@ export default function DashboardPage() {
             <HealthBadge />
           </div>
         </div>
+
+        {/* ── Error Banner (Prevents masking query failures as zero counts) ─ */}
+        {error && (
+          <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex items-start gap-3" role="alert">
+            <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-rose-900">Database or Metrics Query Error</h3>
+              <p className="text-sm text-rose-700 mt-1">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 text-white text-xs font-medium rounded-lg hover:bg-rose-700 transition"
+              >
+                <RefreshCw className="h-3.5 w-3.5" /> Retry
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ── Key Operational Metrics Cards ────────── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

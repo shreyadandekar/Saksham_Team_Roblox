@@ -9,10 +9,12 @@ import { prisma } from "../db/prisma";
 import { comparePassword } from "../utils/password";
 import { signAccessToken, verifyAccessToken } from "../utils/jwt";
 import { requireAuth, extractToken } from "../middleware/auth";
+import { createLoginRateLimiter, clearLoginAttempt } from "../middleware/rateLimit";
 import { env } from "../config/env";
 import { SafeUser } from "../types/auth";
 
 const router = Router();
+const loginLimiter = createLoginRateLimiter();
 
 const loginSchema = z.object({
   email: z.string().trim().email("Invalid email format"),
@@ -25,6 +27,7 @@ const loginSchema = z.object({
  */
 router.post(
   "/login",
+  loginLimiter,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const validation = loginSchema.safeParse(req.body);
@@ -120,6 +123,9 @@ router.post(
         });
         return;
       }
+
+      // Reset failed login attempt counter for this IP on successful authentication
+      clearLoginAttempt(req);
 
       // Record successful login audit event
       await prisma.auditEvent.create({

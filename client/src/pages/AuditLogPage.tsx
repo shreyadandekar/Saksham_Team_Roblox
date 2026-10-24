@@ -37,7 +37,12 @@ export default function AuditLogPage() {
   const { user } = useAuth();
 
   const isOfficerOrAdmin =
-    user?.role === "AICTE_OFFICER" || user?.role === "SYSTEM_ADMIN";
+    user?.role === "SCRUTINY_OFFICER" ||
+    user?.role === "APPROVER" ||
+    user?.role === "ADMIN" ||
+    user?.role === "AUDITOR" ||
+    user?.role === "AICTE_OFFICER" ||
+    user?.role === "SYSTEM_ADMIN";
 
   // Data states
   const [events, setEvents] = useState<AuditEventItem[]>([]);

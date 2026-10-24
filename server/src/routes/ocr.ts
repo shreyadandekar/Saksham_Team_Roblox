@@ -92,7 +92,29 @@ router.get(
         orderBy: [{ createdAt: "desc" }, { attemptNumber: "desc" }],
       });
 
-      res.status(200).json({ extractions });
+      // Role-aware sanitization: Institution users receive only high-level status
+      // and extracted values needed for correction, but NOT internal reviewer identities,
+      // officer remarks, raw full text, or internal confidence scores.
+      const sanitizedExtractions = user.role === Role.INSTITUTION_USER
+        ? extractions.map((ext) => ({
+            id: ext.id,
+            documentId: ext.documentId,
+            instrumentId: ext.instrumentId,
+            attemptNumber: ext.attemptNumber,
+            status: ext.status,
+            extractedFdrNumber: ext.extractedFdrNumber,
+            extractedBankName: ext.extractedBankName,
+            extractedBranchName: ext.extractedBranchName,
+            extractedAmount: ext.extractedAmount,
+            extractedIssueDate: ext.extractedIssueDate,
+            extractedMaturityDate: ext.extractedMaturityDate,
+            hasMismatches: ext.hasMismatches,
+            createdAt: ext.createdAt,
+            document: ext.document,
+          }))
+        : extractions;
+
+      res.status(200).json({ extractions: sanitizedExtractions });
     } catch (error) {
       next(error);
     }
@@ -104,7 +126,7 @@ router.get(
  * Human review workflow for OCR extractions.
  *
  * Safeguards:
- *  - Only AICTE Officers (AICTE_OFFICER) and SYSTEM_ADMIN may review.
+ *  - Only Scrutiny Officers (SCRUTINY_OFFICER / AICTE_OFFICER) may review.
  *  - Requires non-empty review remarks.
  *  - Records field-by-field provenance in acceptedValues.
  *  - NEVER overwrites original institution-entered instrument values.
@@ -119,11 +141,16 @@ router.post(
       const user = req.user!;
       const { instrumentId } = req.params as { instrumentId: string };
 
-      // 1. Role verification: Only Officers and Admins may review OCR extractions
-      if (user.role !== Role.AICTE_OFFICER && user.role !== Role.SYSTEM_ADMIN) {
+      // 1. Role verification: Only Scrutiny Officers and Administrators may review OCR extractions
+      if (
+        user.role !== Role.SCRUTINY_OFFICER &&
+        user.role !== Role.AICTE_OFFICER &&
+        user.role !== Role.SYSTEM_ADMIN &&
+        user.role !== Role.ADMIN
+      ) {
         res.status(403).json({
           error: "Forbidden",
-          message: "Only AICTE Officers or Administrators may record OCR reviews.",
+          message: "Only AICTE Officers or Administrators can record review decisions.",
         });
         return;
       }

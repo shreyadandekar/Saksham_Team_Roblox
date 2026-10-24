@@ -117,6 +117,17 @@ describe("Milestone 4 — Document Upload and Storage API", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
+    // Restore Supabase client mock after clearAllMocks wipes implementations
+    mockGetSupabaseAdmin.mockReturnValue({
+      storage: {
+        from: () => ({
+          upload: mockStorageUpload,
+          remove: mockStorageRemove,
+          createSignedUrl: mockStorageSignedUrl,
+        }),
+      },
+    });
+
     // Default: Supabase upload succeeds
     mockStorageUpload.mockResolvedValue({ data: { path: mockDocument.storagePath }, error: null });
     mockStorageRemove.mockResolvedValue({ data: {}, error: null });

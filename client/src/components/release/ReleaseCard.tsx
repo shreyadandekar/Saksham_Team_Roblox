@@ -25,6 +25,7 @@ interface ReleaseCardProps {
   isInstitutionUser: boolean;
   isOwner: boolean;
   isOfficer: boolean;
+  isApprover?: boolean;
   onRequestRelease: () => void;
   onDecideRelease: () => void;
   onConfirmRefund: () => void;
@@ -37,10 +38,12 @@ export default function ReleaseCard({
   isInstitutionUser,
   isOwner,
   isOfficer,
+  isApprover,
   onRequestRelease,
   onDecideRelease,
   onConfirmRefund,
 }: ReleaseCardProps) {
+  const canDecide = Boolean(isApprover || (isApprover === undefined && isOfficer));
   const pendingRequest = releaseRequests.find((r) => r.status === "PENDING") || null;
   const approvedRequest =
     releaseRequests.find(
@@ -108,7 +111,7 @@ export default function ReleaseCard({
               </div>
             </div>
 
-            {isOfficer && (
+            {canDecide && (
               <button
                 type="button"
                 onClick={onDecideRelease}
@@ -227,7 +230,7 @@ export default function ReleaseCard({
                   <p className="text-xs text-amber-900 leading-relaxed">
                     Financial refund remittance has not yet been recorded. Regulatory release approval does not automatically remit funds.
                   </p>
-                  {isOfficer && (
+                  {canDecide && (
                     <button
                       type="button"
                       onClick={onConfirmRefund}

@@ -12,6 +12,12 @@ datasource db {
 
 enum Role {
   INSTITUTION_USER
+  SCRUTINY_OFFICER
+  APPROVER
+  ADMIN
+  AUDITOR
+
+  // Legacy roles for backward-compatible migration
   AICTE_OFFICER
   SYSTEM_ADMIN
 }
@@ -98,6 +104,10 @@ model User {
   // Milestone 9: OCR extraction reviews
   reviewedOcrExtractions OcrExtraction[] @relation("ReviewedOcrExtractions")
 
+  // Scrutiny relationships for separation-of-duties
+  scrutinizedInstruments Instrument[]     @relation("ScrutinizedInstruments")
+  recordedScrutinyRecords ScrutinyRecord[] @relation("OfficerScrutinyRecords")
+
   @@index([institutionId])
   @@index([role])
   @@map("users")
@@ -125,6 +135,11 @@ model Instrument {
   originalReceivedAt DateTime?
   physicalLocation   String?
 
+  // Scrutiny tracking for separation-of-duties and four-eyes enforcement
+  scrutinizedById    String?
+  scrutinizedBy      User?            @relation("ScrutinizedInstruments", fields: [scrutinizedById], references: [id], onDelete: SetNull)
+  scrutinyRecords    ScrutinyRecord[]
+
   // Strict relations: delete restricted to preserve financial and regulatory audit trails
   institution Institution @relation(fields: [institutionId], references: [id], onDelete: Restrict)
   createdBy   User        @relation("CreatedInstruments", fields: [createdById], references: [id], onDelete: Restrict)
@@ -151,18 +166,23 @@ model Instrument {
   @@index([institutionId])
   @@index([status])
   @@index([createdById])
+  @@index([scrutinizedById])
   @@index([custodyStatus])
   @@map("instruments")
 }
 
 model AuditEvent {
-  id         String   @id @default(cuid())
-  actorId    String?
-  action     String
-  entityType String
-  entityId   String
-  metadata   Json?
-  createdAt  DateTime @default(now())
+  id           String   @id @default(cuid())
+  actorId      String?
+  action       String
+  entityType   String
+  entityId     String
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  // Tamper-evident hash chain fields
+  previousHash String?
+  eventHash    String?
 
   // Actor may be null for system-generated actions; SetNull if actor user is ever deleted
   actor User? @relation("ActorAuditEvents", fields: [actorId], references: [id], onDelete: SetNull)
@@ -170,7 +190,27 @@ model AuditEvent {
   @@index([entityType, entityId])
   @@index([actorId])
   @@index([createdAt])
+  @@index([previousHash])
   @@map("audit_events")
+}
+
+model ScrutinyRecord {
+  id            String   @id @default(cuid())
+  instrumentId  String
+  officerId     String
+  stage         String   @default("INITIAL") // INITIAL, RESUBMISSION
+  decision      String   // START_SCRUTINY, APPROVE, REJECT, REQUEST_CORRECTION
+  remarks       String?
+  checklistData Json?
+  createdAt     DateTime @default(now())
+
+  instrument Instrument @relation(fields: [instrumentId], references: [id], onDelete: Restrict)
+  officer    User       @relation("OfficerScrutinyRecords", fields: [officerId], references: [id], onDelete: Restrict)
+
+  @@index([instrumentId])
+  @@index([officerId])
+  @@index([createdAt])
+  @@map("scrutiny_records")
 }
 
 // ── Milestone 4: per-instrument document records ──────────────────────────

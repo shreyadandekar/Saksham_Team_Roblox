@@ -86,6 +86,21 @@ export async function requireAuth(
   }
 }
 
+export function matchesRole(userRole: Role, targetRole: Role): boolean {
+  if (userRole === targetRole) return true;
+  // Backward compatibility during migration:
+  // Legacy AICTE_OFFICER maps strictly to SCRUTINY_OFFICER
+  if (targetRole === Role.SCRUTINY_OFFICER && userRole === Role.AICTE_OFFICER) return true;
+  if (targetRole === Role.AICTE_OFFICER && userRole === Role.SCRUTINY_OFFICER) return true;
+  // Legacy SYSTEM_ADMIN maps strictly to ADMIN
+  if (targetRole === Role.ADMIN && userRole === Role.SYSTEM_ADMIN) return true;
+  if (targetRole === Role.SYSTEM_ADMIN && userRole === Role.ADMIN) return true;
+
+  // IMPORTANT: Neither ADMIN nor SYSTEM_ADMIN may ever match APPROVER or SCRUTINY_OFFICER
+  // AICTE_OFFICER / SCRUTINY_OFFICER may never match APPROVER
+  return false;
+}
+
 export function requireRoles(...allowedRoles: Role[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
@@ -96,7 +111,9 @@ export function requireRoles(...allowedRoles: Role[]) {
       return;
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
+    const isAuthorized = allowedRoles.some((role) => matchesRole(req.user!.role, role));
+
+    if (!isAuthorized) {
       res.status(403).json({
         error: "Forbidden",
         message: "You do not have permission to access this resource.",
@@ -107,3 +124,4 @@ export function requireRoles(...allowedRoles: Role[]) {
     next();
   };
 }
+

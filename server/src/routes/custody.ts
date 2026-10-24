@@ -104,11 +104,15 @@ router.post(
       const user = req.user!;
       const { instrumentId } = req.params as { instrumentId: string };
 
-      // Role check: Only officers and admins can record physical custody events
-      if (user.role !== Role.AICTE_OFFICER && user.role !== Role.SYSTEM_ADMIN) {
+      // Role check: Scrutiny Officers, legacy AICTE Officers, and Admins may record physical custody events
+      if (
+        user.role !== Role.SCRUTINY_OFFICER &&
+        user.role !== Role.AICTE_OFFICER &&
+        user.role !== Role.SYSTEM_ADMIN
+      ) {
         res.status(403).json({
           error: "Forbidden",
-          message: "Only AICTE Officers and Administrators are authorized to update physical custody records.",
+          message: "Only Scrutiny Officers are authorized to update physical custody records.",
         });
         return;
       }

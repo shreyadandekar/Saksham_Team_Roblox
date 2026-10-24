@@ -43,10 +43,14 @@ router.get(
         }
         whereClause.institutionId = user.institutionId;
       } else if (
+        user.role === Role.SCRUTINY_OFFICER ||
+        user.role === Role.APPROVER ||
+        user.role === Role.ADMIN ||
+        user.role === Role.AUDITOR ||
         user.role === Role.AICTE_OFFICER ||
         user.role === Role.SYSTEM_ADMIN
       ) {
-        // Officer & Admin system-wide policy
+        // Scrutiny Officer, Approver, Admin, and Auditor system-wide read policy
       } else {
         res.status(403).json({
           error: "Forbidden",
@@ -188,7 +192,7 @@ router.get(
       }
 
       // Fetch audit history for this instrument
-      const auditEvents = await prisma.auditEvent.findMany({
+      const rawAuditEvents = await prisma.auditEvent.findMany({
         where: {
           entityType: "Instrument",
           entityId: instrument.id,
@@ -200,6 +204,34 @@ router.get(
         },
         orderBy: { createdAt: "desc" },
       });
+
+      // Role-aware audit filtering: Institution users receive workflow-relevant findings
+      // (status transitions, decision outcomes, correction instructions) but NOT confidential
+      // internal officer notes, internal reviewer emails, or internal verification evidence.
+      const auditEvents = user.role === Role.INSTITUTION_USER
+        ? rawAuditEvents.map((evt) => {
+            const meta = (evt.metadata as Record<string, unknown>) || {};
+            const sanitizedMeta: Record<string, unknown> = {};
+            if (meta.decision) sanitizedMeta.decision = meta.decision;
+            if (meta.remarks) sanitizedMeta.remarks = meta.remarks;
+            if (meta.correctionRemarks) sanitizedMeta.correctionRemarks = meta.correctionRemarks;
+            if (meta.previousStatus) sanitizedMeta.previousStatus = meta.previousStatus;
+            if (meta.newStatus) sanitizedMeta.newStatus = meta.newStatus;
+            if (meta.instrumentNumber) sanitizedMeta.instrumentNumber = meta.instrumentNumber;
+
+            return {
+              id: evt.id,
+              action: evt.action,
+              entityType: evt.entityType,
+              entityId: evt.entityId,
+              createdAt: evt.createdAt,
+              metadata: sanitizedMeta,
+              actor: evt.actor?.role === Role.INSTITUTION_USER
+                ? { fullName: evt.actor.fullName, role: evt.actor.role }
+                : { fullName: "AICTE Officer", role: "AICTE_OFFICER" as const },
+            };
+          })
+        : rawAuditEvents;
 
       // Milestone 6: Fetch predecessor relationships (where this instrument is the successor)
       // and successor relationships (where this instrument is the original)
@@ -277,35 +309,24 @@ router.post(
         return;
       }
 
-      // Ensure user belongs to an institution if creating an instrument
-      let institutionId = user.institutionId;
-      if (user.role === Role.INSTITUTION_USER) {
-        if (!institutionId) {
-          res.status(403).json({
-            error: "Forbidden",
-            message: "User account is not linked to an accredited institution.",
-          });
-          return;
-        }
-      } else if (user.role === Role.SYSTEM_ADMIN) {
-        // System admin may provide institutionId in body if testing/administering
-        const candidateId = req.body.institutionId;
-        if (typeof candidateId === "string" && candidateId.trim()) {
-          institutionId = candidateId.trim();
-        } else if (!institutionId) {
-          res.status(400).json({
-            error: "Bad Request",
-            message: "Institution ID is required for administrative instrument registration.",
-          });
-          return;
-        }
-      } else {
+      // Only INSTITUTION_USER can create instruments for their assigned institution
+      if (user.role !== Role.INSTITUTION_USER) {
         res.status(403).json({
           error: "Forbidden",
-          message: "AICTE officers cannot register FDR instruments directly.",
+          message: "Only institution users may create instruments for their institution.",
         });
         return;
       }
+
+      if (!user.institutionId) {
+        res.status(403).json({
+          error: "Forbidden",
+          message: "User account is not linked to an accredited institution.",
+        });
+        return;
+      }
+
+      const institutionId = user.institutionId;
 
       // Validate request body
       const parsed = createInstrumentSchema.safeParse(req.body);
@@ -394,98 +415,122 @@ router.post(
 );
 
 /**
- * POST /api/instruments/:id/submit
- * Submits an existing DRAFT instrument for scrutiny.
- * Strictly checks that:
- * - Caller belongs to the owning institution (or is SYSTEM_ADMIN).
- * - Current status is DRAFT.
+ * Submit or resubmit an instrument for scrutiny.
+ * Allowed starting states: DRAFT, CORRECTION_REQUIRED.
+ * Restricted to INSTITUTION_USER for their own institution.
  */
-router.post(
-  "/:id/submit",
-  requireAuth,
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const user = req.user;
-      if (!user) {
-        res.status(401).json({ error: "Unauthorized" });
-        return;
-      }
-
-      const id = String(req.params.id);
-
-      const instrument = await prisma.instrument.findUnique({
-        where: { id },
-      });
-
-      if (!instrument) {
-        res.status(404).json({
-          error: "Not Found",
-          message: "Instrument not found.",
-        });
-        return;
-      }
-
-      // Check ownership
-      if (
-        user.role === Role.INSTITUTION_USER &&
-        instrument.institutionId !== user.institutionId
-      ) {
-        res.status(404).json({
-          error: "Not Found",
-          message: "Instrument not found.",
-        });
-        return;
-      }
-
-      // Check lifecycle transition eligibility
-      if (instrument.status !== InstrumentStatus.DRAFT) {
-        res.status(400).json({
-          error: "Invalid State Transition",
-          message: `Cannot submit instrument in '${instrument.status}' status. Only DRAFT instruments can be submitted.`,
-        });
-        return;
-      }
-
-      // Atomic transition + audit log
-      const updated = await prisma.$transaction(async (tx) => {
-        const result = await tx.instrument.update({
-          where: { id },
-          data: {
-            status: InstrumentStatus.SUBMITTED,
-          },
-          include: {
-            institution: {
-              select: { id: true, name: true, code: true },
-            },
-          },
-        });
-
-        await tx.auditEvent.create({
-          data: {
-            actorId: user.id,
-            action: "INSTRUMENT_SUBMITTED",
-            entityType: "Instrument",
-            entityId: id,
-            metadata: {
-              previousStatus: InstrumentStatus.DRAFT,
-              newStatus: InstrumentStatus.SUBMITTED,
-              instrumentNumber: instrument.instrumentNumber,
-            },
-          },
-        });
-
-        return result;
-      });
-
-      res.status(200).json({
-        message: "Instrument successfully submitted for scrutiny.",
-        instrument: updated,
-      });
-    } catch (error) {
-      next(error);
+async function submitInstrumentHandler(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
+
+    if (user.role !== Role.INSTITUTION_USER) {
+      res.status(403).json({
+        error: "Forbidden",
+        message: "Only institution users may submit instruments.",
+      });
+      return;
+    }
+
+    const id = String(req.params.id);
+
+    const instrument = await prisma.instrument.findUnique({
+      where: { id },
+    });
+
+    if (!instrument) {
+      res.status(404).json({
+        error: "Not Found",
+        message: "Instrument not found.",
+      });
+      return;
+    }
+
+    // Check ownership
+    if (instrument.institutionId !== user.institutionId) {
+      res.status(404).json({
+        error: "Not Found",
+        message: "Instrument not found.",
+      });
+      return;
+    }
+
+    // Check lifecycle transition eligibility (DRAFT or CORRECTION_REQUIRED)
+    const allowedStatuses: InstrumentStatus[] = [
+      InstrumentStatus.DRAFT,
+      InstrumentStatus.CORRECTION_REQUIRED,
+    ];
+    if (!allowedStatuses.includes(instrument.status)) {
+      res.status(400).json({
+        error: "Invalid State Transition",
+        message: `Cannot submit instrument in '${instrument.status}' status. Only DRAFT or CORRECTION_REQUIRED instruments can be submitted.`,
+      });
+      return;
+    }
+
+    const isResubmission = instrument.status === InstrumentStatus.CORRECTION_REQUIRED;
+    const remarks = typeof req.body?.remarks === "string" ? req.body.remarks.trim() : undefined;
+
+    // Atomic transition + audit log
+    const updated = await prisma.$transaction(async (tx) => {
+      const result = await tx.instrument.update({
+        where: { id },
+        data: {
+          status: InstrumentStatus.SUBMITTED,
+        },
+        include: {
+          institution: {
+            select: { id: true, name: true, code: true },
+          },
+        },
+      });
+
+      if (isResubmission && typeof (tx as any).scrutinyRecord?.create === "function") {
+        await (tx as any).scrutinyRecord.create({
+          data: {
+            instrumentId: id,
+            officerId: user.id,
+            stage: "RESUBMISSION",
+            decision: "CORRECTION_RESPONSE_SUBMITTED",
+            remarks: remarks || "Institution submitted correction response",
+          },
+        });
+      }
+
+      await tx.auditEvent.create({
+        data: {
+          actorId: user.id,
+          action: isResubmission ? "INSTRUMENT_RESUBMITTED" : "INSTRUMENT_SUBMITTED",
+          entityType: "Instrument",
+          entityId: id,
+          metadata: {
+            previousStatus: instrument.status,
+            newStatus: InstrumentStatus.SUBMITTED,
+            instrumentNumber: instrument.instrumentNumber,
+            ...(remarks && { correctionRemarks: remarks }),
+          },
+        },
+      });
+
+      return result;
+    });
+
+    res.status(200).json({
+      message: isResubmission
+        ? "Instrument successfully resubmitted for scrutiny."
+        : "Instrument successfully submitted for scrutiny.",
+      instrument: updated,
+    });
+  } catch (error) {
+    next(error);
   }
-);
+}
+
+router.post("/:id/submit", requireAuth, submitInstrumentHandler);
+router.post("/:id/resubmit", requireAuth, submitInstrumentHandler);
 
 /**
  * POST /api/instruments/:id/start-scrutiny
@@ -494,7 +539,7 @@ router.post(
 router.post(
   "/:id/start-scrutiny",
   requireAuth,
-  requireRoles(Role.AICTE_OFFICER, Role.SYSTEM_ADMIN),
+  requireRoles(Role.SCRUTINY_OFFICER, Role.AICTE_OFFICER, Role.SYSTEM_ADMIN),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user = req.user!;
@@ -525,6 +570,7 @@ router.post(
           where: { id },
           data: {
             status: InstrumentStatus.UNDER_SCRUTINY,
+            scrutinizedById: user.id,
           },
           include: {
             institution: {
@@ -532,6 +578,18 @@ router.post(
             },
           },
         });
+
+        if (typeof (tx as any).scrutinyRecord?.create === "function") {
+          await (tx as any).scrutinyRecord.create({
+            data: {
+              instrumentId: id,
+              officerId: user.id,
+              stage: "INITIAL",
+              decision: "START_SCRUTINY",
+              remarks: "Scrutiny initiated by officer",
+            },
+          });
+        }
 
         await tx.auditEvent.create({
           data: {
@@ -598,11 +656,16 @@ router.post(
         return;
       }
 
-      // Check ownership
-      if (
-        user.role === Role.INSTITUTION_USER &&
-        source.institutionId !== user.institutionId
-      ) {
+      // Only institution users can initiate renewal or replacement for their institution
+      if (user.role !== Role.INSTITUTION_USER) {
+        res.status(403).json({
+          error: "Forbidden",
+          message: "Only institution users may initiate renewal or replacement.",
+        });
+        return;
+      }
+
+      if (source.institutionId !== user.institutionId) {
         res.status(404).json({
           error: "Not Found",
           message: "Original instrument not found.",
@@ -869,7 +932,7 @@ router.get(
 router.post(
   "/:id/scrutiny-decision",
   requireAuth,
-  requireRoles(Role.AICTE_OFFICER, Role.SYSTEM_ADMIN),
+  requireRoles(Role.SCRUTINY_OFFICER, Role.AICTE_OFFICER, Role.SYSTEM_ADMIN),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user = req.user!;
@@ -930,16 +993,32 @@ router.post(
           newStatus = InstrumentStatus.REJECTED;
         }
 
-        // 1. Update target instrument status
+        // 1. Update target instrument status and record officer who scrutinized
         const targetResult = await tx.instrument.update({
           where: { id },
-          data: { status: newStatus },
+          data: {
+            status: newStatus,
+            scrutinizedById: user.id,
+          },
           include: {
             institution: { select: { id: true, name: true, code: true } },
           },
         });
 
-        // 2. Audit event on target instrument
+        // 2. Persist structured scrutiny history
+        if (typeof (tx as any).scrutinyRecord?.create === "function") {
+          await (tx as any).scrutinyRecord.create({
+            data: {
+              instrumentId: id,
+              officerId: user.id,
+              stage: instrument.status === InstrumentStatus.CORRECTION_REQUIRED ? "RESUBMISSION" : "INITIAL",
+              decision,
+              remarks: remarks || null,
+            },
+          });
+        }
+
+        // 3. Audit event on target instrument
         await tx.auditEvent.create({
           data: {
             actorId: user.id,

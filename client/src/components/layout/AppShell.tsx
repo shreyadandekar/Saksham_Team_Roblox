@@ -23,12 +23,20 @@ export default function AppShell({ children }: AppShellProps) {
 
   const roleLabels: Record<string, string> = {
     INSTITUTION_USER: "Institution User",
+    SCRUTINY_OFFICER: "Scrutiny Officer",
+    APPROVER: "Approver (Competent Authority)",
+    ADMIN: "System Administrator",
+    AUDITOR: "Auditor (Read-Only)",
     AICTE_OFFICER: "AICTE Officer",
     SYSTEM_ADMIN: "System Admin",
   };
 
   const roleColors: Record<string, string> = {
     INSTITUTION_USER: "bg-emerald-500/20 text-emerald-200 border-emerald-400/30",
+    SCRUTINY_OFFICER: "bg-amber-500/20 text-amber-200 border-amber-400/30",
+    APPROVER: "bg-indigo-500/20 text-indigo-200 border-indigo-400/30",
+    ADMIN: "bg-purple-500/20 text-purple-200 border-purple-400/30",
+    AUDITOR: "bg-teal-500/20 text-teal-200 border-teal-400/30",
     AICTE_OFFICER: "bg-amber-500/20 text-amber-200 border-amber-400/30",
     SYSTEM_ADMIN: "bg-purple-500/20 text-purple-200 border-purple-400/30",
   };
@@ -91,7 +99,10 @@ export default function AppShell({ children }: AppShellProps) {
                 </NavLink>
               )}
 
-              {(user?.role === "AICTE_OFFICER" || user?.role === "SYSTEM_ADMIN") && (
+              {(user?.role === "SCRUTINY_OFFICER" ||
+                user?.role === "AICTE_OFFICER" ||
+                user?.role === "AUDITOR" ||
+                user?.role === "SYSTEM_ADMIN") && (
                 <NavLink
                   to="/scrutiny"
                   className={({ isActive }) =>

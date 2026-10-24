@@ -16,9 +16,9 @@
 import { Router, Request, Response, NextFunction } from "express";
 import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
-import { Role } from "@prisma/client";
+import { Role, InstrumentStatus } from "@prisma/client";
 import { prisma } from "../db/prisma";
-import { requireAuth } from "../middleware/auth";
+import { requireAuth, requireRoles } from "../middleware/auth";
 import { env } from "../config/env";
 import { getSupabaseAdmin } from "../lib/supabase";
 import {
@@ -29,6 +29,41 @@ import {
 } from "../validation/document";
 import type { AllowedMimeType } from "../validation/document";
 import { triggerDocumentOcr } from "../services/ocr";
+
+/**
+ * Validates actual binary content signatures (magic bytes) for supported file formats.
+ * Prevents disguised executable or corrupted payloads from passing MIME-header checks.
+ */
+export function validateFileSignature(buffer: Buffer, mimetype: string): boolean {
+  if (!buffer || buffer.length < 4) return false;
+
+  if (mimetype === "application/pdf") {
+    // PDF magic bytes: %PDF (hex: 25 50 44 46) — the version suffix (-1.x) follows but is not part of the signature.
+    return buffer.toString("ascii", 0, 4) === "%PDF";
+  }
+
+  if (mimetype === "image/jpeg") {
+    // JPEG magic bytes: FF D8 FF
+    return buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+  }
+
+  if (mimetype === "image/png") {
+    // PNG magic bytes: 89 50 4E 47 0D 0A 1A 0A
+    return (
+      buffer.length >= 8 &&
+      buffer[0] === 0x89 &&
+      buffer[1] === 0x50 &&
+      buffer[2] === 0x4e &&
+      buffer[3] === 0x47 &&
+      buffer[4] === 0x0d &&
+      buffer[5] === 0x0a &&
+      buffer[6] === 0x1a &&
+      buffer[7] === 0x0a
+    );
+  }
+
+  return false;
+}
 
 const router = Router({ mergeParams: true }); // receives :instrumentId from parent mount
 
@@ -103,6 +138,15 @@ router.post(
         return;
       }
 
+      // Validate actual binary content signature (magic bytes)
+      if (!validateFileSignature(req.file.buffer, req.file.mimetype)) {
+        res.status(400).json({
+          error: "Invalid File Signature",
+          message: "Uploaded file content signature does not match the claimed MIME type.",
+        });
+        return;
+      }
+
       // Validate optional category field in the body
       const bodyParsed = uploadDocumentBodySchema.safeParse(req.body);
       if (!bodyParsed.success) {
@@ -122,6 +166,19 @@ router.post(
         res.status(404).json({
           error: "Not Found",
           message: "Instrument not found.",
+        });
+        return;
+      }
+
+      // Enforce document upload lifecycle guards: DRAFT or CORRECTION_REQUIRED only
+      const allowedUploadStatuses: InstrumentStatus[] = [
+        InstrumentStatus.DRAFT,
+        InstrumentStatus.CORRECTION_REQUIRED,
+      ];
+      if (!allowedUploadStatuses.includes(instrument.status as InstrumentStatus)) {
+        res.status(400).json({
+          error: "Invalid State Transition",
+          message: `Cannot upload documents for instrument in '${instrument.status}' status. Documents can only be uploaded in DRAFT or CORRECTION_REQUIRED status.`,
         });
         return;
       }

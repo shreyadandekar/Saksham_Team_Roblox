@@ -18,22 +18,28 @@ const DEMO_ACCOUNTS = [
     institution: "Delhi Institute of Advanced Eng.",
   },
   {
-    label: "Pune Pharmacy (Institution)",
-    email: "inst.pune@demo.fdr-sentinel.gov.in",
-    role: "INSTITUTION_USER",
-    institution: "Maharashtra Inst. of Pharm.",
+    label: "Scrutiny Officer (Desk)",
+    email: "officer.sharma@demo.fdr-sentinel.gov.in",
+    role: "SCRUTINY_OFFICER",
+    institution: "AICTE HQ",
   },
   {
-    label: "AICTE Officer (Scrutiny)",
-    email: "officer.sharma@demo.fdr-sentinel.gov.in",
-    role: "AICTE_OFFICER",
+    label: "Competent Authority (Approver)",
+    email: "approver.verma@demo.fdr-sentinel.gov.in",
+    role: "APPROVER",
     institution: "AICTE HQ",
   },
   {
     label: "System Administrator",
     email: "admin.sentinel@demo.fdr-sentinel.gov.in",
-    role: "SYSTEM_ADMIN",
+    role: "ADMIN",
     institution: "System Admin",
+  },
+  {
+    label: "Oversight Auditor (Read-Only)",
+    email: "auditor.patel@demo.fdr-sentinel.gov.in",
+    role: "AUDITOR",
+    institution: "External Audit Cell",
   },
 ];
 

@@ -208,7 +208,14 @@ export default function InstrumentDetailPage() {
   }
 
   const isInstitutionUser = user?.role === "INSTITUTION_USER";
-  const isOfficer = user?.role === "AICTE_OFFICER" || user?.role === "SYSTEM_ADMIN";
+  const isScrutinyOfficer =
+    user?.role === "SCRUTINY_OFFICER" ||
+    user?.role === "AICTE_OFFICER" ||
+    user?.role === "SYSTEM_ADMIN";
+  const isApprover = user?.role === "APPROVER";
+  const isAdmin = user?.role === "ADMIN" || user?.role === "SYSTEM_ADMIN";
+  const isOfficer = isScrutinyOfficer;
+  const isOfficerOrAdmin = isScrutinyOfficer || isAdmin;
   const isOwner = user && instrument && instrument.institutionId === user.institutionId;
 
   if (loading) {
@@ -705,6 +712,7 @@ export default function InstrumentDetailPage() {
               isInstitutionUser={Boolean(isInstitutionUser)}
               isOwner={Boolean(isOwner)}
               isOfficer={Boolean(isOfficer)}
+              isApprover={Boolean(isApprover)}
               onRequestRelease={() => setIsRequestReleaseOpen(true)}
               onDecideRelease={() => setIsReleaseDecisionOpen(true)}
               onConfirmRefund={() => setIsConfirmRefundOpen(true)}
@@ -717,7 +725,7 @@ export default function InstrumentDetailPage() {
               instrumentId={instrument.id}
               currentCustody={currentCustody}
               events={custodyEvents}
-              isOfficerOrAdmin={Boolean(isOfficer)}
+              isOfficerOrAdmin={Boolean(isOfficerOrAdmin)}
               onEventRecorded={loadData}
             />
           </div>

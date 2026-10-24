@@ -87,7 +87,7 @@ const officerUser = {
   id: "user-officer-1",
   email: "officer@aicte-india.org",
   fullName: "Shri A. K. Sharma",
-  role: Role.AICTE_OFFICER,
+  role: Role.APPROVER,
   institutionId: null,
   isActive: true,
 };
@@ -106,6 +106,7 @@ const activeInstrument = {
   instrumentNumber: "FDR-BOB-2026-802",
   institutionId: "inst-1",
   status: InstrumentStatus.ACTIVE,
+  scrutinizedById: "user-scrutiny-officer-99",
 };
 
 const maturedInstrument = {
@@ -113,6 +114,7 @@ const maturedInstrument = {
   instrumentNumber: "FDR-BOB-2025-100",
   institutionId: "inst-1",
   status: InstrumentStatus.MATURED,
+  scrutinizedById: "user-scrutiny-officer-99",
 };
 
 const releaseRequestedInstrument = {
@@ -120,6 +122,7 @@ const releaseRequestedInstrument = {
   instrumentNumber: "FDR-BOB-2026-802",
   institutionId: "inst-1",
   status: InstrumentStatus.RELEASE_REQUESTED,
+  scrutinizedById: "user-scrutiny-officer-99",
 };
 
 const releasedInstrument = {
@@ -127,6 +130,7 @@ const releasedInstrument = {
   instrumentNumber: "FDR-BOB-2026-802",
   institutionId: "inst-1",
   status: InstrumentStatus.RELEASED,
+  scrutinizedById: "user-scrutiny-officer-99",
 };
 
 const pendingReleaseRequest = {

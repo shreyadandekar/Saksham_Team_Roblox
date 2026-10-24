@@ -11,8 +11,11 @@ import { requireAuth, requireRoles } from "../middleware/auth";
 
 const router = Router();
 
-// Scrutiny queue requires AICTE_OFFICER or SYSTEM_ADMIN role
-router.use(requireAuth, requireRoles(Role.AICTE_OFFICER, Role.SYSTEM_ADMIN));
+// Scrutiny queue requires SCRUTINY_OFFICER (or legacy AICTE_OFFICER) or read-only AUDITOR
+router.use(
+  requireAuth,
+  requireRoles(Role.SCRUTINY_OFFICER, Role.AICTE_OFFICER, Role.AUDITOR)
+);
 
 /**
  * GET /api/scrutiny

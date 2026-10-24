@@ -86,17 +86,20 @@ router.post(
       const user = req.user!;
       const { instrumentId } = req.params as { instrumentId: string };
 
-      // AICTE officers cannot submit release requests on behalf of institutions
-      if (user.role === Role.AICTE_OFFICER) {
+      // Only institution users and admins can submit release requests.
+      // APPROVER / AICTE_OFFICER / SCRUTINY_OFFICER roles are not authorized.
+      if (
+        user.role !== Role.INSTITUTION_USER &&
+        user.role !== Role.SYSTEM_ADMIN
+      ) {
         res.status(403).json({
           error: "Forbidden",
-          message: "AICTE Officers are not authorized to submit release requests.",
+          message: "AICTE Officers are not authorized to submit release requests. Only institution users may initiate a release.",
         });
         return;
       }
 
-      // Institution users must belong to an institution
-      if (user.role === Role.INSTITUTION_USER && !user.institutionId) {
+      if (user.role !== Role.SYSTEM_ADMIN && !user.institutionId) {
         res.status(403).json({
           error: "Forbidden",
           message: "User account is not linked to an accredited institution.",
@@ -308,7 +311,7 @@ router.get(
 router.post(
   "/decision",
   requireAuth,
-  requireRoles(Role.AICTE_OFFICER, Role.SYSTEM_ADMIN),
+  requireRoles(Role.APPROVER),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user = req.user!;
@@ -326,10 +329,16 @@ router.post(
 
       const { decision, remarks } = parsed.data;
 
-      // Officers have system-wide access; no institution-scope filtering needed.
+      // Approvers have system-wide regulatory jurisdiction
       const instrument = await prisma.instrument.findUnique({
         where: { id: instrumentId },
-        select: { id: true, instrumentNumber: true, status: true, institutionId: true },
+        select: {
+          id: true,
+          instrumentNumber: true,
+          status: true,
+          institutionId: true,
+          scrutinizedById: true,
+        },
       });
 
       if (!instrument) {
@@ -348,9 +357,7 @@ router.post(
         return;
       }
 
-      // Find the PENDING release request.  Use findFirst with a status filter
-      // rather than findUnique, as the partial unique index guarantees at most
-      // one PENDING record per instrument — this is consistent and safe.
+      // Find the PENDING release request.
       const pendingRequest = await prisma.releaseRequest.findFirst({
         where: {
           instrumentId: instrument.id,
@@ -358,6 +365,7 @@ router.post(
         },
         select: {
           id: true,
+          requestedById: true,
           previousInstrumentStatus: true,
         },
       });
@@ -366,6 +374,102 @@ router.post(
         res.status(404).json({
           error: "Not Found",
           message: "No pending release request found for this instrument.",
+        });
+        return;
+      }
+
+      // ── Four-Eyes Separation of Duties Validation ───────────────────────────
+      // 1. Approver cannot be the release requester
+      if (pendingRequest.requestedById === user.id) {
+        await prisma.auditEvent.create({
+          data: {
+            actorId: user.id,
+            action: "SECURITY_SOD_VIOLATION_DENIED",
+            entityType: "ReleaseRequest",
+            entityId: pendingRequest.id,
+            metadata: {
+              violation: "APPROVER_WAS_REQUESTER",
+              reason: "Requester attempted to approve own release request",
+              instrumentId: instrument.id,
+            },
+          },
+        });
+        res.status(403).json({
+          error: "Forbidden",
+          message: "Separation of duties violation: You cannot approve a release request you submitted.",
+        });
+        return;
+      }
+
+      // 2. Fetch all scrutiny history across ScrutinyRecords, AuditEvents, and scrutinizedById
+      const [scrutinyRecords, scrutinyAuditEvents] = await Promise.all([
+        typeof prisma.scrutinyRecord?.findMany === "function"
+          ? prisma.scrutinyRecord.findMany({
+              where: { instrumentId: instrument.id },
+              select: { officerId: true },
+            })
+          : Promise.resolve([]),
+        typeof prisma.auditEvent?.findMany === "function"
+          ? prisma.auditEvent.findMany({
+              where: {
+                entityType: "Instrument",
+                entityId: instrument.id,
+                action: { startsWith: "SCRUTINY_" },
+              },
+              select: { actorId: true },
+            })
+          : Promise.resolve([]),
+      ]);
+
+      const scrutinizingOfficerIds = new Set<string>();
+      if (instrument.scrutinizedById) {
+        scrutinizingOfficerIds.add(instrument.scrutinizedById);
+      }
+      (scrutinyRecords || []).forEach((r) => scrutinizingOfficerIds.add(r.officerId));
+      (scrutinyAuditEvents || []).forEach((a) => {
+        if (a?.actorId) scrutinizingOfficerIds.add(a.actorId);
+      });
+
+      // 3. Approver cannot have participated in any scrutiny of this instrument
+      if (scrutinizingOfficerIds.has(user.id)) {
+        await prisma.auditEvent.create({
+          data: {
+            actorId: user.id,
+            action: "SECURITY_SOD_VIOLATION_DENIED",
+            entityType: "ReleaseRequest",
+            entityId: pendingRequest.id,
+            metadata: {
+              violation: "APPROVER_WAS_SCRUTINIZER",
+              reason: "Scrutinizing officer attempted to approve release",
+              instrumentId: instrument.id,
+            },
+          },
+        });
+        res.status(403).json({
+          error: "Forbidden",
+          message: "Separation of duties violation: An officer who scrutinized this instrument cannot approve its release.",
+        });
+        return;
+      }
+
+      // 4. Missing scrutiny history must fail closed
+      if (scrutinizingOfficerIds.size === 0) {
+        await prisma.auditEvent.create({
+          data: {
+            actorId: user.id,
+            action: "SECURITY_SOD_VIOLATION_DENIED",
+            entityType: "ReleaseRequest",
+            entityId: pendingRequest.id,
+            metadata: {
+              violation: "MISSING_SCRUTINY_HISTORY",
+              reason: "Release decision attempted without verified scrutiny history",
+              instrumentId: instrument.id,
+            },
+          },
+        });
+        res.status(403).json({
+          error: "Forbidden",
+          message: "Release request cannot be decided without verified scrutiny history.",
         });
         return;
       }
@@ -420,7 +524,7 @@ router.post(
               previousStatus: InstrumentStatus.RELEASE_REQUESTED,
               newStatus: newInstrumentStatus,
               officerRemarks: remarks,
-              officerEmail: user.email,
+              approverEmail: user.email,
               // Explicitly note that this approval is regulatory only
               ...(isApproval && {
                 note: "Regulatory approval granted. Physical custody handover and refund confirmation are separate subsequent actions.",
@@ -448,7 +552,7 @@ router.post(
 /**
  * POST /api/instruments/:instrumentId/release/confirm-refund
  *
- * Authorized: AICTE_OFFICER, SYSTEM_ADMIN
+ * Authorized: APPROVER
  * Guard:      Release request must be in APPROVED status (instrument already RELEASED)
  *
  * Records evidence that the refund/bank transfer has physically occurred.
@@ -462,7 +566,7 @@ router.post(
 router.post(
   "/confirm-refund",
   requireAuth,
-  requireRoles(Role.AICTE_OFFICER, Role.SYSTEM_ADMIN),
+  requireRoles(Role.APPROVER),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user = req.user!;

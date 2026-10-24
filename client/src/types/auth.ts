@@ -3,7 +3,14 @@
  * Frontend authentication types mirroring the backend contract.
  */
 
-export type Role = "INSTITUTION_USER" | "AICTE_OFFICER" | "SYSTEM_ADMIN";
+export type Role =
+  | "INSTITUTION_USER"
+  | "SCRUTINY_OFFICER"
+  | "APPROVER"
+  | "ADMIN"
+  | "AUDITOR"
+  | "AICTE_OFFICER"
+  | "SYSTEM_ADMIN";
 
 export interface User {
   id: string;

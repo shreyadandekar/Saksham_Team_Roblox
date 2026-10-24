@@ -33,6 +33,7 @@ import { Role } from "@prisma/client";
 import { prisma } from "../db/prisma";
 import { requireAuth, requireRoles } from "../middleware/auth";
 import { auditQuerySchema } from "../validation/audit";
+import { verifyAuditChain } from "../utils/auditChain";
 
 const router = Router();
 
@@ -44,7 +45,15 @@ const router = Router();
 router.get(
   "/",
   requireAuth,
-  requireRoles(Role.INSTITUTION_USER, Role.AICTE_OFFICER, Role.SYSTEM_ADMIN),
+  requireRoles(
+    Role.INSTITUTION_USER,
+    Role.SCRUTINY_OFFICER,
+    Role.APPROVER,
+    Role.ADMIN,
+    Role.AUDITOR,
+    Role.AICTE_OFFICER,
+    Role.SYSTEM_ADMIN
+  ),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const user = req.user!;
@@ -262,6 +271,135 @@ router.get(
           hasPrev: page > 1,
         },
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * Escapes a cell value for safe RFC 4180 CSV export.
+ * Mitigates CSV Injection / Formula Injection by prefixing formula triggers with a single quote.
+ */
+function escapeCsvCell(val: unknown): string {
+  if (val === null || val === undefined) return '""';
+  let str = typeof val === "string" ? val : typeof val === "object" ? JSON.stringify(val) : String(val);
+
+  // Prefix formula injection triggers (=, +, -, @, \t, \r) with '
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = `'${str}`;
+  }
+
+  return `"${str.replace(/"/g, '""')}"`;
+}
+
+/**
+ * GET /api/audit/chain-verify
+ * Cryptographic hash-chain integrity verification.
+ * Accessible to AUDITOR and ADMIN roles.
+ */
+router.get(
+  "/chain-verify",
+  requireAuth,
+  requireRoles(Role.AUDITOR, Role.ADMIN, Role.SYSTEM_ADMIN),
+  async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const result = await verifyAuditChain(prisma);
+      res.status(200).json({
+        message: result.verified
+          ? "Audit chain verified successfully: No tampering or missing blocks detected."
+          : "Audit chain verification failed: Potential tampering or break in chain continuity.",
+        verification: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * GET /api/audit/export
+ * Exports filtered audit events as a structured CSV report.
+ * Protected against CSV formula injection.
+ * Restricted to AUDITOR and ADMIN.
+ */
+router.get(
+  "/export",
+  requireAuth,
+  requireRoles(Role.AUDITOR, Role.ADMIN, Role.SYSTEM_ADMIN),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { entityType, action, fromDate, toDate } = req.query;
+
+      const whereClause: Record<string, unknown> = {};
+      if (entityType && typeof entityType === "string") {
+        whereClause.entityType = entityType;
+      }
+      if (action && typeof action === "string") {
+        whereClause.action = action;
+      }
+      if (fromDate || toDate) {
+        const createdAtFilter: Record<string, Date> = {};
+        if (fromDate && typeof fromDate === "string") {
+          createdAtFilter.gte = new Date(fromDate);
+        }
+        if (toDate && typeof toDate === "string") {
+          createdAtFilter.lte = new Date(toDate);
+        }
+        whereClause.createdAt = createdAtFilter;
+      }
+
+      // Max 5000 rows to prevent unbounded memory exhaustion
+      const events = await prisma.auditEvent.findMany({
+        where: whereClause,
+        include: {
+          actor: {
+            select: { id: true, fullName: true, email: true, role: true },
+          },
+        },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        take: 5000,
+      });
+
+      const headers = [
+        "Event ID",
+        "Timestamp",
+        "Action",
+        "Entity Type",
+        "Entity ID",
+        "Actor ID",
+        "Actor Name",
+        "Actor Email",
+        "Actor Role",
+        "Metadata",
+      ];
+
+      const csvRows: string[] = [headers.map(escapeCsvCell).join(",")];
+
+      for (const evt of events) {
+        const row = [
+          evt.id,
+          evt.createdAt.toISOString(),
+          evt.action,
+          evt.entityType,
+          evt.entityId,
+          evt.actorId || "",
+          evt.actor?.fullName || "SYSTEM",
+          evt.actor?.email || "",
+          evt.actor?.role || "",
+          evt.metadata ? JSON.stringify(evt.metadata) : "",
+        ];
+        csvRows.push(row.map(escapeCsvCell).join(","));
+      }
+
+      const csvContent = csvRows.join("\r\n");
+
+      res.setHeader("Content-Type", "text/csv; charset=utf-8");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="fdr_sentinel_audit_export_${new Date().toISOString().slice(0, 10)}.csv"`
+      );
+      res.status(200).send(csvContent);
     } catch (error) {
       next(error);
     }
