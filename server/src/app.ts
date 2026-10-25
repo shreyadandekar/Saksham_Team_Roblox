@@ -21,6 +21,7 @@ import releaseRouter from "./routes/release";
 import auditRouter from "./routes/audit";
 import ocrRouter from "./routes/ocr";
 import usersRouter from "./routes/users";
+import clearancesRouter from "./routes/clearances";
 
 export function createApp(): Application {
   const app = express();
@@ -49,6 +50,7 @@ export function createApp(): Application {
   app.use("/api/dashboard", dashboardRouter);
   app.use("/api/audit", auditRouter);
   app.use("/api/users", usersRouter);
+  app.use("/api/clearances", clearancesRouter);
 
   // 404 handler — must come after all routes
   app.use((_req: Request, res: Response) => {

@@ -1,11 +1,31 @@
 /**
  * src/components/layout/AppShell.tsx
- * Persistent application layout with authenticated user details and logout action.
+ *
+ * Master Application Shell matching SIH 2026 Reference Specification (fi.pdf).
+ * Features:
+ * - Topmost service notification bar (#0d1527) with status indicator
+ * - Clean white navbar with dark navy brand icon, title, user profile, and sign-out
+ * - Left vertical sidebar with active amber accent bar indicator
+ * - Warm off-white content canvas (#fbfaf8) with responsive container
+ * - Mobile sidebar drawer toggle
  */
 
-import type { ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Shield, LogOut, User as UserIcon } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import {
+  ShieldCheck,
+  LogOut,
+  LayoutGrid,
+  Files,
+  CalendarClock,
+  UserCircle,
+  FilePlus,
+  FileCheck2,
+  Award,
+  History,
+  Menu,
+  X,
+} from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 interface AppShellProps {
@@ -15,6 +35,8 @@ interface AppShellProps {
 export default function AppShell({ children }: AppShellProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   async function handleLogout() {
     await logout();
@@ -23,159 +45,399 @@ export default function AppShell({ children }: AppShellProps) {
 
   const roleLabels: Record<string, string> = {
     INSTITUTION_USER: "Institution User",
-    SCRUTINY_OFFICER: "Scrutiny Officer",
-    APPROVER: "Approver (Competent Authority)",
+    SCRUTINY_OFFICER: "AICTE Officer",
+    APPROVER: "Competent Authority",
     ADMIN: "System Administrator",
-    AUDITOR: "Auditor (Read-Only)",
+    AUDITOR: "Auditor",
     AICTE_OFFICER: "AICTE Officer",
-    SYSTEM_ADMIN: "System Admin",
+    SYSTEM_ADMIN: "System Administrator",
   };
 
-  const roleColors: Record<string, string> = {
-    INSTITUTION_USER: "bg-emerald-500/20 text-emerald-200 border-emerald-400/30",
-    SCRUTINY_OFFICER: "bg-amber-500/20 text-amber-200 border-amber-400/30",
-    APPROVER: "bg-indigo-500/20 text-indigo-200 border-indigo-400/30",
-    ADMIN: "bg-purple-500/20 text-purple-200 border-purple-400/30",
-    AUDITOR: "bg-teal-500/20 text-teal-200 border-teal-400/30",
-    AICTE_OFFICER: "bg-amber-500/20 text-amber-200 border-amber-400/30",
-    SYSTEM_ADMIN: "bg-purple-500/20 text-purple-200 border-purple-400/30",
-  };
+  // Derive initials from full name (e.g. "Ritu Malhotra" -> "RM")
+  const initials = user?.fullName
+    ? user.fullName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "US";
+
+  // Navigation Items
+  const primaryNavItems = [
+    { label: "Dashboard", to: "/dashboard", icon: LayoutGrid },
+    { label: "FDR Registry", to: "/instruments", icon: Files },
+    { label: "Maturities", to: "/maturities", icon: CalendarClock },
+    { label: "Profile", to: "/profile", icon: UserCircle },
+  ];
+
+  // Secondary workflows based on user role
+  const canRegisterFdr = user?.role === "INSTITUTION_USER";
+  const canScrutinize =
+    user?.role === "SCRUTINY_OFFICER" ||
+    user?.role === "AICTE_OFFICER" ||
+    user?.role === "SYSTEM_ADMIN" ||
+    user?.role === "ADMIN";
+  const canViewClearances = true; // All authenticated users can track clearances
+  const canViewAudit =
+    user?.role === "AUDITOR" ||
+    user?.role === "ADMIN" ||
+    user?.role === "SYSTEM_ADMIN" ||
+    user?.role === "SCRUTINY_OFFICER";
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      {/* ── Top Navigation ─────────────────────────────── */}
-      <header className="bg-blue-900 text-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div className="min-h-screen flex flex-col bg-[#fbfaf8] text-slate-900 font-sans antialiased">
+      {/* ── 1. Topmost Dark Status Bar ──────────────────────────────── */}
+      <div className="bg-[#0b1324] text-slate-300 text-[11px] px-4 sm:px-8 py-1.5 flex items-center justify-between border-b border-slate-800/80 select-none">
+        <div className="flex items-center gap-2 text-slate-400">
+          <span>Fixed Deposit Receipt portal for technical institutions</span>
+        </div>
+        <div className="flex items-center gap-4 text-[11px]">
+          <span className="text-slate-400 hidden sm:inline">
+            Prototype with synthetic data
+          </span>
+          <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Service reachable</span>
+          </div>
+        </div>
+      </div>
+      {/* Subtle brand gradient line below dark bar */}
+      <div className="h-[2px] bg-gradient-to-r from-amber-600 via-sky-600 to-teal-500 w-full" />
+
+      {/* ── 2. Main Top Navbar ───────────────────────────────────────── */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          {/* Left: Mobile hamburger & Brand */}
           <div className="flex items-center gap-3">
-            <Shield className="h-7 w-7 text-sky-400" aria-hidden="true" />
-            <div>
-              <span className="text-lg font-bold tracking-tight">
-                FDR Sentinel
-              </span>
-              <span className="hidden sm:inline-block ml-2 text-xs text-blue-300 border-l border-blue-700 pl-2">
-                PS26265 Portal
-              </span>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition"
+              aria-label="Toggle Navigation"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+
+            {/* Brand Logo & Title */}
+            <div
+              onClick={() => navigate("/dashboard")}
+              className="flex items-center gap-3 cursor-pointer group select-none"
+            >
+              <div className="w-9 h-9 rounded-lg bg-[#0b192c] text-white flex items-center justify-center shadow-sm group-hover:bg-[#11223b] transition">
+                <ShieldCheck className="w-5 h-5 text-sky-400" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-slate-900 tracking-tight leading-tight">
+                  FDR Sentinel
+                </span>
+                <span className="text-[11px] text-slate-500 leading-tight">
+                  Security Deposit Management
+                </span>
+              </div>
             </div>
-
-            <nav className="ml-6 flex items-center gap-1" aria-label="Main navigation">
-              <NavLink
-                to="/dashboard"
-                className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-blue-800 text-white"
-                      : "text-blue-200 hover:bg-blue-800/60 hover:text-white"
-                  }`
-                }
-              >
-                Dashboard
-              </NavLink>
-
-              <NavLink
-                to="/instruments"
-                className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-blue-800 text-white"
-                      : "text-blue-200 hover:bg-blue-800/60 hover:text-white"
-                  }`
-                }
-              >
-                FDR Registry
-              </NavLink>
-
-              {user?.role === "INSTITUTION_USER" && (
-                <NavLink
-                  to="/instruments/new"
-                  className={({ isActive }) =>
-                    `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-blue-800 text-white"
-                        : "text-blue-200 hover:bg-blue-800/60 hover:text-white"
-                    }`
-                  }
-                >
-                  Register FDR
-                </NavLink>
-              )}
-
-              {(user?.role === "SCRUTINY_OFFICER" ||
-                user?.role === "AICTE_OFFICER" ||
-                user?.role === "AUDITOR" ||
-                user?.role === "SYSTEM_ADMIN") && (
-                <NavLink
-                  to="/scrutiny"
-                  className={({ isActive }) =>
-                    `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-amber-600 text-white font-bold"
-                        : "text-amber-200 hover:bg-blue-800/60 hover:text-amber-100"
-                    }`
-                  }
-                >
-                  Scrutiny Queue
-                </NavLink>
-              )}
-
-              <NavLink
-                to="/audit"
-                className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-blue-800 text-white font-semibold"
-                      : "text-blue-200 hover:bg-blue-800/60 hover:text-white"
-                  }`
-                }
-              >
-                Audit Log
-              </NavLink>
-            </nav>
           </div>
 
-          {/* User profile & Logout */}
+          {/* Right: User Profile & Sign Out Button */}
           {user && (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
+              {/* User text details */}
               <div className="text-right hidden sm:block">
-                <p className="text-xs font-semibold text-white leading-tight">
+                <p className="text-xs font-semibold text-slate-900 leading-tight">
                   {user.fullName}
                 </p>
-                <div className="flex items-center justify-end gap-1.5 mt-0.5">
-                  <span
-                    className={`text-[10px] uppercase font-bold px-1.5 py-0.2 rounded border ${
-                      roleColors[user.role] || "bg-blue-800 text-blue-200"
-                    }`}
-                  >
-                    {roleLabels[user.role] || user.role}
-                  </span>
-                </div>
+                <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
+                  {roleLabels[user.role] || user.role}
+                </p>
               </div>
 
-              <div className="h-8 w-8 rounded-full bg-blue-800 flex items-center justify-center text-blue-200 border border-blue-700">
-                <UserIcon className="h-4 w-4" />
+              {/* Avatar circle with initials */}
+              <div
+                onClick={() => navigate("/profile")}
+                className="w-8 h-8 rounded-full bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center border border-slate-300 hover:ring-2 hover:ring-sky-500/20 cursor-pointer transition select-none"
+                title="View Profile"
+              >
+                {initials}
               </div>
 
+              {/* Sign out button */}
               <button
                 type="button"
                 onClick={handleLogout}
-                title="Sign out"
-                className="p-1.5 rounded-md text-blue-300 hover:text-white hover:bg-blue-800 transition-colors cursor-pointer"
-                aria-label="Log out"
+                className="border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer transition shadow-none"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="w-3.5 h-3.5 text-slate-500" />
+                <span className="hidden sm:inline">Sign out</span>
               </button>
             </div>
           )}
         </div>
       </header>
 
-      {/* ── Page Content ───────────────────────────────── */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+      {/* ── 3. Main Body: Sidebar + Content Canvas ────────────────────── */}
+      <div className="flex flex-1 max-w-[1600px] w-full mx-auto">
+        {/* Left Sidebar (Desktop) */}
+        <aside className="w-56 lg:w-60 shrink-0 bg-white border-r border-slate-200 hidden lg:flex flex-col justify-between py-6 select-none">
+          <div className="space-y-6 px-3">
+            {/* Primary Navigation */}
+            <nav className="space-y-1">
+              {primaryNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive =
+                  item.to === "/instruments"
+                    ? location.pathname.startsWith("/instruments") &&
+                      location.pathname !== "/instruments/new"
+                    : location.pathname === item.to;
 
-      <footer className="text-center text-xs text-slate-400 py-4 border-t border-slate-200/60">
-        FDR Sentinel · SIH 2026 Prototype · Synthetic Demonstration Data Only
-      </footer>
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition ${
+                      isActive
+                        ? "bg-[#eef2f6] text-slate-900 font-semibold"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    }`}
+                  >
+                    {/* Amber active indicator bar on the left */}
+                    {isActive && (
+                      <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-600 rounded-r" />
+                    )}
+                    <Icon
+                      className={`w-4 h-4 ${
+                        isActive ? "text-slate-900" : "text-slate-500"
+                      }`}
+                    />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+
+            {/* Separator / Modules Section */}
+            <div className="pt-2 border-t border-slate-100">
+              <span className="block text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3.5 mb-2">
+                Workflows & Modules
+              </span>
+
+              <nav className="space-y-1">
+                {/* Institution FDR Registration */}
+                {canRegisterFdr && (
+                  <NavLink
+                    to="/instruments/new"
+                    className={({ isActive }) =>
+                      `relative flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition ${
+                        isActive
+                          ? "bg-[#eef2f6] text-slate-900 font-semibold"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-600 rounded-r" />
+                        )}
+                        <FilePlus className="w-4 h-4 text-slate-500" />
+                        <span>Register FDR</span>
+                      </>
+                    )}
+                  </NavLink>
+                )}
+
+                {/* Scrutiny Queue for Officers */}
+                {canScrutinize && (
+                  <NavLink
+                    to="/scrutiny"
+                    className={({ isActive }) =>
+                      `relative flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition ${
+                        isActive
+                          ? "bg-[#eef2f6] text-slate-900 font-semibold"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-600 rounded-r" />
+                        )}
+                        <FileCheck2 className="w-4 h-4 text-slate-500" />
+                        <span>Scrutiny Queue</span>
+                      </>
+                    )}
+                  </NavLink>
+                )}
+
+                {/* Clearance Command Center */}
+                {canViewClearances && (
+                  <NavLink
+                    to="/clearances"
+                    className={({ isActive }) =>
+                      `relative flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition ${
+                        isActive
+                          ? "bg-[#eef2f6] text-slate-900 font-semibold"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-600 rounded-r" />
+                        )}
+                        <Award className="w-4 h-4 text-slate-500" />
+                        <span>Clearances</span>
+                      </>
+                    )}
+                  </NavLink>
+                )}
+
+                {/* Audit Log */}
+                {canViewAudit && (
+                  <NavLink
+                    to="/audit"
+                    className={({ isActive }) =>
+                      `relative flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition ${
+                        isActive
+                          ? "bg-[#eef2f6] text-slate-900 font-semibold"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-600 rounded-r" />
+                        )}
+                        <History className="w-4 h-4 text-slate-500" />
+                        <span>Audit Log</span>
+                      </>
+                    )}
+                  </NavLink>
+                )}
+              </nav>
+            </div>
+          </div>
+
+          {/* Sidebar bottom institution info */}
+          {user?.institution && (
+            <div className="px-4 py-3 border-t border-slate-100 mx-3 rounded-xl bg-slate-50/80">
+              <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                Institution
+              </span>
+              <p className="text-xs font-semibold text-slate-800 truncate mt-0.5">
+                {user.institution.name}
+              </p>
+              <p className="text-[10px] text-slate-500 font-mono truncate">
+                {user.institution.aicteId}
+              </p>
+            </div>
+          )}
+        </aside>
+
+        {/* Mobile Sidebar Drawer Overlay */}
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 z-40 lg:hidden flex">
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-xs"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <div className="relative w-64 bg-white h-full p-6 shadow-2xl flex flex-col justify-between z-50">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                  <span className="text-sm font-bold text-slate-900">Navigation</span>
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="p-1 rounded-md text-slate-500 hover:bg-slate-100"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <nav className="space-y-1">
+                  {primaryNavItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = location.pathname === item.to;
+                    return (
+                      <NavLink
+                        key={item.to}
+                        to={item.to}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium ${
+                          isActive
+                            ? "bg-[#eef2f6] text-slate-900 font-semibold"
+                            : "text-slate-600 hover:bg-slate-50"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4 text-slate-500" />
+                        <span>{item.label}</span>
+                      </NavLink>
+                    );
+                  })}
+                  {canRegisterFdr && (
+                    <NavLink
+                      to="/instruments/new"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                    >
+                      <FilePlus className="w-4 h-4 text-slate-500" />
+                      <span>Register FDR</span>
+                    </NavLink>
+                  )}
+                  {canScrutinize && (
+                    <NavLink
+                      to="/scrutiny"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                    >
+                      <FileCheck2 className="w-4 h-4 text-slate-500" />
+                      <span>Scrutiny Queue</span>
+                    </NavLink>
+                  )}
+                  <NavLink
+                    to="/clearances"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                  >
+                    <Award className="w-4 h-4 text-slate-500" />
+                    <span>Clearances</span>
+                  </NavLink>
+                  {canViewAudit && (
+                    <NavLink
+                      to="/audit"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                    >
+                      <History className="w-4 h-4 text-slate-500" />
+                      <span>Audit Log</span>
+                    </NavLink>
+                  )}
+                </nav>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                className="w-full py-2 border border-slate-300 rounded-lg text-xs font-medium text-slate-700 flex items-center justify-center gap-2"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign out</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Main Content Canvas ───────────────────────────────────── */}
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
+          <div className="w-full max-w-6xl mx-auto space-y-6">
+            {children}
+          </div>
+
+          {/* Reference matched footer */}
+          <footer className="text-center text-[11px] text-slate-400 py-6 mt-12 border-t border-slate-200/80">
+            FDR Sentinel · SIH 2026 prototype (PS26265) · All records shown are synthetic demonstration data.
+          </footer>
+        </main>
+      </div>
     </div>
   );
 }

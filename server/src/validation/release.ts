@@ -64,3 +64,54 @@ export const confirmRefundSchema = z.object({
 });
 
 export type ConfirmRefundInput = z.infer<typeof confirmRefundSchema>;
+
+// ── USP-2: Intelligent FDR Release & Multi-Department Clearance Workflow ──────
+
+export const reviewReleaseDocumentSchema = z.object({
+  status: z.enum(["CONFIRMED", "REJECTED", "CORRECTION_REQUIRED"], {
+    required_error: "Document review status is required",
+    invalid_type_error: "Status must be CONFIRMED, REJECTED, or CORRECTION_REQUIRED",
+  }),
+  reviewRemarks: z
+    .string()
+    .trim()
+    .min(3, "Remarks must be at least 3 characters")
+    .max(2000, "Remarks must not exceed 2000 characters")
+    .optional(),
+  documentId: z.string().optional(),
+});
+
+export type ReviewReleaseDocumentInput = z.infer<typeof reviewReleaseDocumentSchema>;
+
+export const decideClearanceSchema = z.object({
+  status: z.enum(["CLEARED", "OBJECTION_RAISED", "NOT_APPLICABLE"], {
+    required_error: "Clearance status is required",
+    invalid_type_error: "Status must be CLEARED, OBJECTION_RAISED, or NOT_APPLICABLE",
+  }),
+  decisionReason: z
+    .string({ required_error: "Decision reason / justification is required" })
+    .trim()
+    .min(5, "Decision reason must be at least 5 characters")
+    .max(2000, "Decision reason must not exceed 2000 characters"),
+});
+
+export type DecideClearanceInput = z.infer<typeof decideClearanceSchema>;
+
+export const releaseHoldSchema = z.object({
+  action: z.enum(["PLACE_HOLD", "LIFT_HOLD"], {
+    required_error: "Hold action (PLACE_HOLD or LIFT_HOLD) is required",
+  }),
+  reason: z
+    .string({ required_error: "Reason is required" })
+    .trim()
+    .min(5, "Reason must be at least 5 characters")
+    .max(2000, "Reason must not exceed 2000 characters"),
+});
+
+export type ReleaseHoldInput = z.infer<typeof releaseHoldSchema>;
+
+export const assignClearanceOfficerSchema = z.object({
+  assignedOfficerId: z.string({ required_error: "Assigned officer ID is required" }).min(1),
+});
+
+export type AssignClearanceOfficerInput = z.infer<typeof assignClearanceOfficerSchema>;

@@ -108,8 +108,16 @@ model User {
   scrutinizedInstruments Instrument[]     @relation("ScrutinizedInstruments")
   recordedScrutinyRecords ScrutinyRecord[] @relation("OfficerScrutinyRecords")
 
+  // USP-2: Multi-Department Clearance Workflow
+  department              String?
+  assignedClearances      ReleaseClearance[]      @relation("AssignedClearances")
+  decidedClearances       ReleaseClearance[]      @relation("DecidedClearances")
+  reviewedReleaseDocuments ReleaseDocumentReview[] @relation("ReviewedReleaseDocuments")
+  holdsPlaced             ReleaseRequest[]        @relation("HoldsPlaced")
+
   @@index([institutionId])
   @@index([role])
+  @@index([department])
   @@map("users")
 }
 
@@ -230,6 +238,9 @@ model Document {
 
   // Milestone 9: OCR extractions for this document
   ocrExtractions OcrExtraction[]
+
+  // USP-2: Link to release document reviews
+  releaseDocumentReviews ReleaseDocumentReview[]
 
   @@index([instrumentId])
   @@index([uploadedById])
@@ -375,9 +386,19 @@ model ReleaseRequest {
   decidedBy         User?      @relation("DecidedReleases", fields: [decidedById], references: [id], onDelete: SetNull)
   refundConfirmedBy User?      @relation("ConfirmedRefunds", fields: [refundConfirmedById], references: [id], onDelete: SetNull)
 
+  // USP-2: Multi-Department Clearance Workflow (AICTE APH 2024-2027 Sec 6.46)
+  workflowStage       ReleaseWorkflowStage @default(SUBMITTED)
+  holdReason          String?              @db.Text
+  holdPlacedById      String?
+  holdPlacedBy        User?                @relation("HoldsPlaced", fields: [holdPlacedById], references: [id], onDelete: SetNull)
+
+  clearances          ReleaseClearance[]
+  documentReviews     ReleaseDocumentReview[]
+
   // Standard indexes for common query patterns
   @@index([instrumentId])
   @@index([status])
+  @@index([workflowStage])
   @@index([createdAt])
   @@index([requestedById])
 
@@ -446,4 +467,148 @@ model OcrExtraction {
   @@index([reviewedById])
   @@index([createdAt])
   @@map("ocr_extractions")
+}
+
+// ── USP-1: APH-Aware FDR Compliance Engine ───────────────────────────────────
+//
+// Source: AICTE Approval Process Handbook 2024-2027, Section 1.12, Table 1.4.
+//
+// Migration note: these models are additive only — no existing model is
+// altered.  The AphRule table will be created by the next `prisma migrate dev`
+// run.  Until then, the pure evaluator in aphComplianceEngine.ts uses the
+// in-memory constants in aphRules.ts and does NOT require the table to exist.
+
+enum PremisesOwnershipType {
+  OWNED               // Institution owns the building and/or land
+  LEASED_PRIVATE      // Privately leased — APH mandates double security deposit
+  LEASED_GOVERNMENT   // Government-owned, leased to institution
+  GOVERNMENT_ALLOTTED // Government-allotted land — treated same as owned
+  UNKNOWN             // Ownership not yet recorded
+}
+
+// Versioned, configurable APH security deposit rules.
+// Mirrors the in-memory constants in server/src/services/aphRules.ts.
+// Keeping both allows: fast in-process evaluation (constants) + DB-queryable
+// rule history for audits and future rule updates without code changes.
+model AphRule {
+  id                   String    @id @default(cuid())
+
+  // ── Rule identity ────────────────────────────────────────────────────────
+  ruleKey              String    @unique  // e.g. "APH_2024_ENG_UG"
+  regulatoryVersion    String             // e.g. "2024-2027"
+  effectiveFrom        DateTime
+  effectiveTo          DateTime?          // null = currently effective
+
+  // ── Regulatory scope ─────────────────────────────────────────────────────
+  programme            String             // e.g. "ENGINEERING_TECHNOLOGY"
+  academicLevel        String             // "DIPLOMA" | "UG" | "PG"
+
+  // ── Financial amounts (integer rupees — no floating-point) ───────────────
+  // Base amount applies to owned / government-allotted premises.
+  // For private-lease the caller applies PRIVATE_LEASE_MULTIPLIER (×2).
+  baseAmountRupees     Int                // e.g. 3500000 for ₹35 lakh
+
+  // ── Regulatory metadata ───────────────────────────────────────────────────
+  sourceClause         String?            // "APH 2024-2027, Sec 1.12, Table 1.4"
+  sourceUrl            String?
+  applicableConditions String?   @db.Text // Free-text notes on applicability
+  notes                String?   @db.Text // Additional regulatory context
+
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  isActive             Boolean   @default(true)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@unique([regulatoryVersion, programme, academicLevel])
+  @@index([programme, academicLevel])
+  @@index([regulatoryVersion])
+  @@index([isActive])
+  @@map("aph_rules")
+}
+
+// ── USP-2: Intelligent FDR Release & Multi-Department Clearance Workflow ──────
+// AICTE Approval Process Handbook 2024-2027, Section 6.46.
+
+enum ClearanceDepartment {
+  PGRC                      // Public Grievance Redressal Cell
+  VIGILANCE                 // Vigilance Cell
+  OTHER_APPLICABLE_BUREAU   // Regional Office / Legal Bureau / Applicable Bureau
+}
+
+enum ClearanceStatus {
+  PENDING
+  CLEARED
+  OBJECTION_RAISED
+  NOT_APPLICABLE
+}
+
+enum ReleaseWorkflowStage {
+  SUBMITTED
+  DOCUMENT_REVIEW
+  CORRECTION_REQUIRED
+  CLEARANCES_PENDING
+  READY_FOR_FINAL_DECISION
+  NOC_ISSUED
+  REJECTED
+  ON_HOLD
+}
+
+enum ReleaseDocumentType {
+  APPLICATION_LETTER
+  AFFIDAVIT_6
+  FDR_DEPOSIT_EVIDENCE
+  LATEST_LOA_EOA
+}
+
+enum DocumentReviewStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  CORRECTION_REQUIRED
+}
+
+model ReleaseClearance {
+  id                String              @id @default(cuid())
+  releaseRequestId  String
+  department        ClearanceDepartment
+  status            ClearanceStatus     @default(PENDING)
+  assignedOfficerId String?
+  decidedById       String?
+  decisionReason    String?             @db.Text
+  decidedAt         DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  releaseRequest    ReleaseRequest      @relation(fields: [releaseRequestId], references: [id], onDelete: Cascade)
+  assignedOfficer   User?               @relation("AssignedClearances", fields: [assignedOfficerId], references: [id], onDelete: SetNull)
+  decidedBy         User?               @relation("DecidedClearances", fields: [decidedById], references: [id], onDelete: SetNull)
+
+  @@unique([releaseRequestId, department])
+  @@index([releaseRequestId])
+  @@index([department])
+  @@index([status])
+  @@map("release_clearances")
+}
+
+model ReleaseDocumentReview {
+  id               String               @id @default(cuid())
+  releaseRequestId String
+  documentType     ReleaseDocumentType
+  documentId       String?
+  status           DocumentReviewStatus @default(PENDING)
+  reviewedById     String?
+  reviewRemarks    String?              @db.Text
+  reviewedAt       DateTime?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  releaseRequest   ReleaseRequest       @relation(fields: [releaseRequestId], references: [id], onDelete: Cascade)
+  reviewedBy       User?                @relation("ReviewedReleaseDocuments", fields: [reviewedById], references: [id], onDelete: SetNull)
+  document         Document?            @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@unique([releaseRequestId, documentType])
+  @@index([releaseRequestId])
+  @@index([documentType])
+  @@index([status])
+  @@map("release_document_reviews")
 }

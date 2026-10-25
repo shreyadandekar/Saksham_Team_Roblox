@@ -12,6 +12,10 @@ import InstrumentsPage from "./pages/InstrumentsPage";
 import RegisterInstrumentPage from "./pages/RegisterInstrumentPage";
 import InstrumentDetailPage from "./pages/InstrumentDetailPage";
 import ScrutinyQueuePage from "./pages/ScrutinyQueuePage";
+import ClearanceCommandCenterPage from "./pages/ClearanceCommandCenterPage";
+import ClearanceCaseDetailPage from "./pages/ClearanceCaseDetailPage";
+import MaturitiesPage from "./pages/MaturitiesPage";
+import ProfilePage from "./pages/ProfilePage";
 import AuditLogPage from "./pages/AuditLogPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
@@ -64,6 +68,42 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ScrutinyQueuePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/clearances"
+          element={
+            <ProtectedRoute>
+              <ClearanceCommandCenterPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/clearances/:releaseRequestId"
+          element={
+            <ProtectedRoute>
+              <ClearanceCaseDetailPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/maturities"
+          element={
+            <ProtectedRoute>
+              <MaturitiesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />

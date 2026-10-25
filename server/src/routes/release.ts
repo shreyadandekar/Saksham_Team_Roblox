@@ -24,11 +24,23 @@ import { Router, Request, Response, NextFunction } from "express";
 import { Role, InstrumentStatus, ReleaseRequestStatus, Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma";
 import { requireAuth, requireRoles } from "../middleware/auth";
+import { createChainedAuditEvent } from "../utils/auditChain";
 import {
   submitReleaseRequestSchema,
   releaseDecisionSchema,
   confirmRefundSchema,
+  reviewReleaseDocumentSchema,
+  decideClearanceSchema,
+  releaseHoldSchema,
+  assignClearanceOfficerSchema,
 } from "../validation/release";
+import {
+  MANDATORY_RELEASE_DOCUMENTS,
+  MANDATORY_CLEARANCE_DEPARTMENTS,
+  isOfficerAuthorizedForDepartmentClearance,
+  evaluateReleaseNocGuard,
+  generateReleasePreCheckReport,
+} from "../services/releaseWorkflowService";
 
 const router = Router({ mergeParams: true });
 
@@ -165,15 +177,41 @@ router.post(
       const result = await prisma.$transaction(async (tx) => {
         // 1. Create the release request, capturing the current status for
         //    accurate restoration if the request is later rejected.
-        const releaseRequest = await tx.releaseRequest.create({
+        const releaseRequest = await (tx.releaseRequest as any).create({
           data: {
             instrumentId: instrument.id,
             previousInstrumentStatus: instrument.status,
             requestedById: user.id,
             reason,
             status: ReleaseRequestStatus.PENDING,
+            workflowStage: "SUBMITTED",
           },
         });
+
+        // Initialize document reviews and departmental clearances if supported
+        if (typeof (tx as any).releaseDocumentReview?.create === "function") {
+          for (const docType of MANDATORY_RELEASE_DOCUMENTS) {
+            await (tx as any).releaseDocumentReview.create({
+              data: {
+                releaseRequestId: releaseRequest.id,
+                documentType: docType as any,
+                status: "PENDING",
+              },
+            });
+          }
+        }
+
+        if (typeof (tx as any).releaseClearance?.create === "function") {
+          for (const dept of MANDATORY_CLEARANCE_DEPARTMENTS) {
+            await (tx as any).releaseClearance.create({
+              data: {
+                releaseRequestId: releaseRequest.id,
+                department: dept as any,
+                status: "PENDING",
+              },
+            });
+          }
+        }
 
         // 2. Transition instrument to RELEASE_REQUESTED
         const updatedInstrument = await tx.instrument.update({
@@ -255,7 +293,7 @@ router.get(
         return;
       }
 
-      const releaseRequests = await prisma.releaseRequest.findMany({
+      const releaseRequests = await (prisma.releaseRequest as any).findMany({
         where: { instrumentId: instrument.id },
         include: {
           requestedBy: {
@@ -266,6 +304,17 @@ router.get(
           },
           refundConfirmedBy: {
             select: { id: true, fullName: true, email: true, role: true },
+          },
+          clearances: {
+            include: {
+              assignedOfficer: { select: { id: true, fullName: true, role: true, department: true } },
+              decidedBy: { select: { id: true, fullName: true, role: true, department: true } },
+            },
+          },
+          documentReviews: {
+            include: {
+              reviewedBy: { select: { id: true, fullName: true, role: true } },
+            },
           },
         },
         orderBy: { createdAt: "desc" },
@@ -474,6 +523,26 @@ router.post(
         return;
       }
 
+      // 5. Final Decision Guard for Approvals (APH Section 6.46)
+      if (decision === "APPROVE") {
+        const recordedClearances = typeof (prisma as any).releaseClearance?.findMany === "function"
+          ? await (prisma as any).releaseClearance.findMany({ where: { releaseRequestId: pendingRequest.id } })
+          : [];
+
+        if (recordedClearances.length > 0) {
+          const guardResult = await evaluateReleaseNocGuard(pendingRequest.id, user, prisma);
+          if (!guardResult.isEligible) {
+            res.status(422).json({
+              error: "Precondition Failed",
+              message: "Cannot issue FDR release NOC due to unsatisfied regulatory prerequisites.",
+              isEligibleForFinalDecision: false,
+              blockers: guardResult.blockers,
+            });
+            return;
+          }
+        }
+      }
+
       const now = new Date();
       const isApproval = decision === "APPROVE";
 
@@ -488,10 +557,11 @@ router.post(
       // Atomic transaction: update request + instrument + audit
       const result = await prisma.$transaction(async (tx) => {
         // 1. Update the release request
-        const updatedRequest = await tx.releaseRequest.update({
+        const updatedRequest = await (tx.releaseRequest as any).update({
           where: { id: pendingRequest.id },
           data: {
             status: newRequestStatus,
+            workflowStage: isApproval ? "NOC_ISSUED" : "REJECTED",
             decidedById: user.id,
             decidedAt: now,
             officerRemarks: remarks,
@@ -659,6 +729,690 @@ router.post(
       res.status(200).json({
         message: "Refund confirmed successfully. Physical custody handover, if applicable, should be recorded separately.",
         releaseRequest: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// ── D. USP-2: Intelligent Multi-Department Clearance & NOC Endpoints ───────────
+
+/**
+ * GET /api/instruments/:instrumentId/release/:releaseRequestId/pre-check
+ * Evaluates document checklist, departmental clearances, holds, and USP-1 APH compliance.
+ */
+router.get(
+  "/:releaseRequestId/pre-check",
+  requireAuth,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user = req.user!;
+      const { instrumentId, releaseRequestId } = req.params as {
+        instrumentId: string;
+        releaseRequestId: string;
+      };
+
+      const instrument = await resolveInstrument(instrumentId, user);
+      if (!instrument) {
+        res.status(404).json({ error: "Not Found", message: "Instrument not found." });
+        return;
+      }
+
+      const report = await generateReleasePreCheckReport(releaseRequestId, user, prisma);
+      if (!report.releaseRequest) {
+        res.status(404).json({ error: "Not Found", message: "Release request not found." });
+        return;
+      }
+
+      res.status(200).json({
+        instrumentId: instrument.id,
+        instrumentNumber: instrument.instrumentNumber,
+        releaseRequestId,
+        ...report,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * POST /api/instruments/:instrumentId/release/:releaseRequestId/documents/:documentType/review
+ * Scrutinizer or Approver reviews a mandatory release document.
+ */
+router.post(
+  "/:releaseRequestId/documents/:documentType/review",
+  requireAuth,
+  requireRoles(Role.SCRUTINY_OFFICER, Role.APPROVER, Role.ADMIN),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user = req.user!;
+      const { instrumentId, releaseRequestId, documentType } = req.params as {
+        instrumentId: string;
+        releaseRequestId: string;
+        documentType: string;
+      };
+
+      if (!MANDATORY_RELEASE_DOCUMENTS.includes(documentType as any)) {
+        res.status(400).json({
+          error: "Validation Error",
+          message: `Invalid document type '${documentType}'. Must be one of: ${MANDATORY_RELEASE_DOCUMENTS.join(", ")}`,
+        });
+        return;
+      }
+
+      const parsed = reviewReleaseDocumentSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: "Validation Error",
+          message: "Invalid review payload.",
+          issues: parsed.error.issues,
+        });
+        return;
+      }
+
+      const instrument = await resolveInstrument(instrumentId, user);
+      if (!instrument) {
+        res.status(404).json({ error: "Not Found", message: "Instrument not found." });
+        return;
+      }
+
+      const releaseRequest = await prisma.releaseRequest.findUnique({
+        where: { id: releaseRequestId },
+      });
+
+      if (!releaseRequest || releaseRequest.instrumentId !== instrument.id) {
+        res.status(404).json({ error: "Not Found", message: "Release request not found." });
+        return;
+      }
+
+      if (releaseRequest.status !== ReleaseRequestStatus.PENDING) {
+        res.status(400).json({
+          error: "Invalid State",
+          message: `Cannot review documents for release request in status '${releaseRequest.status}'.`,
+        });
+        return;
+      }
+
+      const now = new Date();
+      const result = await prisma.$transaction(async (tx) => {
+        const review = await (tx as any).releaseDocumentReview.upsert({
+          where: {
+            releaseRequestId_documentType: {
+              releaseRequestId,
+              documentType: documentType as any,
+            },
+          },
+          update: {
+            status: parsed.data.status,
+            reviewedById: user.id,
+            reviewRemarks: parsed.data.reviewRemarks || null,
+            documentId: parsed.data.documentId || null,
+            reviewedAt: now,
+          },
+          create: {
+            releaseRequestId,
+            documentType: documentType as any,
+            status: parsed.data.status,
+            reviewedById: user.id,
+            reviewRemarks: parsed.data.reviewRemarks || null,
+            documentId: parsed.data.documentId || null,
+            reviewedAt: now,
+          },
+        });
+
+        // Determine workflow transition
+        let nextStage: string = "DOCUMENT_REVIEW";
+        if (parsed.data.status === "CORRECTION_REQUIRED") {
+          nextStage = "CORRECTION_REQUIRED";
+        } else {
+          // Check all documents
+          const allReviews = await (tx as any).releaseDocumentReview.findMany({
+            where: { releaseRequestId },
+          });
+          const allConfirmed =
+            MANDATORY_RELEASE_DOCUMENTS.every(
+              (dt) => allReviews.find((r: any) => r.documentType === dt)?.status === "CONFIRMED"
+            );
+
+          if (allConfirmed) {
+            // Check clearances
+            const allClearances = await (tx as any).releaseClearance.findMany({
+              where: { releaseRequestId },
+            });
+            const allSatisfied =
+              MANDATORY_CLEARANCE_DEPARTMENTS.every(
+                (dept) =>
+                  ["CLEARED", "NOT_APPLICABLE"].includes(
+                    allClearances.find((c: any) => c.department === dept)?.status
+                  )
+              );
+            nextStage = allSatisfied ? "READY_FOR_FINAL_DECISION" : "CLEARANCES_PENDING";
+          }
+        }
+
+        await (tx.releaseRequest as any).update({
+          where: { id: releaseRequestId },
+          data: { workflowStage: nextStage },
+        });
+
+        await createChainedAuditEvent(tx, {
+          actorId: user.id,
+          action: "RELEASE_DOCUMENT_REVIEWED",
+          entityType: "ReleaseDocumentReview",
+          entityId: review.id,
+          metadata: {
+            releaseRequestId,
+            documentType,
+            status: parsed.data.status,
+            remarks: parsed.data.reviewRemarks,
+            nextStage,
+          },
+        });
+
+        return { review, nextStage };
+      });
+
+      res.status(200).json({
+        message: `Document review for '${documentType}' saved successfully.`,
+        review: result.review,
+        workflowStage: result.nextStage,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * POST /api/instruments/:instrumentId/release/:releaseRequestId/clearances/:department
+ * Authorized department officer records departmental clearance (PGRC, VIGILANCE, OTHER_APPLICABLE_BUREAU).
+ */
+router.post(
+  "/:releaseRequestId/clearances/:department",
+  requireAuth,
+  requireRoles(Role.SCRUTINY_OFFICER, Role.APPROVER, Role.ADMIN),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user = req.user!;
+      const { instrumentId, releaseRequestId, department } = req.params as {
+        instrumentId: string;
+        releaseRequestId: string;
+        department: string;
+      };
+
+      if (!MANDATORY_CLEARANCE_DEPARTMENTS.includes(department as any)) {
+        res.status(400).json({
+          error: "Validation Error",
+          message: `Invalid clearance department '${department}'. Must be one of: ${MANDATORY_CLEARANCE_DEPARTMENTS.join(", ")}`,
+        });
+        return;
+      }
+
+      const parsed = decideClearanceSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: "Validation Error",
+          message: "Invalid clearance decision payload.",
+          issues: parsed.error.issues,
+        });
+        return;
+      }
+
+      const instrument = await resolveInstrument(instrumentId, user);
+      if (!instrument) {
+        res.status(404).json({ error: "Not Found", message: "Instrument not found." });
+        return;
+      }
+
+      const releaseRequest = await prisma.releaseRequest.findUnique({
+        where: { id: releaseRequestId },
+      });
+
+      if (!releaseRequest || releaseRequest.instrumentId !== instrument.id) {
+        res.status(404).json({ error: "Not Found", message: "Release request not found." });
+        return;
+      }
+
+      if (releaseRequest.status !== ReleaseRequestStatus.PENDING) {
+        res.status(400).json({
+          error: "Invalid State",
+          message: `Cannot decide clearance for release request in status '${releaseRequest.status}'.`,
+        });
+        return;
+      }
+
+      // Check existing clearance record
+      const existingClearance = typeof (prisma as any).releaseClearance?.findUnique === "function"
+        ? await (prisma as any).releaseClearance.findUnique({
+            where: {
+              releaseRequestId_department: {
+                releaseRequestId,
+                department: department as any,
+              },
+            },
+          })
+        : null;
+
+      // ── RBAC Department Authorization Check ──────────────────────────────
+      // User must be explicitly authorized for this department
+      const userWithDept: any = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { id: true, role: true, department: true } as any,
+      });
+
+      const isAuthorized = isOfficerAuthorizedForDepartmentClearance(
+        {
+          id: user.id,
+          role: user.role,
+          department: userWithDept?.department,
+        },
+        department,
+        existingClearance?.assignedOfficerId
+      );
+
+      if (!isAuthorized) {
+        await prisma.auditEvent.create({
+          data: {
+            actorId: user.id,
+            action: "SECURITY_UNAUTHORIZED_CLEARANCE_DENIED",
+            entityType: "ReleaseClearance",
+            entityId: existingClearance?.id || `${releaseRequestId}-${department}`,
+            metadata: {
+              department,
+              userDepartment: userWithDept?.department,
+              assignedOfficerId: existingClearance?.assignedOfficerId,
+              reason: "Officer attempted clearance decision without departmental authorization",
+            },
+          },
+        });
+
+        res.status(403).json({
+          error: "Forbidden",
+          message: `You do not have clearance authority for department '${department}'. Only assigned officers or members of '${department}' may record this decision.`,
+        });
+        return;
+      }
+
+      // Duplicate submission guard: prevent identical re-decision
+      if (existingClearance && existingClearance.status === parsed.data.status && existingClearance.decidedAt) {
+        res.status(409).json({
+          error: "Conflict",
+          message: `Clearance for '${department}' has already been decided with status '${existingClearance.status}'.`,
+        });
+        return;
+      }
+
+      const now = new Date();
+      const result = await prisma.$transaction(async (tx) => {
+        const clearance = await (tx as any).releaseClearance.upsert({
+          where: {
+            releaseRequestId_department: {
+              releaseRequestId,
+              department: department as any,
+            },
+          },
+          update: {
+            status: parsed.data.status,
+            decisionReason: parsed.data.decisionReason,
+            decidedById: user.id,
+            decidedAt: now,
+          },
+          create: {
+            releaseRequestId,
+            department: department as any,
+            status: parsed.data.status,
+            decisionReason: parsed.data.decisionReason,
+            decidedById: user.id,
+            decidedAt: now,
+          },
+        });
+
+        // Workflow transition
+        let nextStage: string = (releaseRequest as any).workflowStage || "SUBMITTED";
+        let holdReason: string | null = (releaseRequest as any).holdReason || null;
+
+        if (parsed.data.status === "OBJECTION_RAISED") {
+          nextStage = "ON_HOLD";
+          holdReason = `Objection raised by ${department}: ${parsed.data.decisionReason}`;
+        } else {
+          // Check if all clearances satisfied
+          const allClearances = await (tx as any).releaseClearance.findMany({
+            where: { releaseRequestId },
+          });
+          const allSatisfied =
+            MANDATORY_CLEARANCE_DEPARTMENTS.every((dept) =>
+              ["CLEARED", "NOT_APPLICABLE"].includes(
+                allClearances.find((c: any) => c.department === dept)?.status
+              )
+            );
+
+          const allReviews = await (tx as any).releaseDocumentReview.findMany({
+            where: { releaseRequestId },
+          });
+          const allDocsConfirmed =
+            MANDATORY_RELEASE_DOCUMENTS.every(
+              (dt) => allReviews.find((r: any) => r.documentType === dt)?.status === "CONFIRMED"
+            );
+
+          if (allSatisfied && allDocsConfirmed) {
+            nextStage = "READY_FOR_FINAL_DECISION";
+          } else {
+            nextStage = "CLEARANCES_PENDING";
+          }
+        }
+
+        await (tx.releaseRequest as any).update({
+          where: { id: releaseRequestId },
+          data: { workflowStage: nextStage, holdReason },
+        });
+
+        await createChainedAuditEvent(tx, {
+          actorId: user.id,
+          action: "CLEARANCE_DECIDED",
+          entityType: "ReleaseClearance",
+          entityId: clearance.id,
+          metadata: {
+            releaseRequestId,
+            department,
+            status: parsed.data.status,
+            reason: parsed.data.decisionReason,
+            nextStage,
+          },
+        });
+
+        return { clearance, nextStage };
+      });
+
+      res.status(200).json({
+        message: `Clearance decision for '${department}' recorded successfully as '${parsed.data.status}'.`,
+        clearance: result.clearance,
+        workflowStage: result.nextStage,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * POST /api/instruments/:instrumentId/release/:releaseRequestId/clearances/:department/assign
+ * Assign an officer to a specific departmental clearance.
+ */
+router.post(
+  "/:releaseRequestId/clearances/:department/assign",
+  requireAuth,
+  requireRoles(Role.ADMIN, Role.APPROVER),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user = req.user!;
+      const { instrumentId, releaseRequestId, department } = req.params as {
+        instrumentId: string;
+        releaseRequestId: string;
+        department: string;
+      };
+
+      const parsed = assignClearanceOfficerSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: "Validation Error",
+          message: "Invalid assignment payload.",
+          issues: parsed.error.issues,
+        });
+        return;
+      }
+
+      const instrument = await resolveInstrument(instrumentId, user);
+      if (!instrument) {
+        res.status(404).json({ error: "Not Found", message: "Instrument not found." });
+        return;
+      }
+
+      const targetOfficer = await prisma.user.findUnique({
+        where: { id: parsed.data.assignedOfficerId },
+      });
+
+      if (!targetOfficer || !targetOfficer.isActive) {
+        res.status(404).json({ error: "Not Found", message: "Assigned officer not found or inactive." });
+        return;
+      }
+
+      const clearance = await (prisma as any).releaseClearance.upsert({
+        where: {
+          releaseRequestId_department: {
+            releaseRequestId,
+            department: department as any,
+          },
+        },
+        update: { assignedOfficerId: targetOfficer.id },
+        create: {
+          releaseRequestId,
+          department: department as any,
+          status: "PENDING",
+          assignedOfficerId: targetOfficer.id,
+        },
+      });
+
+      await createChainedAuditEvent(prisma as any, {
+        actorId: user.id,
+        action: "CLEARANCE_ASSIGNED",
+        entityType: "ReleaseClearance",
+        entityId: clearance.id,
+        metadata: {
+          releaseRequestId,
+          department,
+          assignedOfficerId: targetOfficer.id,
+          assignedOfficerEmail: targetOfficer.email,
+        },
+      });
+
+      res.status(200).json({
+        message: `Officer ${targetOfficer.fullName} successfully assigned to ${department} clearance.`,
+        clearance,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * POST /api/instruments/:instrumentId/release/:releaseRequestId/hold
+ * Places or lifts a regulatory/financial hold on a release request.
+ */
+router.post(
+  "/:releaseRequestId/hold",
+  requireAuth,
+  requireRoles(Role.SCRUTINY_OFFICER, Role.APPROVER, Role.ADMIN),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user = req.user!;
+      const { instrumentId, releaseRequestId } = req.params as {
+        instrumentId: string;
+        releaseRequestId: string;
+      };
+
+      const parsed = releaseHoldSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({
+          error: "Validation Error",
+          message: "Invalid hold payload.",
+          issues: parsed.error.issues,
+        });
+        return;
+      }
+
+      const instrument = await resolveInstrument(instrumentId, user);
+      if (!instrument) {
+        res.status(404).json({ error: "Not Found", message: "Instrument not found." });
+        return;
+      }
+
+      const releaseRequest = await prisma.releaseRequest.findUnique({
+        where: { id: releaseRequestId },
+      });
+
+      if (!releaseRequest || releaseRequest.instrumentId !== instrument.id) {
+        res.status(404).json({ error: "Not Found", message: "Release request not found." });
+        return;
+      }
+
+      const { action, reason } = parsed.data;
+
+      const result = await prisma.$transaction(async (tx) => {
+        let nextStage: string;
+        let holdReason: string | null;
+        let holdPlacedById: string | null;
+        let auditAction: string;
+
+        if (action === "PLACE_HOLD") {
+          nextStage = "ON_HOLD";
+          holdReason = reason;
+          holdPlacedById = user.id;
+          auditAction = "RELEASE_HOLD_PLACED";
+        } else {
+          // LIFT_HOLD
+          nextStage = "CLEARANCES_PENDING";
+          holdReason = null;
+          holdPlacedById = null;
+          auditAction = "RELEASE_HOLD_LIFTED";
+        }
+
+        const updated = await (tx.releaseRequest as any).update({
+          where: { id: releaseRequestId },
+          data: {
+            workflowStage: nextStage,
+            holdReason,
+            holdPlacedById,
+          },
+        });
+
+        await createChainedAuditEvent(tx, {
+          actorId: user.id,
+          action: auditAction,
+          entityType: "ReleaseRequest",
+          entityId: releaseRequestId,
+          metadata: {
+            action,
+            reason,
+            nextStage,
+          },
+        });
+
+        return updated;
+      });
+
+      res.status(200).json({
+        message: action === "PLACE_HOLD" ? "Release request placed on hold." : "Hold lifted successfully.",
+        releaseRequest: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * POST /api/instruments/:instrumentId/release/:releaseRequestId/noc
+ * Final authorized NOC issuance by the Approval Bureau (Role.APPROVER).
+ * Enforces the strict Final Decision Guard.
+ */
+router.post(
+  "/:releaseRequestId/noc",
+  requireAuth,
+  requireRoles(Role.APPROVER),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user = req.user!;
+      const { instrumentId, releaseRequestId } = req.params as {
+        instrumentId: string;
+        releaseRequestId: string;
+      };
+
+      const instrument = await resolveInstrument(instrumentId, user);
+      if (!instrument) {
+        res.status(404).json({ error: "Not Found", message: "Instrument not found." });
+        return;
+      }
+
+      const releaseRequest = await prisma.releaseRequest.findUnique({
+        where: { id: releaseRequestId },
+      });
+
+      if (!releaseRequest || releaseRequest.instrumentId !== instrument.id) {
+        res.status(404).json({ error: "Not Found", message: "Release request not found." });
+        return;
+      }
+
+      // Concurrency guard: already decided
+      if (releaseRequest.status !== ReleaseRequestStatus.PENDING) {
+        res.status(409).json({
+          error: "Conflict",
+          message: `Release request has already been decided with status '${releaseRequest.status}'. Concurrent decision prevented.`,
+        });
+        return;
+      }
+
+      // Strict Final Decision Guard
+      const guardResult = await evaluateReleaseNocGuard(releaseRequestId, user, prisma);
+      if (!guardResult.isEligible) {
+        res.status(422).json({
+          error: "Precondition Failed",
+          message: "Cannot issue FDR release NOC due to unsatisfied regulatory prerequisites.",
+          isEligibleForFinalDecision: false,
+          blockers: guardResult.blockers,
+        });
+        return;
+      }
+
+      const now = new Date();
+      const remarks = req.body.remarks || "All departmental clearances and statutory documents verified. FDR Release NOC granted.";
+
+      const result = await prisma.$transaction(async (tx) => {
+        const updatedRequest = await (tx.releaseRequest as any).update({
+          where: { id: releaseRequestId },
+          data: {
+            status: ReleaseRequestStatus.APPROVED,
+            workflowStage: "NOC_ISSUED",
+            decidedById: user.id,
+            decidedAt: now,
+            officerRemarks: remarks,
+          },
+        });
+
+        const updatedInstrument = await tx.instrument.update({
+          where: { id: instrument.id },
+          data: { status: InstrumentStatus.RELEASED },
+          select: {
+            id: true,
+            instrumentNumber: true,
+            status: true,
+            institutionId: true,
+          },
+        });
+
+        await createChainedAuditEvent(tx, {
+          actorId: user.id,
+          action: "RELEASE_NOC_ISSUED",
+          entityType: "ReleaseRequest",
+          entityId: releaseRequestId,
+          metadata: {
+            instrumentId: instrument.id,
+            instrumentNumber: instrument.instrumentNumber,
+            nocDecision: "APPROVED",
+            remarks,
+            approvedByEmail: user.email,
+          },
+        });
+
+        return { updatedRequest, updatedInstrument };
+      });
+
+      res.status(200).json({
+        message: "FDR Release NOC issued successfully by Approval Bureau.",
+        releaseRequest: result.updatedRequest,
+        instrument: result.updatedInstrument,
       });
     } catch (error) {
       next(error);

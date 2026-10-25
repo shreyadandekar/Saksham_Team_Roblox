@@ -18,6 +18,12 @@ export interface User {
   email: string;
   role: Role;
   institutionId: string | null;
+  department?: string | null;
+  institution?: {
+    id: string;
+    name: string;
+    aicteId: string;
+  } | null;
 }
 
 export interface AuthResponse {

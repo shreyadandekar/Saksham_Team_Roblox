@@ -1,19 +1,35 @@
 @import "tailwindcss";
 
 /*
- * FDR Sentinel – global design tokens
- * Tailwind v4 uses CSS-native custom properties for theming.
+ * FDR Sentinel – Global Design Tokens
+ * Direct visual alignment with SIH 2026 Reference Specification (fi.pdf).
+ *
+ * Characteristics:
+ * - Warm off-white page background (#fbfaf8)
+ * - Pure white cards (#ffffff) with crisp, minimal borders (#e5e7eb)
+ * - Deep navy brand primary (#0b192c)
+ * - Warm amber active indicator (#d97706)
+ * - Restrained typography and subtle hover states
  */
 @theme {
-  --color-primary: #1d4ed8;
-  --color-primary-dark: #1e3a8a;
-  --color-accent: #0ea5e9;
-  --color-surface: #f8fafc;
-  --color-surface-dark: #0f172a;
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
+  --color-brand-dark: #0b192c;
+  --color-brand-primary: #0f172a;
+  --color-brand-accent: #d97706;
+  --color-brand-accent-hover: #b45309;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-page-bg: #fbfaf8;
+  --color-card-bg: #ffffff;
+  --color-sidebar-bg: #ffffff;
+  --color-sidebar-active: #eef2f6;
+
+  --color-border-subtle: #e5e7eb;
+  --color-border-light: #f1f5f9;
+
+  --color-text-main: #0f172a;
+  --color-text-muted: #64748b;
+  --color-text-subtle: #94a3b8;
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
   --radius-card: 0.75rem;
 }
@@ -26,6 +42,28 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-surface);
-  color: var(--color-text);
+  background-color: var(--color-page-bg);
+  color: var(--color-text-main);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
