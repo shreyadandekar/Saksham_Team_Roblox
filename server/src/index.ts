@@ -11,7 +11,7 @@ import { startMaturityScheduler, stopMaturityScheduler } from "./scheduler/matur
 const app = createApp();
 
 const server = app.listen(env.PORT, () => {
-  console.log(`✅  FDR Sentinel API running on http://localhost:${env.PORT}`);
+  console.log(`✅  Saksham API running on http://localhost:${env.PORT}`);
   console.log(`    Environment : ${env.NODE_ENV}`);
   console.log(`    Health check: http://localhost:${env.PORT}/api/health`);
 
@@ -23,7 +23,7 @@ const server = app.listen(env.PORT, () => {
 
 // Graceful process shutdown
 function handleShutdown(signal: string) {
-  console.log(`\nReceived ${signal}. Gracefully stopping FDR Sentinel API...`);
+  console.log(`\nReceived ${signal}. Gracefully stopping Saksham API...`);
   stopMaturityScheduler();
   server.close(() => {
     console.log("HTTP server closed.");

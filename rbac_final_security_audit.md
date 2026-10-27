@@ -1,6 +1,6 @@
-# FDR Sentinel — RBAC Security Audit & Database Repair Final Verification Report
+# Saksham — RBAC Security Audit & Database Repair Final Verification Report
 
-**Project:** FDR Sentinel — PS26265 FDR Lifecycle Control  
+**Project:** Saksham (formerly FDR Sentinel) — PS26265 FDR Lifecycle Control  
 **Local Path:** `D:\FDR-Sentinel`  
 **Date of Audit:** October 24, 2026  
 **Auditor:** Agentic Security & Database Architecture Team  
@@ -12,7 +12,7 @@
 
 **Verdict:** **SYSTEM VERIFIED & OPERATIONAL (DEVELOPMENT & DEMO ENVIRONMENT)**
 
-The FDR Sentinel application has been restored to full functionality. The critical runtime database failure (`instruments.scrutinizedById does not exist`) has been diagnosed, repaired, and verified against the live PostgreSQL database with zero data loss. All 5 demo user roles (`INSTITUTION_USER`, `SCRUTINY_OFFICER`, `APPROVER`, `ADMIN`, and `AUDITOR`) authenticate successfully with their intended credentials and scopes. Multi-tenant isolation between institutions is strictly enforced at the database query level. The four-eyes release approval workflow rejects self-approvals and officer conflicts of interest. The entire automated test suite (294 tests across 20 test suites) passes cleanly, along with backend and frontend TypeScript typechecks and production builds.
+The Saksham application has been restored to full functionality. The critical runtime database failure (`instruments.scrutinizedById does not exist`) has been diagnosed, repaired, and verified against the live PostgreSQL database with zero data loss. All 5 demo user roles (`INSTITUTION_USER`, `SCRUTINY_OFFICER`, `APPROVER`, `ADMIN`, and `AUDITOR`) authenticate successfully with their intended credentials and scopes. Multi-tenant isolation between institutions is strictly enforced at the database query level. The four-eyes release approval workflow rejects self-approvals and officer conflicts of interest. The entire automated test suite (294 tests across 20 test suites) passes cleanly, along with backend and frontend TypeScript typechecks and production builds.
 
 ---
 

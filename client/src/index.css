@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 /*
- * FDR Sentinel – Global Design Tokens
- * Direct visual alignment with SIH 2026 Reference Specification (fi.pdf).
+ * Saksham – Global Design Tokens
+ * Rebranded visual identity matching SIH 2026 Reference Specification.
  *
  * Characteristics:
- * - Warm off-white page background (#fbfaf8)
+ * - Clean off-white page background (#f8f9fa)
  * - Pure white cards (#ffffff) with crisp, minimal borders (#e5e7eb)
  * - Deep navy brand primary (#0b192c)
  * - Warm amber active indicator (#d97706)
@@ -34,8 +34,13 @@
   --radius-card: 0.75rem;
 }
 
+:root {
+  color-scheme: light;
+}
+
 /* Smooth font rendering */
 html {
+  color-scheme: light;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

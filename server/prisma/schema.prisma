@@ -1,4 +1,4 @@
-// Prisma schema for FDR Sentinel (SIH 2026 PS26265)
+// Prisma schema for Saksham (SIH 2026 PS26265)
 
 generator client {
   provider = "prisma-client-js"

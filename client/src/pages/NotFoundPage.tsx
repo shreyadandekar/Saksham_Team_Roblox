@@ -3,20 +3,22 @@
  * 404 fallback route.
  */
 import { Link } from "react-router-dom";
-import { FileQuestion } from "lucide-react";
 import AppShell from "../components/layout/AppShell";
 
 export default function NotFoundPage() {
   return (
     <AppShell>
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
-        <FileQuestion
-          className="h-12 w-12 text-slate-400"
-          aria-hidden="true"
-        />
-        <h1 className="text-3xl font-bold text-slate-700">404 – Not Found</h1>
-        <p className="text-slate-500">
-          The page you're looking for doesn't exist.
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-center p-2 mb-1">
+          <img
+            src="/assets/saksham-logo.png"
+            alt="Saksham"
+            className="w-full h-full object-contain"
+          />
+        </div>
+        <h1 className="text-2xl font-bold text-slate-800">404 – Page Not Found</h1>
+        <p className="text-xs text-slate-500 max-w-sm">
+          The requested page or resource could not be found within Saksham.
         </p>
         <Link
           to="/dashboard"

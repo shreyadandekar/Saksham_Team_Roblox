@@ -82,7 +82,7 @@ export default function ProfilePage() {
               {user?.fullName || "Authenticated Officer"}
             </h2>
             <p className="text-xs text-slate-500 font-mono">
-              {user?.email || "user@fdr-sentinel.gov.in"}
+              {user?.email || "user@saksham.gov.in"}
             </p>
             <div className="pt-1">
               <span className="inline-block px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">

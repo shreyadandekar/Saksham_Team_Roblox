@@ -1,4 +1,4 @@
-# FDR Sentinel — SIH 2026 Judge-Winning Presentation Content & Pitch Deck
+# Saksham — SIH 2026 Judge-Winning Presentation Content & Pitch Deck
 
 > **Competition:** Smart India Hackathon 2026 (SIH 2026)  
 > **Problem Statement ID:** PS26265  
@@ -16,11 +16,11 @@
 ## SLIDE 1 — TITLE PAGE
 
 ### 1. Punchy Headline
-**FDR Sentinel: Turning Passive Deposit Storage into Explainable Regulatory Intelligence & Accountable Multi-Department Clearances.**
+**Saksham: Turning Passive Deposit Storage into Explainable Regulatory Intelligence & Accountable Multi-Department Clearances.**
 
 ### 2. Final PPT-Ready Content
-- **Project Name:** FDR Sentinel (AICTE Security Deposit & FDR Management Portal)
-- **Tagline:** Explainable Regulatory Compliance & Multi-Department Release Workflow for Institutional Deposits
+- **Project Name:** Saksham (Security Deposit & FDR Management)
+- **Tagline:** Intelligent Security Deposit Compliance & Clearance Management
 - **Problem Statement ID:** 26265
 - **Problem Statement Title:** Streamline of Security Deposit/FDR Portal
 - **Organization:** All India Council for Technical Education (AICTE), Regulation Bureau
@@ -30,13 +30,13 @@
 - **System Verification:** 22 Passing Test Suites (325 Unit Tests, 100% Pass Rate) | Verified Working Prototype
 
 ### 3. Recommended Visual
-A sleek dark-mode mockup of the **FDR Sentinel Clearance Command Center** and **APH Compliance Engine** badge side-by-side, flanked by official AICTE Emblem placement, SIH 2026 branding, and security badges: *SHA-256 Tamper-Evident Audit Chain* & *Four-Eyes Separation of Duties*.
+A sleek dark-mode mockup of the **Saksham Clearance Command Center** and **APH Compliance Engine** badge side-by-side, flanked by official AICTE Emblem placement, SIH 2026 branding, and security badges: *SHA-256 Tamper-Evident Audit Chain* & *Four-Eyes Separation of Duties*.
 
 ### 4. Speaker Notes (30–45 Seconds)
-> *"Respected judges, technical institutions across India deposit hundreds of crores of rupees in Fixed Deposit Receipts with AICTE to guarantee institutional stability and protect student and faculty interests. Yet today, managing these deposits, verifying whether they meet complex Approval Process Handbook norms, and navigating the multi-department clearance required for release is an administrative bottleneck. We present FDR Sentinel — an intelligent, regulation-aware platform that transforms FDR record-keeping from passive file storage into active, explainable compliance intelligence and multi-department clearance orchestration. Every feature we present today is backed by 325 passing automated tests and a live, working prototype."*
+> *"Respected judges, technical institutions across India deposit hundreds of crores of rupees in Fixed Deposit Receipts with AICTE to guarantee institutional stability and protect student and faculty interests. Yet today, managing these deposits, verifying whether they meet complex Approval Process Handbook norms, and navigating the multi-department clearance required for release is an administrative bottleneck. We present Saksham — an intelligent, regulation-aware platform that transforms FDR record-keeping from passive file storage into active, explainable compliance intelligence and multi-department clearance orchestration. Every feature we present today is backed by 325 passing automated tests and a live, working prototype."*
 
 ### 5. Judge Takeaway
-*FDR Sentinel is not a generic student CRUD portal; it is a mature, domain-tailored regulatory governance solution built specifically around AICTE's actual statutory handbook.*
+*Saksham is not a generic student CRUD portal; it is a mature, domain-tailored regulatory governance solution built specifically around AICTE's actual statutory handbook.*
 
 ---
 
@@ -71,10 +71,10 @@ A sleek dark-mode mockup of the **FDR Sentinel Clearance Command Center** and **
 - **Right Column:** A screenshot of **USP 2 (Explainable Blockers Panel & Timeline)** showing a pending release request with completed Scrutiny and PGRC stages, but an active amber blocker: *"Vigilance clearance not yet recorded under APH Section 6.46."*
 
 ### 4. Speaker Notes (30–45 Seconds)
-> *"Judges, an ordinary portal merely stores numbers in a table. FDR Sentinel answers the two hardest questions AICTE officers face daily. First: 'Does this institution's deposit actually meet current regulations?' Our APH Compliance Engine automatically evaluates Table 1.4 rules — for example, detecting that a private UG engineering college operating on leased land requires ₹70 Lakh instead of ₹35 Lakh, flagging the exact shortfall before an extension of approval is granted. Second: 'What is holding up this FDR release?' Under Section 6.46, releasing a deposit requires concurrence from Scrutiny, PGRC, and Vigilance. Our Clearance Command Center gives complete visibility into exactly which department must act next and prevents final NOC issuance until every statutory prerequisite is satisfied."*
+> *"Judges, an ordinary portal merely stores numbers in a table. Saksham answers the two hardest questions AICTE officers face daily. First: 'Does this institution's deposit actually meet current regulations?' Our APH Compliance Engine automatically evaluates Table 1.4 rules — for example, detecting that a private UG engineering college operating on leased land requires ₹70 Lakh instead of ₹35 Lakh, flagging the exact shortfall before an extension of approval is granted. Second: 'What is holding up this FDR release?' Under Section 6.46, releasing a deposit requires concurrence from Scrutiny, PGRC, and Vigilance. Our Clearance Command Center gives complete visibility into exactly which department must act next and prevents final NOC issuance until every statutory prerequisite is satisfied."*
 
 ### 5. Judge Takeaway
-*By converting static records into automated regulatory intelligence (USP 1) and explainable clearance orchestration (USP 2), FDR Sentinel directly eliminates institutional non-compliance and administrative gridlock.*
+*By converting static records into automated regulatory intelligence (USP 1) and explainable clearance orchestration (USP 2), Saksham directly eliminates institutional non-compliance and administrative gridlock.*
 
 ---
 
@@ -152,10 +152,10 @@ A crisp architecture flowchart highlighting the interaction between the **OCR Co
 A high-contrast **Risk vs Mitigation Card Grid**, highlighting the *Four-Eyes Separation of Duties rule* and a screenshot showing the *SHA-256 Audit Chain Verification passing*.
 
 ### 4. Speaker Notes (30–45 Seconds)
-> *"Judges, feasibility is where most hackathon ideas fall short. We engineered FDR Sentinel for immediate government viability. We asked: What happens if an institution uploads an illegible scan? Our system does not blindly accept OCR; it tags values with three-way provenance and requires officer confirmation. What happens if regulations change next year? Our APH engine is version-isolated in configurable tables. What prevents an insider from releasing funds inappropriately? Our Final Decision Guard enforces cryptographic Four-Eyes separation — meaning the officer who requests or scrutinizes an instrument cannot approve its release, and the Approval Bureau cannot issue an NOC while a Vigilance or PGRC hold is active."*
+> *"Judges, feasibility is where most hackathon ideas fall short. We engineered Saksham for immediate government viability. We asked: What happens if an institution uploads an illegible scan? Our system does not blindly accept OCR; it tags values with three-way provenance and requires officer confirmation. What happens if regulations change next year? Our APH engine is version-isolated in configurable tables. What prevents an insider from releasing funds inappropriately? Our Final Decision Guard enforces cryptographic Four-Eyes separation — meaning the officer who requests or scrutinizes an instrument cannot approve its release, and the Approval Bureau cannot issue an NOC while a Vigilance or PGRC hold is active."*
 
 ### 5. Judge Takeaway
-*FDR Sentinel is engineered with real-world defensive controls — handling edge cases, preventing fraud through Four-Eyes checks, and providing graceful fallbacks for incomplete regulatory data.*
+*Saksham is engineered with real-world defensive controls — handling edge cases, preventing fraud through Four-Eyes checks, and providing graceful fallbacks for incomplete regulatory data.*
 
 ---
 
@@ -188,7 +188,7 @@ A high-contrast **Risk vs Mitigation Card Grid**, highlighting the *Four-Eyes Se
 An **Impact Radar Graphic** demonstrating improvements across 5 dimensions: *Regulatory Accuracy*, *Process Transparency*, *Anti-Fraud Safeguards*, *Operational Turnaround*, and *Audit Traceability*.
 
 ### 4. Speaker Notes (30–45 Seconds)
-> *"The impact of FDR Sentinel extends beyond convenience — it safeguards public and institutional funds. By automatically enforcing APH Table 1.4 rules, AICTE ensures that institutions maintain the exact legal financial backing required to protect students and staff. For institutions, the mystery of 'Why has our FDR release been stuck for six months?' is completely eliminated by our explainable blockers panel. For AICTE leadership, every release decision is guaranteed to have passed Scrutiny, PGRC, and Vigilance clearances, backed by an immutable cryptographic audit trail. It represents modern, accountable, and transparent digital governance."*
+> *"The impact of Saksham extends beyond convenience — it safeguards public and institutional funds. By automatically enforcing APH Table 1.4 rules, AICTE ensures that institutions maintain the exact legal financial backing required to protect students and staff. For institutions, the mystery of 'Why has our FDR release been stuck for six months?' is completely eliminated by our explainable blockers panel. For AICTE leadership, every release decision is guaranteed to have passed Scrutiny, PGRC, and Vigilance clearances, backed by an immutable cryptographic audit trail. It represents modern, accountable, and transparent digital governance."*
 
 ### 5. Judge Takeaway
 *The platform delivers clear, measurable administrative and financial benefits: protecting institutional solvency, eliminating processing bottlenecks, and creating an uncompromised audit trail.*
@@ -221,10 +221,10 @@ An **Impact Radar Graphic** demonstrating improvements across 5 dimensions: *Reg
 Official cover visual of the **AICTE Approval Process Handbook 2024–2027** paired with an excerpt of **Table 1.4 (Security Deposit Scheme)** and **Section 6.46 (Release Procedure)**, overlaid with verification checkmarks linking directly to our codebase modules (`aphRules.ts` & `releaseWorkflowService.ts`).
 
 ### 4. Speaker Notes (30–45 Seconds)
-> *"Judges, every single formula, workflow stage, and document requirement in FDR Sentinel is directly derived from primary regulatory sources: the AICTE Approval Process Handbook 2024–2027. We did not guess deposit amounts — we implemented Section 1.12 Table 1.4. We did not invent release stages — we followed Section 6.46 to the letter, encoding PGRC, Vigilance, and Approval Bureau clearances into our state machine. Combined with OWASP-compliant security architecture and SHA-256 audit chaining, FDR Sentinel is a legally faithful and technically robust implementation of SIH Problem Statement 26265."*
+> *"Judges, every single formula, workflow stage, and document requirement in Saksham is directly derived from primary regulatory sources: the AICTE Approval Process Handbook 2024–2027. We did not guess deposit amounts — we implemented Section 1.12 Table 1.4. We did not invent release stages — we followed Section 6.46 to the letter, encoding PGRC, Vigilance, and Approval Bureau clearances into our state machine. Combined with OWASP-compliant security architecture and SHA-256 audit chaining, Saksham is a legally faithful and technically robust implementation of SIH Problem Statement 26265."*
 
 ### 5. Judge Takeaway
-*FDR Sentinel is built on rock-solid legal and regulatory foundations, making it immediately recognizable, credible, and defensible before senior AICTE officials and evaluation judges.*
+*Saksham is built on rock-solid legal and regulatory foundations, making it immediately recognizable, credible, and defensible before senior AICTE officials and evaluation judges.*
 
 ---
 
@@ -233,18 +233,18 @@ Official cover visual of the **AICTE Approval Process Handbook 2024–2027** pai
 ---
 
 ## A. 30-Second Elevator Pitch
-> *"Technical institutions in India maintain hundreds of crores in fixed deposits with AICTE, but managing compliance and multi-department releases today involves spreadsheet tracking, manual handbook lookups, and prolonged correspondence. We built **FDR Sentinel** — an intelligent, regulation-aware platform that transforms static FDR records into active compliance intelligence. It automatically evaluates AICTE Approval Process Handbook Table 1.4 rules — including leased-land multipliers — to detect shortfalls instantly, and orchestrates a multi-department clearance workflow across Scrutiny, PGRC, and Vigilance with a strict Decision Guard that blocks unauthorized releases. Backed by 325 passing automated tests and a live prototype, FDR Sentinel delivers transparent, accountable governance to AICTE's Regulation Bureau."*
+> *"Technical institutions in India maintain hundreds of crores in fixed deposits with AICTE, but managing compliance and multi-department releases today involves spreadsheet tracking, manual handbook lookups, and prolonged correspondence. We built **Saksham** — an intelligent, regulation-aware platform that transforms static FDR records into active compliance intelligence. It automatically evaluates AICTE Approval Process Handbook Table 1.4 rules — including leased-land multipliers — to detect shortfalls instantly, and orchestrates a multi-department clearance workflow across Scrutiny, PGRC, and Vigilance with a strict Decision Guard that blocks unauthorized releases. Backed by 325 passing automated tests and a live prototype, Saksham delivers transparent, accountable governance to AICTE's Regulation Bureau."*
 
 ---
 
 ## B. 90-Second Solution Explanation
 > *"Good morning, respected judges. In technical education governance, fixed deposit security deposits are the ultimate safeguard for institutional commitments. But two major bottlenecks exist in the current process.*
 >
-> *First, compliance calculation is non-trivial. Under AICTE APH Table 1.4, deposit obligations vary by programme and academic level. Furthermore, if an institution operates on private-leased land or buildings, the deposit requirement doubles. Currently, officers must cross-reference documents manually. FDR Sentinel solves this with our **APH-Aware Compliance Intelligence Engine (USP 1)**. It aggregates an institution's instruments, applies versioned regulatory rules, and instantly flags whether the institution is compliant, deficient, or needs review — explaining the exact clause and shortfall in plain English.*
+> *First, compliance calculation is non-trivial. Under AICTE APH Table 1.4, deposit obligations vary by programme and academic level. Furthermore, if an institution operates on private-leased land or buildings, the deposit requirement doubles. Currently, officers must cross-reference documents manually. Saksham solves this with our **APH-Aware Compliance Intelligence Engine (USP 1)**. It aggregates an institution's instruments, applies versioned regulatory rules, and instantly flags whether the institution is compliant, deficient, or needs review — explaining the exact clause and shortfall in plain English.*
 >
 > *Second, releasing an FDR upon course closure or maturity under Section 6.46 requires concurrence across multiple departments. Historically, cases lingered because nobody knew who was holding up the file. Our **Clearance Command Center (USP 2)** digitises this multi-stage workflow. Scrutiny officers confirm mandatory legal affidavits; PGRC officers log grievance clearances; Vigilance officers confirm no disciplinary inquiries exist. Our automated **Final Decision Guard** ensures that the Approval Bureau cannot issue an NOC until every clearance is confirmed and Four-Eyes separation of duties is strictly satisfied. If anything is missing, our Explainable Blockers panel tells officers precisely what is pending.*
 >
-> *Supported by OCR discrepancy detection, automated 90-day maturity tracking, and a tamper-evident SHA-256 audit chain, FDR Sentinel turns administrative friction into accountable governance."*
+> *Supported by OCR discrepancy detection, automated 90-day maturity tracking, and a tamper-evident SHA-256 audit chain, Saksham turns administrative friction into accountable governance."*
 
 ---
 
@@ -292,13 +292,13 @@ This step-by-step walkthrough utilizes our actual implemented routes and test sc
 
 ## D. Five Difficult Judge Questions & Winning Answers
 
-### Question 1: "AICTE already has an online portal for approvals and release applications. Why do we need FDR Sentinel?"
+### Question 1: "AICTE already has an online portal for approvals and release applications. Why do we need Saksham?"
 **Winning Answer:**
-> *"AICTE’s existing portal primarily serves as an application submission and document upload repository. However, the administrative intelligence still happens manually offline. Determining whether an institution meets Table 1.4 deposit requirements requires officers to manually check tables, calculate multipliers for leased land, and sum scattered FDRs. Similarly, release applications require coordinating clearances across PGRC, Vigilance, and Regional offices through emails or physical files. FDR Sentinel does not replace AICTE's core infrastructure — it introduces an intelligence and clearance orchestration layer that automatically computes regulatory compliance and enforces multi-department clearances with zero manual follow-up."*
+> *"AICTE’s existing portal primarily serves as an application submission and document upload repository. However, the administrative intelligence still happens manually offline. Determining whether an institution meets Table 1.4 deposit requirements requires officers to manually check tables, calculate multipliers for leased land, and sum scattered FDRs. Similarly, release applications require coordinating clearances across PGRC, Vigilance, and Regional offices through emails or physical files. Saksham does not replace AICTE's core infrastructure — it introduces an intelligence and clearance orchestration layer that automatically computes regulatory compliance and enforces multi-department clearances with zero manual follow-up."*
 
 ### Question 2: "What makes your solution genuinely innovative compared to an ordinary CRUD web app?"
 **Winning Answer:**
-> *"An ordinary CRUD app simply stores data in tables: someone types ₹35 Lakh, and the database stores ₹35 Lakh. FDR Sentinel is fundamentally different in three ways:
+> *"An ordinary CRUD app simply stores data in tables: someone types ₹35 Lakh, and the database stores ₹35 Lakh. Saksham is fundamentally different in three ways:
 > First, **OCR Discrepancy Detection**: It parses uploaded bank certificates and highlights discrepancies between what was typed and what the bank certified.
 > Second, **USP 1 (APH Compliance Engine)**: It actively calculates whether the institution is compliant under versioned handbook formulas, accounting for multi-programme additions and premises lease conditions.
 > Third, **USP 2 (Decision Guard & Four-Eyes Principle)**: It implements a statutory state machine that mathematically prevents an Approval Bureau officer from issuing an NOC if a Vigilance inquiry is active or if Four-Eyes separation of duties is violated. That is active regulatory governance, not CRUD."*
@@ -316,13 +316,13 @@ This step-by-step walkthrough utilizes our actual implemented routes and test sc
 
 ### Question 5: "Does your system perform live verification with commercial banks? If not, isn't that a vulnerability?"
 **Winning Answer:**
-> *"Direct automated integration with commercial banks requires access to RBI’s Structured Financial Messaging System (SFMS) or dedicated institutional banking APIs, which are proprietary and restricted to production government credentials. We designed FDR Sentinel with **integration readiness**: our models capture bank branch IFSCs and transaction reference numbers, while our OCR engine verifies bank certificates against uploaded receipts. We explicitly distinguish between 'OCR Extracted', 'Officer Confirmed', and 'Bank Verified', ensuring that our prototype never makes false claims of automated bank clearance while providing the exact schema necessary for direct API plug-in upon AICTE deployment."*
+> *"Direct automated integration with commercial banks requires access to RBI’s Structured Financial Messaging System (SFMS) or dedicated institutional banking APIs, which are proprietary and restricted to production government credentials. We designed Saksham with **integration readiness**: our models capture bank branch IFSCs and transaction reference numbers, while our OCR engine verifies bank certificates against uploaded receipts. We explicitly distinguish between 'OCR Extracted', 'Officer Confirmed', and 'Bank Verified', ensuring that our prototype never makes false claims of automated bank clearance while providing the exact schema necessary for direct API plug-in upon AICTE deployment."*
 
 ---
 
 ## E. Final USP Comparison Matrix
 
-| Regulatory Dimension | Conventional Institutional Portal | FDR Sentinel Platform |
+| Regulatory Dimension | Conventional Institutional Portal | Saksham Platform |
 |---|---|---|
 | **Compliance Evaluation** | Manual spreadsheet cross-referencing against printed handbook. | **USP 1: APH Compliance Engine** automatically applies Table 1.4 rules, leased land multipliers, and computes exact shortfall. |
 | **Handling Lease Multipliers** | Frequently overlooked during manual review; prone to human error. | Automatically enforced: private-leased land/building condition doubles deposit obligation to 2.0×. |

@@ -13,7 +13,6 @@
 import { useState, type ReactNode } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
-  ShieldCheck,
   LogOut,
   LayoutGrid,
   Files,
@@ -86,28 +85,10 @@ export default function AppShell({ children }: AppShellProps) {
     user?.role === "SCRUTINY_OFFICER";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fbfaf8] text-slate-900 font-sans antialiased">
-      {/* ── 1. Topmost Dark Status Bar ──────────────────────────────── */}
-      <div className="bg-[#0b1324] text-slate-300 text-[11px] px-4 sm:px-8 py-1.5 flex items-center justify-between border-b border-slate-800/80 select-none">
-        <div className="flex items-center gap-2 text-slate-400">
-          <span>Fixed Deposit Receipt portal for technical institutions</span>
-        </div>
-        <div className="flex items-center gap-4 text-[11px]">
-          <span className="text-slate-400 hidden sm:inline">
-            Prototype with synthetic data
-          </span>
-          <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Service reachable</span>
-          </div>
-        </div>
-      </div>
-      {/* Subtle brand gradient line below dark bar */}
-      <div className="h-[2px] bg-gradient-to-r from-amber-600 via-sky-600 to-teal-500 w-full" />
-
-      {/* ── 2. Main Top Navbar ───────────────────────────────────────── */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div className="min-h-screen flex flex-col bg-[#f8f9fa] text-slate-900 font-sans antialiased">
+      {/* ── Main Top Navbar (Clean White matching IMAGE 3) ──────────── */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div className="w-full px-4 sm:px-6 lg:px-8 h-15 flex items-center justify-between">
           {/* Left: Mobile hamburger & Brand */}
           <div className="flex items-center gap-3">
             <button
@@ -123,12 +104,16 @@ export default function AppShell({ children }: AppShellProps) {
               onClick={() => navigate("/dashboard")}
               className="flex items-center gap-3 cursor-pointer group select-none"
             >
-              <div className="w-9 h-9 rounded-lg bg-[#0b192c] text-white flex items-center justify-center shadow-sm group-hover:bg-[#11223b] transition">
-                <ShieldCheck className="w-5 h-5 text-sky-400" />
+              <div className="w-8 h-8 rounded-lg bg-white overflow-hidden flex items-center justify-center border border-slate-200/90 shadow-xs group-hover:border-slate-300 transition p-0.5 shrink-0">
+                <img
+                  src="/assets/saksham-logo.png"
+                  alt="Saksham Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-bold text-slate-900 tracking-tight leading-tight">
-                  FDR Sentinel
+                  Saksham
                 </span>
                 <span className="text-[11px] text-slate-500 leading-tight">
                   Security Deposit Management
@@ -345,7 +330,16 @@ export default function AppShell({ children }: AppShellProps) {
             <div className="relative w-64 bg-white h-full p-6 shadow-2xl flex flex-col justify-between z-50">
               <div className="space-y-6">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                  <span className="text-sm font-bold text-slate-900">Navigation</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-md bg-white border border-slate-200 flex items-center justify-center p-0.5 overflow-hidden">
+                      <img
+                        src="/assets/saksham-logo.png"
+                        alt="Saksham Logo"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <span className="text-sm font-bold text-slate-900">Saksham</span>
+                  </div>
                   <button
                     onClick={() => setMobileMenuOpen(false)}
                     className="p-1 rounded-md text-slate-500 hover:bg-slate-100"
@@ -428,13 +422,13 @@ export default function AppShell({ children }: AppShellProps) {
 
         {/* ── Main Content Canvas ───────────────────────────────────── */}
         <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
-          <div className="w-full max-w-6xl mx-auto space-y-6">
+          <div className="w-full max-w-7xl mx-auto space-y-6">
             {children}
           </div>
 
           {/* Reference matched footer */}
-          <footer className="text-center text-[11px] text-slate-400 py-6 mt-12 border-t border-slate-200/80">
-            FDR Sentinel · SIH 2026 prototype (PS26265) · All records shown are synthetic demonstration data.
+          <footer className="text-center text-[11px] text-slate-400 py-6 mt-12 border-t border-slate-200">
+            Saksham · SIH 2026 prototype (PS26265) · All records shown are synthetic demonstration data.
           </footer>
         </main>
       </div>

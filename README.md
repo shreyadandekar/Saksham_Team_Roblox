@@ -1,7 +1,7 @@
-# FDR Sentinel
+# Saksham
 
 > **SIH 2026 – Problem Statement PS26265**
-> Streamline of Security Deposit / Fixed Deposit Receipt (FDR) Portal prototype.
+> **Security Deposit & FDR Management** — Intelligent Security Deposit Compliance & Clearance Management.
 
 ---
 

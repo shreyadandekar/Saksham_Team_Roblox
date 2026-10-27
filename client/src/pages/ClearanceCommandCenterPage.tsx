@@ -1,7 +1,7 @@
 /**
  * src/pages/ClearanceCommandCenterPage.tsx
  *
- * Dedicated Clearance Workflow Command Center for FDR Sentinel (SIH 2026 PS26265).
+ * Dedicated Clearance Workflow Command Center for Saksham (SIH 2026 PS26265).
  * Intelligent FDR Release & Multi-Department Clearance Workflow (AICTE APH 2024–2027 Section 6.46).
  */
 

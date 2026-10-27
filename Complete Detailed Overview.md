@@ -1,8 +1,10 @@
-# FDR Sentinel — Complete Updated Project Overview | SIH 2026
+# Saksham — Complete Updated Project Overview | SIH 2026
 
-> **Project Name:** FDR Sentinel  
+> **Project Name:** Saksham (formerly FDR Sentinel)  
 > **Problem Statement ID:** PS26265  
 > **Problem Statement Title:** Streamline of Security Deposit/FDR Portal  
+> **Product Description:** Security Deposit & FDR Management  
+> **Tagline:** Intelligent Security Deposit Compliance & Clearance Management  
 > **Target Organization:** AICTE (All India Council for Technical Education), Regulation Bureau  
 > **Theme:** Smart Automation | **Category:** Software  
 > **Repository Baseline:** React 19 + TypeScript + Vite + Tailwind CSS v4 (Client) | Node.js + Express + TypeScript + Prisma + PostgreSQL (Server)  
@@ -12,16 +14,16 @@
 
 ## 1. Executive Overview
 
-**FDR Sentinel** is a purpose-built, regulatory-aware web platform designed for AICTE’s Regulation Bureau and technical institutions across India. It modernises the end-to-end lifecycle of institutional security deposits submitted as Fixed Deposit Receipts (FDRs). 
+**Saksham** is a purpose-built, regulatory-aware web platform designed for AICTE’s Regulation Bureau and technical institutions across India. It modernises the end-to-end lifecycle of institutional security deposits submitted as Fixed Deposit Receipts (FDRs). 
 
-While conventional institutional portals act as passive document filing cabinets or basic database registries, FDR Sentinel incorporates active regulatory intelligence to automate oversight, enforce statutory compliance, and streamline administrative clearances.
+While conventional institutional portals act as passive document filing cabinets or basic database registries, Saksham incorporates active regulatory intelligence to automate oversight, enforce statutory compliance, and streamline administrative clearances.
 
 The platform is engineered around two core Unique Selling Propositions (USPs):
 1. **APH-Aware FDR Compliance Intelligence Engine (USP 1):** Automatically evaluates institutional security deposit obligations against versioned tables in the AICTE Approval Process Handbook (APH 2024–2027 Section 1.12, Table 1.4). It accounts for academic programmes, level (Diploma, UG, PG), and physical premises ownership (such as the 2.0× multiplier for private-leased land/buildings), calculating exact shortfalls or surpluses with clause-level explainability.
 2. **Intelligent FDR Release & Multi-Department Clearance Workflow (USP 2):** Digitises and coordinates the statutory release and refund process under APH Section 6.46. It enforces four-eyes separation of duties, tracks scrutiny reviews across four mandatory legal documents, orchestrates inter-departmental clearances (Public Grievance Redressal Cell [PGRC], Vigilance Bureau, Regional/Other Bureaus), and features an automated **Final Decision Guard** that blocks premature No Objection Certificate (NOC) issuance until every prerequisite is satisfied.
 
 ### Core Value Sentence
-> *"FDR Sentinel transforms static institutional deposit records into active, explainable regulatory compliance intelligence and coordinates multi-department release clearances with cryptographic auditability."*
+> *"Saksham transforms static institutional deposit records into active, explainable regulatory compliance intelligence and coordinates multi-department release clearances with cryptographic auditability."*
 
 ---
 
@@ -43,7 +45,7 @@ Under the AICTE Act, technical educational institutions seeking establishment, e
    When an institution applies to close a course, reduce intake, or mature a deposit, releasing the FDR requires multi-bureau concurrence. AICTE must verify that no faculty or student grievances are pending before the PGRC, no vigilance inquiries or court litigations are active, all mandatory affidavits are confirmed, and competent approval authorities concur. Without a unified clearance engine, release requests suffered prolonged correspondence delays and lacked explainability.
 
 > **Regulatory Context:**  
-> AICTE has previously introduced online portals for approval tracking and release applications. FDR Sentinel does not claim that AICTE has no digital presence; rather, it bridges the critical gap between basic record storage and **automated regulatory compliance, explainable blocker detection, and cryptographically verified inter-departmental clearances**.
+> AICTE has previously introduced online portals for approval tracking and release applications. Saksham does not claim that AICTE has no digital presence; rather, it bridges the critical gap between basic record storage and **automated regulatory compliance, explainable blocker detection, and cryptographically verified inter-departmental clearances**.
 
 ---
 
@@ -436,9 +438,9 @@ Auditor visits /audit → Verifies complete SHA-256 cryptographic chain → Conf
 
 ---
 
-## 14. Why FDR Sentinel Is Different
+## 14. Why Saksham Is Different
 
-| Feature Dimension | Conventional Institutional Portal | FDR Sentinel Platform |
+| Feature Dimension | Conventional Institutional Portal | Saksham Platform |
 |---|---|---|
 | **Data Storage** | Static database table with manual entry. | Dynamic registry with document-provenance tracking (`ENTERED`, `EXTRACTED`, `OVERRIDE`). |
 | **Document Verification** | Officer manually reads scanned PDFs. | Automated OCR text extraction, candidate matching, and automated discrepancy flagging. |
