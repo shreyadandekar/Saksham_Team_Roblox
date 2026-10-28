@@ -1,6 +1,6 @@
 /**
  * src/components/common/StatusBadge.tsx
- * Standardized status badge for FDR lifecycle states.
+ * Standardized status badge for FDR lifecycle states matching government portal styling.
  */
 
 import type { InstrumentStatus } from "../../types/instrument";
@@ -17,60 +17,60 @@ export default function StatusBadge({ status, className = "" }: StatusBadgeProps
   > = {
     DRAFT: {
       label: "Draft",
-      styles: "bg-slate-100 text-slate-700 border-slate-300",
-      dot: "bg-slate-400",
+      styles: "bg-[#F1F5F9] text-[#475569] border-[#CBD5E1]",
+      dot: "bg-[#64748B]",
     },
     SUBMITTED: {
       label: "Submitted",
-      styles: "bg-sky-50 text-sky-800 border-sky-300",
-      dot: "bg-sky-500",
+      styles: "bg-[#EFF6FF] text-[#1E40AF] border-[#BFDBFE]",
+      dot: "bg-[#2563EB]",
     },
     UNDER_SCRUTINY: {
       label: "Under Scrutiny",
-      styles: "bg-amber-50 text-amber-800 border-amber-300",
-      dot: "bg-amber-500",
+      styles: "bg-[#FEF3C7] text-[#92400E] border-[#FCD34D]",
+      dot: "bg-[#D97706]",
     },
     CORRECTION_REQUIRED: {
       label: "Correction Required",
-      styles: "bg-rose-50 text-rose-800 border-rose-300",
-      dot: "bg-rose-500",
+      styles: "bg-[#FEE2E2] text-[#991B1B] border-[#FCA5A5]",
+      dot: "bg-[#DC2626]",
     },
     ACTIVE: {
       label: "Active Deposit",
-      styles: "bg-emerald-50 text-emerald-800 border-emerald-300",
-      dot: "bg-emerald-500",
+      styles: "bg-[#DCFCE7] text-[#166534] border-[#86EFAC]",
+      dot: "bg-[#16A34A]",
     },
     REJECTED: {
       label: "Rejected",
-      styles: "bg-red-50 text-red-800 border-red-300",
-      dot: "bg-red-500",
+      styles: "bg-[#FEE2E2] text-[#991B1B] border-[#FCA5A5]",
+      dot: "bg-[#DC2626]",
     },
     MATURED: {
       label: "Matured",
-      styles: "bg-indigo-50 text-indigo-800 border-indigo-300",
-      dot: "bg-indigo-500",
+      styles: "bg-[#FEE2E2] text-[#991B1B] border-[#FCA5A5]",
+      dot: "bg-[#B91C1C]",
     },
     RELEASE_REQUESTED: {
       label: "Release Requested",
-      styles: "bg-purple-50 text-purple-800 border-purple-300",
-      dot: "bg-purple-500",
+      styles: "bg-[#FEF3C7] text-[#92400E] border-[#FCD34D]",
+      dot: "bg-[#D97706]",
     },
     RELEASED: {
-      label: "Released",
-      styles: "bg-zinc-100 text-zinc-700 border-zinc-300",
-      dot: "bg-zinc-400",
+      label: "Released / Discharged",
+      styles: "bg-[#DCFCE7] text-[#166534] border-[#86EFAC]",
+      dot: "bg-[#16A34A]",
     },
   };
 
   const config = configs[status] || {
-    label: status,
-    styles: "bg-slate-100 text-slate-700 border-slate-300",
-    dot: "bg-slate-400",
+    label: (status as string).replace(/_/g, " "),
+    styles: "bg-[#F1F5F9] text-[#475569] border-[#CBD5E1]",
+    dot: "bg-[#64748B]",
   };
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${config.styles} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${config.styles} ${className}`}
     >
       <span className={`h-1.5 w-1.5 rounded-full ${config.dot}`} aria-hidden="true" />
       {config.label}

@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>सक्षम | SAKSHAM — National Security Deposit &amp; Fixed Deposit Lifecycle Management System | AICTE &amp;
+        Ministry of Education, Govt. of India</title>
+    <meta
+        content="Official sovereign portal for Fixed Deposit Receipt (FDR) statutory compliance, tripartite lien registration, automated maturity monitoring, and e-NOC issuance under AICTE and Ministry of Education, Government of India."
+        name="description">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        govNavy: {
+                            900: "#0b1a30",
+                            850: "#112440",
+                            800: "#15284F",
+                            700: "#1c355e",
+                            600: "#244376",
+                            100: "#eaf0f9",
+                            50: "#f3f6fb"
+                        },
+                        govSlate: {
+                            700: "#334155",
+                            600: "#475569",
+                            500: "#64748b",
+                            200: "#e2e8f0",
+                            100: "#f1f5f9",
+                            50: "#f8fafc"
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes marqueeScroll {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .gov-ticker-track {
+            display: inline-flex;
+            animation: marqueeScroll 45s linear infinite;
+        }
+
+        .gov-ticker-track:hover {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+
+<body class="bg-[#f4f6f8] text-slate-900 font-sans antialiased text-sm">
+    <!-- ========================================================================= -->
+    <!-- 1. GIGW ACCESSIBILITY TOP STRIP & HEADER                                   -->
+    <!-- ========================================================================= -->
+    <header class="w-full bg-white border-b border-slate-300">
+        <!-- Tricolor bar -->
+        <div class="h-1 w-full flex">
+            <div class="h-full flex-1 bg-[#FF9933]"></div>
+            <div class="h-full flex-1 bg-white"></div>
+            <div class="h-full flex-1 bg-[#138808]"></div>
+        </div>
+        <!-- Accessibility and Official Authority Toolbar -->
+        <div class="bg-[#f0f2f5] border-b border-slate-200 px-4 sm:px-8 py-1 text-xs text-slate-700">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-[11px] sm:text-xs">
+                    <span class="font-bold text-slate-900">भारत सरकार</span>
+                    <span class="text-slate-400">|</span>
+                    <span class="font-medium text-slate-800">Government of India</span>
+                    <span class="text-slate-400">|</span>
+                    <span class="text-slate-600 hidden md:inline">शिक्षा मंत्रालय (Ministry of Education)</span>
+                </div>
+                <div class="flex items-center gap-3 text-[11px]">
+                    <a class="hover:underline text-slate-700" href="#main-content">मुख्य सामग्री पर जाएं (Skip to Main
+                        Content)</a>
+                    <span class="text-slate-300">|</span>
+                    <button class="hover:underline text-slate-700 flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-[13px]">visibility</span> स्क्रीन रीडर (Screen
+                        Reader)
+                    </button>
+                    <span class="text-slate-300">|</span>
+                    <div
+                        class="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded border border-slate-300 text-[10px] font-bold">
+                        <button class="px-1 hover:text-blue-900" title="Decrease font size">A-</button>
+                        <button class="px-1 hover:text-blue-900" title="Standard font size">A</button>
+                        <button class="px-1 hover:text-blue-900" title="Increase font size">A+</button>
+                    </div>
+                    <span class="text-slate-300">|</span>
+                    <button class="font-bold text-govNavy-800 hover:underline">English</button>
+                    <span class="text-slate-400">/</span>
+                    <button class="font-bold text-slate-700 hover:underline">हिन्दी</button>
+                </div>
+            </div>
+        </div>
+        <!-- Apex Government Masthead -->
+        <div class="px-4 sm:px-8 py-3 bg-white">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                <!-- Left: State Emblem + AICTE Details -->
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <img alt="State Emblem of India" class="h-16 w-auto object-contain shrink-0"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpl2CtKlSIgvAwrpmtaa4qEhfa1tGCJ-cqwODCDDk16a-Q4NsJpcYiN9eZPJnw6cHvvTXebVpnpWCQFMhhLxUKBVReaVfQMLb_6ACnGydAH1mhzQZyw0vBVdTTtukG7zEuLKMT2rpH5n8zYFcOtrqV5t_YSUVETXvRs8yW5jBMPvm23d1MLHTSjck7eVDKu13Ka40glzXSKZa0-QAnLSTOMQKjMy9MUCyDWW7SPaz3FNSjNVMmkGST5Q">
+                    <div class="h-12 w-px bg-slate-300 hidden sm:block"></div>
+                    <div class="flex flex-col">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-govNavy-800">शिक्षा मंत्रालय |
+                            Ministry of Education</span>
+                        <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">
+                            अखिल भारतीय तकनीकी शिक्षा परिषद
+                        </h1>
+                        <span class="text-xs sm:text-sm font-semibold text-slate-800">
+                            All India Council for Technical Education
+                        </span>
+                        <span class="text-[10px] text-slate-500 font-medium">A Statutory Body Under Government of
+                            India</span>
+                    </div>
+                </div>
+                <!-- Right: Saksham Identity & National Hotline -->
+                <div
+                    class="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto border-t md:border-t-0 pt-2 md:pt-0 border-slate-200">
+                    <div class="flex items-center gap-3">
+                        <img alt="Saksham Official Portal Logo" class="h-12 w-12 object-contain shrink-0"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjerUXwbFySWAyu7pz9i5Sr0D6eMsiRxEzKVs_DcjSCOMFWpeISdSrSZRVFNsYv9qjl7UizFIHKgD4f1PSDr4_20fkvCn99V5pL6m5Lh13VCGgpZuXTKHm4ysEYhc5GI6lEKMIbP4WmTg42oCmJ2iADMPf0odzpgRmwTkuRWFb9RWXloxc0ZnfTupPr2l0IZ6LpQFFYKfkdByPMsksWNF6Lk4LDHqijrFeQi_pGOzfHgjI2etj_fI18A">
+                        <div class="flex flex-col">
+                            <span class="text-base font-bold text-govNavy-800 leading-none">सक्षम | SAKSHAM</span>
+                            <span class="text-[11px] font-medium text-slate-700">Central Regulatory Deposit
+                                Ledger</span>
+                            <span class="text-[10px] text-slate-500 font-mono">FDR Lifecycle Portal • AICTE APH
+                                Compliant</span>
+                        </div>
+                    </div>
+                    <div class="hidden lg:flex flex-col items-end border-l border-slate-200 pl-5 text-right">
+                        <span class="text-[10px] uppercase font-bold text-slate-500">Helpline / टोल फ्री</span>
+                        <span class="text-sm font-bold text-govNavy-800 font-mono">1800-11-2026</span>
+                        <span class="text-[10px] text-slate-600">09:30 AM to 05:30 PM (Working Days)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Standard Government Navigation Bar (#15284F) -->
+        <nav class="bg-govNavy-800 text-white border-t border-govNavy-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between">
+                <ul class="flex items-center overflow-x-auto text-xs font-semibold whitespace-nowrap">
+                    <li class="">
+                        <a class="px-3.5 py-2.5 bg-govNavy-900 text-white flex items-center gap-1 border-b-2 border-amber-400"
+                            href="#">
+                            <span class="material-symbols-outlined text-[15px]">home</span> होम (Home)
+                        </a>
+                    </li>
+                    <li class="">
+                        <a class="px-3 py-2.5 text-slate-100 hover:bg-govNavy-700 border-r border-govNavy-700/60 transition-colors inline-block"
+                            href="#search-section">
+                            Search Instruments
+                        </a>
+                    </li>
+                    <li class="">
+                        <a class="px-3 py-2.5 text-slate-100 hover:bg-govNavy-700 border-r border-govNavy-700/60 transition-colors inline-block"
+                            href="#statistics-section">
+                            National Census
+                        </a>
+                    </li>
+                    <li class="">
+                        <a class="px-3 py-2.5 text-slate-100 hover:bg-govNavy-700 border-r border-govNavy-700/60 transition-colors inline-block"
+                            href="#services-section">
+                            Portal Modules
+                        </a>
+                    </li>
+                    <li class="">
+                        <a class="px-3 py-2.5 text-slate-100 hover:bg-govNavy-700 border-r border-govNavy-700/60 transition-colors inline-block"
+                            href="#sop-section">
+                            Standard Procedure (SOP)
+                        </a>
+                    </li>
+                    <li class="">
+                        <a class="px-3 py-2.5 text-slate-100 hover:bg-govNavy-700 border-r border-govNavy-700/60 transition-colors inline-block"
+                            href="#circulars-section">
+                            Circulars &amp; Gazette
+                        </a>
+                    </li>
+                    <li class="">
+                        <a class="px-3 py-2.5 text-slate-100 hover:bg-govNavy-700 transition-colors inline-block"
+                            href="#login-section">
+                            Authorized Logins
+                        </a>
+                    </li>
+                </ul>
+                <div class="hidden sm:block py-1.5 shrink-0">
+                    <a class="inline-flex items-center gap-1 px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded border border-amber-600 transition-colors"
+                        href="#login-section">
+                        <span class="material-symbols-outlined text-[15px]">lock</span> Official Login
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <!-- Official Notice Ticker (Subdued Beige/Slate Strip) -->
+        <div class="bg-[#fbf7ed] border-y border-[#e2d5bc] text-slate-800 text-xs py-1.5 px-4 sm:px-8">
+            <div class="max-w-7xl mx-auto flex items-center gap-3">
+                <span
+                    class="shrink-0 font-bold text-red-700 flex items-center gap-1 text-[11px] uppercase tracking-wide bg-red-100 px-2 py-0.5 rounded border border-red-200">
+                    <span class="material-symbols-outlined text-[14px]">campaign</span> सूचना / Notice:
+                </span>
+                <div class="overflow-hidden whitespace-nowrap w-full">
+                    <div class="gov-ticker-track text-[11.5px] text-slate-800 font-medium">
+                        <span class="mx-3"><strong>AICTE Gazette Mandate 2026/APH-03:</strong> Mandatory registration of
+                            tripartite FDR lien and IFSC branch validation for upcoming approval cycle.</span>
+                        <span class="text-slate-400">•</span>
+                        <span class="mx-3"><strong>Circular No. AICTE/FD/REV-26:</strong> Automated T-90 maturity alerts
+                            activated across 34 scheduled commercial banks. Untracked instruments subject to regulatory
+                            review.</span>
+                        <span class="text-slate-400">•</span>
+                        <span class="mx-3"><strong>PFMS Integration Notice:</strong> Electronic No-Objection
+                            Certificates (e-NOC) now digitally signed under sovereign public key infrastructure.</span>
+                        <span class="text-slate-400">•</span>
+                        <span class="mx-3"><strong>AICTE Gazette Mandate 2026/APH-03:</strong> Mandatory registration of
+                            tripartite FDR lien and IFSC branch validation for upcoming approval cycle.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main id="main-content">
+        <!-- ========================================================================= -->
+        <!-- 2. TRADITIONAL GOVERNMENT HERO & SEARCH BANNER                             -->
+        <!-- ========================================================================= -->
+        <section class="bg-white border-b border-slate-300 py-8 px-4 sm:px-8" id="search-section">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Left Column: Formal Overview & Public Search -->
+                <div class="lg:col-span-7 flex flex-col gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-govNavy-800 uppercase tracking-wide block mb-1">
+                            Official Regulatory Registry • Approval Process Handbook (APH)
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
+                            Central Repository for Fixed Deposit Receipts &amp; Security Deposits
+                        </h2>
+                        <p class="text-slate-700 text-xs sm:text-sm mt-2 leading-relaxed">
+                            SAKSHAM is the official statutory portal of the All India Council for Technical Education
+                            (AICTE), Ministry of Education, Government of India, establishing a centralized registry to
+                            monitor tripartite FDR liens, term tenures, periodic interest accruals, bank guarantees, and
+                            statutory e-NOC discharges across scheduled commercial banks.
+                        </p>
+                    </div>
+                    <!-- Government Form Search Box -->
+                    <div class="bg-[#f8fafc] border border-slate-300 rounded p-4 shadow-sm">
+                        <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-200">
+                            <h3 class="text-xs sm:text-sm font-bold text-govNavy-800 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">search</span>
+                                Public Verification: Search Statutory Instrument / Institute
+                            </h3>
+                            <span class="text-[10px] font-semibold text-slate-500 uppercase">GIGW Rule 4.2
+                                Compliant</span>
+                        </div>
+                        <form class="space-y-3" onsubmit="event.preventDefault(); openLookupModal();">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-800 mb-1" for="fdr-input">
+                                    Enter FDR Registration Number / Institution Permanent ID (PID) <span
+                                        class="text-red-600">*</span>
+                                </label>
+                                <div class="flex flex-col sm:flex-row gap-2">
+                                    <input
+                                        class="flex-1 px-3 py-2 text-xs border border-slate-300 rounded bg-white text-slate-900 font-mono focus:border-govNavy-800 focus:ring-1 focus:ring-govNavy-800"
+                                        id="fdr-input" placeholder="e.g., FDR/2026/DEL/7821-A or PID: 1-4928172"
+                                        required="" type="text" value="FDR/2026/DEL/7821-A">
+                                    <button
+                                        class="px-4 py-2 bg-govNavy-800 hover:bg-govNavy-900 text-white font-bold text-xs rounded transition-colors flex items-center justify-center gap-1.5 shrink-0"
+                                        type="submit">
+                                        <span class="material-symbols-outlined text-[16px]">verified</span>
+                                        सत्यापित करें (Verify)
+                                    </button>
+                                </div>
+                                <p class="text-[11px] text-slate-500 mt-1">
+                                    Enter instrument reference as issued on the tripartite endorsement letter or Council
+                                    approval dossier.
+                                </p>
+                            </div>
+                        </form>
+                        <!-- Standard Government Verified Result Row -->
+                        <div
+                            class="mt-3 pt-3 border-t border-slate-200 bg-white p-3 rounded border border-slate-200 text-xs">
+                            <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
+                                <div class="font-bold text-slate-900 flex items-center gap-1">
+                                    <span
+                                        class="material-symbols-outlined text-green-700 text-[16px]">check_circle</span>
+                                    Instrument: FDR/2026/DEL/7821-A
+                                </div>
+                                <span
+                                    class="px-2 py-0.5 bg-green-100 text-green-900 border border-green-300 font-semibold text-[10px] rounded">
+                                    STATUS: ACTIVE LIEN PLEDGED
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11.5px] text-slate-600">
+                                <div>
+                                    <span class="block text-[10px] text-slate-500 font-medium">Principal Amount</span>
+                                    <span class="font-bold text-slate-900 font-mono">₹35,00,000.00</span>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] text-slate-500 font-medium">Scheduled Bank</span>
+                                    <span class="font-semibold text-slate-900">SBI (IFSC: SBIN0000691)</span>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] text-slate-500 font-medium">Lien Beneficiary</span>
+                                    <span class="font-semibold text-slate-900">Member Secy, AICTE</span>
+                                </div>
+                                <div>
+                                    <span class="block text-[10px] text-slate-500 font-medium">Maturity Date</span>
+                                    <span class="font-mono text-slate-900">14-DEC-2029</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 pt-2 border-t border-slate-100 text-right">
+                                <button class="text-govNavy-800 hover:underline font-bold text-[11px]"
+                                    onclick="openLookupModal()">
+                                    पूर्ण विवरण देखें (View Complete Certificate Dossier) →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quick Access Buttons -->
+                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                        <a class="px-3.5 py-2 bg-govNavy-800 hover:bg-govNavy-900 text-white rounded text-xs font-bold flex items-center gap-1.5 transition-colors"
+                            href="#login-section">
+                            <span class="material-symbols-outlined text-[16px]">login</span> Institutional &amp; Officer
+                            Portal Login
+                        </a>
+                        <a class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded text-xs font-bold flex items-center gap-1.5 transition-colors"
+                            href="#circulars-section">
+                            <span class="material-symbols-outlined text-[16px]">file_download</span> Download APH
+                            Guidelines 2026-27
+                        </a>
+                    </div>
+                </div>
+                <!-- Right Column: Statutory Advisory & Official Notice Board -->
+                <div class="lg:col-span-5 flex flex-col gap-4">
+                    <!-- Notice Board Panel -->
+                    <div class="bg-white border border-slate-300 rounded shadow-sm">
+                        <div class="bg-govNavy-800 text-white px-4 py-2 flex items-center justify-between rounded-t">
+                            <h3 class="font-bold text-xs sm:text-sm flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[16px] text-amber-300">notifications</span>
+                                महत्वपूर्ण सूचनाएं (Important Announcements)
+                            </h3>
+                            <span class="text-[10px] text-slate-200">Council Desk</span>
+                        </div>
+                        <div class="p-4 space-y-3 divide-y divide-slate-200 text-xs">
+                            <div class="pt-2 first:pt-0">
+                                <span class="text-[10px] font-bold text-govNavy-800 uppercase block">12 MARCH
+                                    2026</span>
+                                <a class="text-slate-900 font-semibold hover:text-govNavy-800 hover:underline leading-snug block"
+                                    href="#circulars-section">
+                                    Tripartite Lien Format Annexure-VI mandatory for all technical institutions seeking
+                                    Extension of Approval (EoA).
+                                </a>
+                                <span class="text-[11px] text-slate-500">Ref: F.No. AICTE/AB/APH/2026-27</span>
+                            </div>
+                            <div class="pt-2">
+                                <span class="text-[10px] font-bold text-govNavy-800 uppercase block">28 FEBRUARY
+                                    2026</span>
+                                <a class="text-slate-900 font-semibold hover:text-govNavy-800 hover:underline leading-snug block"
+                                    href="#circulars-section">
+                                    Scheduled commercial banks notified regarding automated T-90 maturity intimation
+                                    workflow.
+                                </a>
+                                <span class="text-[11px] text-slate-500">Ref: AICTE/Finance/FDR-Mon/2026</span>
+                            </div>
+                            <div class="pt-2">
+                                <span class="text-[10px] font-bold text-govNavy-800 uppercase block">15 JANUARY
+                                    2026</span>
+                                <a class="text-slate-900 font-semibold hover:text-govNavy-800 hover:underline leading-snug block"
+                                    href="#circulars-section">
+                                    Standard Operating Procedure (SOP) released for e-NOC issuance on completion of
+                                    mandated lock-in period.
+                                </a>
+                                <span class="text-[11px] text-slate-500">Ref: Adv-I/Approval/eNOC-SOP</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 px-4 py-2 border-t border-slate-200 text-right">
+                            <a class="text-xs font-bold text-govNavy-800 hover:underline" href="#circulars-section">सभी
+                                परिपत्र देखें (View All Circulars) →</a>
+                        </div>
+                    </div>
+                    <!-- Official Statutory Warning Box -->
+                    <div
+                        class="bg-[#fff9e6] border border-[#e6d08a] rounded p-3 text-xs text-slate-800 flex items-start gap-2.5">
+                        <span class="material-symbols-outlined text-amber-700 text-[20px] shrink-0">gavel</span>
+                        <div class="">
+                            <strong class="font-bold text-slate-900 block">वैधानिक निर्देश / Statutory Notice:</strong>
+                            Fixed Deposit Receipts (FDRs) pledged in favour of AICTE are sovereign regulatory security
+                            instruments. Premature withdrawal, encashment, or alteration of tripartite lien without
+                            prior written clearance from the Competent Authority is an offence under Section 10(k) of
+                            the AICTE Act, 1987.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ========================================================================= -->
+        <!-- 3. KEY FACTS / STATISTICS (Plain Government Counter Boxes)                -->
+        <!-- ========================================================================= -->
+        <section class="bg-[#f0f2f5] border-b border-slate-300 py-8 px-4 sm:px-8" id="statistics-section">
+            <div class="max-w-7xl mx-auto">
+                <div
+                    class="border-b border-slate-300 pb-3 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <span class="text-xs font-bold text-govNavy-800 uppercase tracking-wide">National Registry
+                            Telemetry</span>
+                        <h3 class="text-lg font-bold text-slate-900">National Deposit Repository: Current Audit Cycle
+                            Statistics</h3>
+                    </div>
+                    <span class="text-xs text-slate-600 font-medium">As on: 12-March-2026 • Verified via NIC Node</span>
+                </div>
+                <!-- Clean 4-box standard government metric grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white border border-slate-300 rounded p-4">
+                        <div class="text-xs font-semibold text-slate-600 uppercase mb-1">Total Active Deposits In Escrow
+                        </div>
+                        <div class="text-2xl font-bold font-mono text-govNavy-800">₹482.50 Cr</div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600 flex justify-between">
+                            <span class="">Pledged Instruments:</span>
+                            <span class="font-bold text-slate-900">14,812 Deeds</span>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-300 rounded p-4">
+                        <div class="text-xs font-semibold text-slate-600 uppercase mb-1">Empanelled Scheduled Banks
+                        </div>
+                        <div class="text-2xl font-bold font-mono text-govNavy-800">34 Banks</div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600 flex justify-between">
+                            <span class="">Classification:</span>
+                            <span class="font-bold text-slate-900">Public &amp; Pvt. Scheduled</span>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-300 rounded p-4">
+                        <div class="text-xs font-semibold text-slate-600 uppercase mb-1">Statutory Scrutiny Compliance
+                        </div>
+                        <div class="text-2xl font-bold font-mono text-green-700">99.4%</div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600 flex justify-between">
+                            <span class="">Regulatory Benchmark:</span>
+                            <span class="font-bold text-slate-900">Section 3.4 APH</span>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-300 rounded p-4">
+                        <div class="text-xs font-semibold text-slate-600 uppercase mb-1">Average Turnaround Time (TAT)
+                        </div>
+                        <div class="text-2xl font-bold font-mono text-govNavy-800">&lt; 48 Working Hrs</div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-600 flex justify-between">
+                            <span class="">Prescribed SLA:</span>
+                            <span class="font-bold text-slate-900">72 Working Hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ========================================================================= -->
+        <!-- 4. CORE SERVICES / MODULES (Government Tabular / Boxed Grid)              -->
+        <!-- ========================================================================= -->
+        <section class="bg-white border-b border-slate-300 py-8 px-4 sm:px-8" id="services-section">
+            <div class="max-w-7xl mx-auto">
+                <div class="border-b border-slate-300 pb-3 mb-6">
+                    <span class="text-xs font-bold text-govNavy-800 uppercase tracking-wide">Key Statutory
+                        Capabilities</span>
+                    <h3 class="text-lg font-bold text-slate-900">Core Services &amp; System Functional Modules</h3>
+                    <p class="text-xs text-slate-600 mt-1">Operational modules governed by AICTE Approval Bureau and
+                        Ministry of Education oversight standards.</p>
+                </div>
+                <!-- Standard Government Service Boxes -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="border border-slate-300 rounded p-4 bg-slate-50 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-govNavy-800 mb-1 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">account_balance</span>
+                                1. Central Deposit Registry
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed mt-2">
+                                National ledger cataloging FDR instruments across scheduled commercial banks with
+                                automated principal, tenure, and branch verification records.
+                            </p>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] font-semibold text-slate-600">
+                            Mandate: APH Section 3.2
+                        </div>
+                    </div>
+                    <div class="border border-slate-300 rounded p-4 bg-slate-50 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-govNavy-800 mb-1 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">domain_verification</span>
+                                2. Tripartite Lien Endorsement
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed mt-2">
+                                Branch IFSC authentication with the Reserve Bank of India directory to validate
+                                tripartite pledge terms and authorized bank signatory declarations.
+                            </p>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] font-semibold text-slate-600">
+                            Directory: RBI Empanelled
+                        </div>
+                    </div>
+                    <div class="border border-slate-300 rounded p-4 bg-slate-50 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-govNavy-800 mb-1 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">document_scanner</span>
+                                3. Scrutiny &amp; Document Audit
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed mt-2">
+                                Council desk examination of FDR physical receipts, seal authenticity, term tenures, and
+                                systematic deficiency notices for shortfall rectifications.
+                            </p>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] font-semibold text-slate-600">
+                            Desk TAT: 24-48 Hours
+                        </div>
+                    </div>
+                    <div class="border border-slate-300 rounded p-4 bg-slate-50 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-govNavy-800 mb-1 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">alarm</span>
+                                4. Maturity Monitoring (T-90)
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed mt-2">
+                                Automated institutional notifications at 90, 60, and 30-day intervals prior to FDR
+                                expiration to ensure mandatory rollover without regulatory lapse.
+                            </p>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] font-semibold text-slate-600">
+                            Escalation: T-90 / T-60 / T-30
+                        </div>
+                    </div>
+                    <div class="border border-slate-300 rounded p-4 bg-slate-50 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-govNavy-800 mb-1 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">verified_user</span>
+                                5. Multi-Desk Clearances
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed mt-2">
+                                Sequential signoffs connecting Finance Bureau, Legal Cell, and Competent Authority with
+                                Aadhaar / e-Sign authenticated clearances.
+                            </p>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] font-semibold text-slate-600">
+                            Tiers: Finance • Legal • CA
+                        </div>
+                    </div>
+                    <div class="border border-slate-300 rounded p-4 bg-slate-50 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-govNavy-800 mb-1 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">lock_open</span>
+                                6. Lien Revocation &amp; e-NOC
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed mt-2">
+                                Release of No-Objection Certificate (e-NOC) upon completion of statutory tenure with
+                                encrypted QR authentication for bank dispatch.
+                            </p>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] font-semibold text-slate-600">
+                            Verification: QR-Code Sealed
+                        </div>
+                    </div>
+                    <div class="border border-slate-300 rounded p-4 bg-slate-50 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-govNavy-800 mb-1 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+                                7. Cumulative Interest Audits
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed mt-2">
+                                Periodic verification of compounded interest accrued on the fixed deposit as stipulated
+                                under the original AICTE sanction memorandum.
+                            </p>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] font-semibold text-slate-600">
+                            Integration: PFMS Portal
+                        </div>
+                    </div>
+                    <div class="border border-slate-300 rounded p-4 bg-slate-50 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-govNavy-800 mb-1 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">history_edu</span>
+                                8. Immutable Audit Trail
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed mt-2">
+                                Time-stamped transaction logs compliant with Right to Information (RTI Act 2005) and
+                                Central Vigilance Commission (CVC) inspection norms.
+                            </p>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] font-semibold text-slate-600">
+                            Audit: CVC / RTI Ready
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ========================================================================= -->
+        <!-- 5. STANDARD OPERATING PROCEDURE (SOP) STEPPER                             -->
+        <!-- ========================================================================= -->
+        <section class="bg-[#f0f2f5] border-b border-slate-300 py-8 px-4 sm:px-8" id="sop-section">
+            <div class="max-w-7xl mx-auto">
+                <div class="border-b border-slate-300 pb-3 mb-6">
+                    <span class="text-xs font-bold text-govNavy-800 uppercase tracking-wide">Procedural
+                        Guidelines</span>
+                    <h3 class="text-lg font-bold text-slate-900">Standard Operating Procedure (SOP) for FDR Lifecycle
+                        Management</h3>
+                    <p class="text-xs text-slate-600 mt-1">Six-stage regulatory compliance workflow as mandated in AICTE
+                        Approval Process Handbook (APH 2026-27).</p>
+                </div>
+                <!-- Formal Process Stepper Table / Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800">चरण / STEP 1</span>
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">Stage
+                                    1</span>
+                            </div>
+                            <div class="font-bold text-slate-900 mb-1">Intake &amp; Submission</div>
+                            <p class="text-slate-600 text-[11px] leading-relaxed">
+                                Institute registers tripartite FDR receipt, IFSC code, and tenure certificate on portal.
+                            </p>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-[10px] text-govNavy-800 font-semibold">
+                            Action: Institution Nodal
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800">चरण / STEP 2</span>
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">Stage
+                                    2</span>
+                            </div>
+                            <div class="font-bold text-slate-900 mb-1">Bank Branch Audit</div>
+                            <p class="text-slate-600 text-[11px] leading-relaxed">
+                                Verification against scheduled bank directory for branch authority and lien
+                                confirmation.
+                            </p>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-[10px] text-govNavy-800 font-semibold">
+                            Action: Bank / System
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800">चरण / STEP 3</span>
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">Stage
+                                    3</span>
+                            </div>
+                            <div class="font-bold text-slate-900 mb-1">Scrutiny Desk Vetting</div>
+                            <p class="text-slate-600 text-[11px] leading-relaxed">
+                                AICTE scrutiny officer inspects document clauses, margin marks, and marks deficiencies
+                                if any.
+                            </p>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-[10px] text-govNavy-800 font-semibold">
+                            Action: Scrutiny Officer
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800">चरण / STEP 4</span>
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">Stage
+                                    4</span>
+                            </div>
+                            <div class="font-bold text-slate-900 mb-1">Finance &amp; Legal Sanction</div>
+                            <p class="text-slate-600 text-[11px] leading-relaxed">
+                                Formal clearance from AICTE Finance Division and Legal Cell endorsing tripartite
+                                compliance.
+                            </p>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-[10px] text-govNavy-800 font-semibold">
+                            Action: Internal Bureau
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800">चरण / STEP 5</span>
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">Stage
+                                    5</span>
+                            </div>
+                            <div class="font-bold text-slate-900 mb-1">Active Escrow &amp; Monitoring</div>
+                            <p class="text-slate-600 text-[11px] leading-relaxed">
+                                Deposit held under active lien. Automated notices sent at T-90, T-60, and T-30 days
+                                before maturity.
+                            </p>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-[10px] text-govNavy-800 font-semibold">
+                            Action: Monitoring Engine
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800">चरण / STEP 6</span>
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-mono">Stage
+                                    6</span>
+                            </div>
+                            <div class="font-bold text-slate-900 mb-1">e-NOC / Lien Discharge</div>
+                            <p class="text-slate-600 text-[11px] leading-relaxed">
+                                Upon successful fulfillment of term, digitally signed electronic NOC generated for the
+                                bank.
+                            </p>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 text-[10px] text-green-700 font-semibold">
+                            Action: Competent Authority
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ========================================================================= -->
+        <!-- 6. SIDE-BY-SIDE: RECENT CIRCULARS & PUBLIC INSTRUMENT LEDGER TABLE        -->
+        <!-- ========================================================================= -->
+        <section class="bg-white border-b border-slate-300 py-8 px-4 sm:px-8" id="circulars-section">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left 8 Cols: Public Instrument Search Ledger -->
+                <div class="lg:col-span-8 flex flex-col">
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-3 border-b border-slate-300 gap-2">
+                        <div>
+                            <span class="text-xs font-bold text-govNavy-800 uppercase tracking-wide">Registry
+                                Records</span>
+                            <h3 class="text-base font-bold text-slate-900">Current Statutory Security Deposit Ledger
+                            </h3>
+                        </div>
+                        <!-- Simple Government Filter Buttons -->
+                        <div class="flex items-center gap-1.5">
+                            <button class="px-2.5 py-1 bg-govNavy-800 text-white rounded text-xs font-semibold"
+                                id="filter-all" onclick="filterTable('all')">
+                                All Records
+                            </button>
+                            <button
+                                class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded text-xs font-semibold"
+                                id="filter-active" onclick="filterTable('active')">
+                                Active Lien
+                            </button>
+                            <button
+                                class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded text-xs font-semibold"
+                                id="filter-maturity" onclick="filterTable('maturity')">
+                                Maturity (T-60)
+                            </button>
+                            <button
+                                class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded text-xs font-semibold"
+                                id="filter-legal" onclick="filterTable('legal')">
+                                Scrutiny
+                            </button>
+                        </div>
+                    </div>
+                    <div class="border border-slate-300 rounded overflow-x-auto bg-white">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr
+                                    class="bg-[#f0f2f5] border-b border-slate-300 text-[11px] font-bold text-slate-800 uppercase">
+                                    <th class="py-2.5 px-3 border-r border-slate-200">Instrument ID</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200">Institution &amp; Region</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200">Bank &amp; IFSC</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200 text-right">Principal</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200">Maturity</th>
+                                    <th class="py-2.5 px-3 border-r border-slate-200">Status</th>
+                                    <th class="py-2.5 px-3 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200" id="table-body">
+                                <!-- Row 1 -->
+                                <tr class="hover:bg-slate-50" data-status="active">
+                                    <td
+                                        class="py-2.5 px-3 font-mono font-bold text-govNavy-800 border-r border-slate-200">
+                                        FDR-2024-DEL-8901
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <div class="font-bold text-slate-900">Delhi Institute of Technology</div>
+                                        <div class="text-[10px] text-slate-500 font-mono">Northern Region • PID:
+                                            1-4928172</div>
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <div class="">State Bank of India</div>
+                                        <div class="text-[10px] text-slate-500 font-mono">SBIN0004019</div>
+                                    </td>
+                                    <td
+                                        class="py-2.5 px-3 text-right font-mono font-bold text-slate-900 border-r border-slate-200">
+                                        ₹10,00,000.00
+                                    </td>
+                                    <td class="py-2.5 px-3 font-mono text-slate-700 border-r border-slate-200">
+                                        15-AUG-2029
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <span
+                                            class="inline-block px-1.5 py-0.5 bg-green-50 text-green-800 border border-green-300 text-[10px] font-bold rounded">
+                                            Active • Verified
+                                        </span>
+                                    </td>
+                                    <td class="py-2.5 px-3 text-center">
+                                        <button
+                                            class="px-2 py-0.5 bg-white hover:bg-slate-100 text-govNavy-800 border border-slate-300 font-semibold rounded text-[11px]"
+                                            onclick="openLookupModal('FDR-2024-DEL-8901')">
+                                            View
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Row 2 -->
+                                <tr class="hover:bg-slate-50" data-status="maturity">
+                                    <td
+                                        class="py-2.5 px-3 font-mono font-bold text-govNavy-800 border-r border-slate-200">
+                                        FDR-2023-BOM-1422
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <div class="font-bold text-slate-900">Maharashtra State Poly. College</div>
+                                        <div class="text-[10px] text-slate-500 font-mono">Western Region • PID:
+                                            1-3810291</div>
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <div class="">Bank of Baroda</div>
+                                        <div class="text-[10px] text-slate-500 font-mono">BARB0NARIMA</div>
+                                    </td>
+                                    <td
+                                        class="py-2.5 px-3 text-right font-mono font-bold text-slate-900 border-r border-slate-200">
+                                        ₹15,00,000.00
+                                    </td>
+                                    <td class="py-2.5 px-3 font-mono text-slate-700 border-r border-slate-200">
+                                        22-APR-2026
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <span
+                                            class="inline-block px-1.5 py-0.5 bg-amber-50 text-amber-900 border border-amber-300 text-[10px] font-bold rounded">
+                                            Maturity Alert (T-60)
+                                        </span>
+                                    </td>
+                                    <td class="py-2.5 px-3 text-center">
+                                        <button
+                                            class="px-2 py-0.5 bg-white hover:bg-slate-100 text-amber-900 border border-slate-300 font-semibold rounded text-[11px]"
+                                            onclick="openLookupModal('FDR-2023-BOM-1422')">
+                                            Notice
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Row 3 -->
+                                <tr class="hover:bg-slate-50" data-status="legal">
+                                    <td
+                                        class="py-2.5 px-3 font-mono font-bold text-govNavy-800 border-r border-slate-200">
+                                        FDR-2025-BLR-6641
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <div class="font-bold text-slate-900">Karnataka Adv. Science Institute</div>
+                                        <div class="text-[10px] text-slate-500 font-mono">Southern Region • PID:
+                                            1-8921102</div>
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <div class="">Canara Bank</div>
+                                        <div class="text-[10px] text-slate-500 font-mono">CNRB0000109</div>
+                                    </td>
+                                    <td
+                                        class="py-2.5 px-3 text-right font-mono font-bold text-slate-900 border-r border-slate-200">
+                                        ₹25,00,000.00
+                                    </td>
+                                    <td class="py-2.5 px-3 font-mono text-slate-700 border-r border-slate-200">
+                                        30-NOV-2030
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <span
+                                            class="inline-block px-1.5 py-0.5 bg-blue-50 text-blue-900 border border-blue-300 text-[10px] font-bold rounded">
+                                            Legal Cell Review
+                                        </span>
+                                    </td>
+                                    <td class="py-2.5 px-3 text-center">
+                                        <button
+                                            class="px-2 py-0.5 bg-white hover:bg-slate-100 text-govNavy-800 border border-slate-300 font-semibold rounded text-[11px]"
+                                            onclick="openLookupModal('FDR-2025-BLR-6641')">
+                                            Scrutinize
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Row 4 -->
+                                <tr class="hover:bg-slate-50" data-status="active">
+                                    <td
+                                        class="py-2.5 px-3 font-mono font-bold text-govNavy-800 border-r border-slate-200">
+                                        FDR-2022-KOL-3319
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <div class="font-bold text-slate-900">Bengal College of Pharma Sciences</div>
+                                        <div class="text-[10px] text-slate-500 font-mono">Eastern Region • PID:
+                                            1-5510298</div>
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <div class="">Punjab National Bank</div>
+                                        <div class="text-[10px] text-slate-500 font-mono">PUNB0019200</div>
+                                    </td>
+                                    <td
+                                        class="py-2.5 px-3 text-right font-mono font-bold text-slate-900 border-r border-slate-200">
+                                        ₹8,00,000.00
+                                    </td>
+                                    <td class="py-2.5 px-3 font-mono text-slate-700 border-r border-slate-200">
+                                        10-MAR-2026
+                                    </td>
+                                    <td class="py-2.5 px-3 border-r border-slate-200">
+                                        <span
+                                            class="inline-block px-1.5 py-0.5 bg-red-50 text-red-800 border border-red-300 text-[10px] font-bold rounded">
+                                            Shortfall Issued
+                                        </span>
+                                    </td>
+                                    <td class="py-2.5 px-3 text-center">
+                                        <button
+                                            class="px-2 py-0.5 bg-white hover:bg-slate-100 text-red-900 border border-slate-300 font-semibold rounded text-[11px]"
+                                            onclick="openLookupModal('FDR-2022-KOL-3319')">
+                                            Notice
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-2 text-[11px] text-slate-500 flex justify-between items-center">
+                        <span class="">Showing verified records from National Security Deposit Index.</span>
+                        <span class="font-mono">Central Database Node: AICTE-NDL-01</span>
+                    </div>
+                </div>
+                <!-- Right 4 Cols: Circulars & Gazette Notifications Downloads -->
+                <div class="lg:col-span-4 flex flex-col gap-4">
+                    <div class="border border-slate-300 rounded bg-[#f8fafc]">
+                        <div class="bg-govNavy-800 text-white px-3.5 py-2 rounded-t flex items-center justify-between">
+                            <h4 class="font-bold text-xs flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[16px]">description</span>
+                                राजपत्र एवं परिपत्र (Gazette &amp; Circulars)
+                            </h4>
+                            <span class="text-[10px] text-slate-200">Official Directives</span>
+                        </div>
+                        <div class="p-3 divide-y divide-slate-200 text-xs">
+                            <div class="pb-2.5">
+                                <span class="text-[10px] font-bold text-slate-500 block">NOTIFICATION • 04 MAR
+                                    2026</span>
+                                <div class="font-bold text-slate-900 mt-0.5">Approval Process Handbook (APH 2026-27)
+                                </div>
+                                <p class="text-[11px] text-slate-600 mt-0.5">Chapter III: Fixed Deposit Receipt Norms
+                                    &amp; Lien Clauses.</p>
+                                <a class="mt-1.5 inline-flex items-center gap-1 text-[11px] font-bold text-govNavy-800 hover:underline"
+                                    href="#">
+                                    <span class="material-symbols-outlined text-[14px]">picture_as_pdf</span> Download
+                                    Gazette (4.2 MB)
+                                </a>
+                            </div>
+                            <div class="py-2.5">
+                                <span class="text-[10px] font-bold text-slate-500 block">CIRCULAR • 19 FEB 2026</span>
+                                <div class="font-bold text-slate-900 mt-0.5">Tripartite Agreement Standard Form
+                                    (Annexure VI)</div>
+                                <p class="text-[11px] text-slate-600 mt-0.5">Mandatory format for AICTE, Institution
+                                    &amp; Scheduled Bank.</p>
+                                <a class="mt-1.5 inline-flex items-center gap-1 text-[11px] font-bold text-govNavy-800 hover:underline"
+                                    href="#">
+                                    <span class="material-symbols-outlined text-[14px]">picture_as_pdf</span> Download
+                                    Format (480 KB)
+                                </a>
+                            </div>
+                            <div class="py-2.5">
+                                <span class="text-[10px] font-bold text-slate-500 block">OFFICE MEMO • 09 JAN
+                                    2026</span>
+                                <div class="font-bold text-slate-900 mt-0.5">e-NOC Protocol on Completion of Mandated
+                                    Lock-in</div>
+                                <p class="text-[11px] text-slate-600 mt-0.5">Guidelines for refund/lien revocation for
+                                    closing institutions.</p>
+                                <a class="mt-1.5 inline-flex items-center gap-1 text-[11px] font-bold text-govNavy-800 hover:underline"
+                                    href="#">
+                                    <span class="material-symbols-outlined text-[14px]">picture_as_pdf</span> Download
+                                    Memo (320 KB)
+                                </a>
+                            </div>
+                        </div>
+                        <div class="bg-white p-2.5 border-t border-slate-200 text-center">
+                            <a class="text-xs font-bold text-govNavy-800 hover:underline" href="#">
+                                View All Ministry Circulars Archive →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ========================================================================= -->
+        <!-- 7. AUTHORIZED ROLE PORTALS & SSO GATEWAY (Clean Government RBAC)          -->
+        <!-- ========================================================================= -->
+        <section class="bg-[#f0f2f5] border-b border-slate-300 py-8 px-4 sm:px-8" id="login-section">
+            <div class="max-w-7xl mx-auto">
+                <div
+                    class="border-b border-slate-300 pb-3 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <span class="text-xs font-bold text-govNavy-800 uppercase tracking-wide">Single Sign-On (SSO)
+                            Portal Gateway</span>
+                        <h3 class="text-lg font-bold text-slate-900">Authorized Official Portals (Role-Based Access
+                            Control)</h3>
+                    </div>
+                    <span
+                        class="text-xs font-semibold text-slate-600 bg-white px-2 py-1 border border-slate-300 rounded">
+                        e-Pramaan / MeriPehchaan Integrated
+                    </span>
+                </div>
+                <!-- 5 Standard Government Officer Login Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                    <!-- Role 1 -->
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800 text-[11px]">ROLE TIER 1</span>
+                                <span class="material-symbols-outlined text-slate-500 text-[18px]">school</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 mb-0.5">Institution Nodal Officer</h4>
+                            <p class="text-[11px] text-slate-600 leading-tight">
+                                FDR submission, renewal documents, shortfall responses &amp; institute PID management.
+                            </p>
+                        </div>
+                        <button
+                            class="mt-3 w-full py-1.5 px-2 bg-govNavy-800 hover:bg-govNavy-900 text-white font-bold text-xs rounded transition-colors text-center"
+                            onclick="simulateSSO('nodal.inst@delhi-tech.edu', 'Institution Nodal Officer')">
+                            Login to Desk →
+                        </button>
+                    </div>
+                    <!-- Role 2 -->
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800 text-[11px]">ROLE TIER 2</span>
+                                <span class="material-symbols-outlined text-slate-500 text-[18px]">rate_review</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 mb-0.5">AICTE Scrutiny Desk</h4>
+                            <p class="text-[11px] text-slate-600 leading-tight">
+                                Document inspection, branch endorsement verification &amp; recording shortfall notes.
+                            </p>
+                        </div>
+                        <button
+                            class="mt-3 w-full py-1.5 px-2 bg-govNavy-800 hover:bg-govNavy-900 text-white font-bold text-xs rounded transition-colors text-center"
+                            onclick="simulateSSO('scrutiny.hq@aicte-india.org', 'AICTE Scrutiny Officer')">
+                            Login to Desk →
+                        </button>
+                    </div>
+                    <!-- Role 3 -->
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800 text-[11px]">ROLE TIER 3</span>
+                                <span class="material-symbols-outlined text-slate-500 text-[18px]">gavel</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 mb-0.5">Competent Authority</h4>
+                            <p class="text-[11px] text-slate-600 leading-tight">
+                                Final statutory approval, lien sanction, and authorized digital release of e-NOC.
+                            </p>
+                        </div>
+                        <button
+                            class="mt-3 w-full py-1.5 px-2 bg-govNavy-800 hover:bg-govNavy-900 text-white font-bold text-xs rounded transition-colors text-center"
+                            onclick="simulateSSO('advisor.approval@aicte-gov.in', 'Competent Authority Desk')">
+                            Login to Desk →
+                        </button>
+                    </div>
+                    <!-- Role 4 -->
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800 text-[11px]">ROLE TIER 4</span>
+                                <span
+                                    class="material-symbols-outlined text-slate-500 text-[18px]">account_balance</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 mb-0.5">Bank Nodal Branch</h4>
+                            <p class="text-[11px] text-slate-600 leading-tight">
+                                Empanelled branch officers certifying tripartite lien notation and maturity renewal.
+                            </p>
+                        </div>
+                        <button
+                            class="mt-3 w-full py-1.5 px-2 bg-govNavy-800 hover:bg-govNavy-900 text-white font-bold text-xs rounded transition-colors text-center"
+                            onclick="simulateSSO('bank.nodal@sbi.co.in', 'Bank Nodal Branch Officer')">
+                            Login to Desk →
+                        </button>
+                    </div>
+                    <!-- Role 5 -->
+                    <div class="bg-white border border-slate-300 rounded p-3 text-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+                                <span class="font-bold text-govNavy-800 text-[11px]">ROLE TIER 5</span>
+                                <span class="material-symbols-outlined text-slate-500 text-[18px]">policy</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 mb-0.5">Chief Vigilance Officer</h4>
+                            <p class="text-[11px] text-slate-600 leading-tight">
+                                Statutory audit logs inspection, RTI compliance queries &amp; council oversight
+                                inspection.
+                            </p>
+                        </div>
+                        <button
+                            class="mt-3 w-full py-1.5 px-2 bg-govNavy-800 hover:bg-govNavy-900 text-white font-bold text-xs rounded transition-colors text-center"
+                            onclick="simulateSSO('audit.vigilance@aicte-nic.in', 'Chief Vigilance Officer')">
+                            Login to Desk →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ========================================================================= -->
+        <!-- 8. STATUTORY SECURITY & COMPLIANCE SECTION                                -->
+        <!-- ========================================================================= -->
+        <section class="bg-white border-b border-slate-300 py-8 px-4 sm:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="border-b border-slate-300 pb-3 mb-6">
+                    <span class="text-xs font-bold text-govNavy-800 uppercase tracking-wide">Compliance
+                        Directives</span>
+                    <h3 class="text-lg font-bold text-slate-900">National Security &amp; Legal Compliance Framework</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                    <div class="p-3 border border-slate-300 rounded bg-[#f8fafc]">
+                        <div class="font-bold text-govNavy-800 flex items-center gap-1.5 mb-1">
+                            <span class="material-symbols-outlined text-[16px]">verified</span> GIGW 3.0 Conformance
+                        </div>
+                        <p class="text-slate-600 text-[11px] leading-relaxed">
+                            Meets all mandatory criteria of Guidelines for Indian Government Websites (GIGW) for
+                            accessibility, usability, and data security.
+                        </p>
+                    </div>
+                    <div class="p-3 border border-slate-300 rounded bg-[#f8fafc]">
+                        <div class="font-bold text-govNavy-800 flex items-center gap-1.5 mb-1">
+                            <span class="material-symbols-outlined text-[16px]">shield</span> CERT-In &amp; MeitY
+                            Audited
+                        </div>
+                        <p class="text-slate-600 text-[11px] leading-relaxed">
+                            Quarterly vulnerability assessment and penetration testing (VAPT) verified under Indian
+                            Computer Emergency Response Team directives.
+                        </p>
+                    </div>
+                    <div class="p-3 border border-slate-300 rounded bg-[#f8fafc]">
+                        <div class="font-bold text-govNavy-800 flex items-center gap-1.5 mb-1">
+                            <span class="material-symbols-outlined text-[16px]">enhanced_encryption</span> PKI / HSM
+                            e-Sign
+                        </div>
+                        <p class="text-slate-600 text-[11px] leading-relaxed">
+                            All approvals, notices, and e-NOC certificates are digitally signed via hardware security
+                            module (HSM) sovereign encryption certificates.
+                        </p>
+                    </div>
+                    <div class="p-3 border border-slate-300 rounded bg-[#f8fafc]">
+                        <div class="font-bold text-govNavy-800 flex items-center gap-1.5 mb-1">
+                            <span class="material-symbols-outlined text-[16px]">info</span> RTI Act 2005 Retentions
+                        </div>
+                        <p class="text-slate-600 text-[11px] leading-relaxed">
+                            Section 4 disclosure standards maintain immutable chronological event logs for public
+                            transparency and sovereign institutional accountability.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- ========================================================================= -->
+    <!-- 9. OFFICIAL GOVERNMENT OF INDIA FOOTER                                    -->
+    <!-- ========================================================================= -->
+    <footer class="bg-govNavy-900 text-slate-300 text-xs border-t-2 border-amber-500">
+        <!-- Top Section: Official Insignias -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 py-8 border-b border-govNavy-800">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                    <img alt="State Emblem of India" class="h-14 w-auto object-contain shrink-0 invert brightness-200"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpl2CtKlSIgvAwrpmtaa4qEhfa1tGCJ-cqwODCDDk16a-Q4NsJpcYiN9eZPJnw6cHvvTXebVpnpWCQFMhhLxUKBVReaVfQMLb_6ACnGydAH1mhzQZyw0vBVdTTtukG7zEuLKMT2rpH5n8zYFcOtrqV5t_YSUVETXvRs8yW5jBMPvm23d1MLHTSjck7eVDKu13Ka40glzXSKZa0-QAnLSTOMQKjMy9MUCyDWW7SPaz3FNSjNVMmkGST5Q">
+                    <div class="h-10 w-px bg-govNavy-700 hidden sm:block"></div>
+                    <img alt="Saksham Emblem" class="h-12 w-auto object-contain shrink-0 bg-white p-1 rounded"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjerUXwbFySWAyu7pz9i5Sr0D6eMsiRxEzKVs_DcjSCOMFWpeISdSrSZRVFNsYv9qjl7UizFIHKgD4f1PSDr4_20fkvCn99V5pL6m5Lh13VCGgpZuXTKHm4ysEYhc5GI6lEKMIbP4WmTg42oCmJ2iADMPf0odzpgRmwTkuRWFb9RWXloxc0ZnfTupPr2l0IZ6LpQFFYKfkdByPMsksWNF6Lk4LDHqijrFeQi_pGOzfHgjI2etj_fI18A">
+                    <div>
+                        <div class="font-bold text-white text-sm sm:text-base leading-tight">सक्षम | SAKSHAM PORTAL
+                        </div>
+                        <div class="text-[11px] text-slate-300">National Security Deposit &amp; Fixed Deposit Lifecycle
+                            Management System</div>
+                        <div class="text-[11px] text-amber-400 font-semibold">अखिल भारतीय तकनीकी शिक्षा परिषद (AICTE),
+                            शिक्षा मंत्रालय, भारत सरकार</div>
+                    </div>
+                </div>
+                <div class="text-right text-[11px] space-y-1">
+                    <div class="">हेल्पडेस्क / Helpdesk: <strong
+                            class="text-white font-mono text-xs">1800-11-2026</strong></div>
+                    <div class="">ईमेल / Email: <span
+                            class="text-slate-200 font-mono">saksham-fdr@aicte-india.org</span></div>
+                    <div class="text-slate-400">Nelson Mandela Marg, Vasant Kunj, New Delhi-110070</div>
+                </div>
+            </div>
+        </div>
+        <!-- Middle Section: Official Gov Links -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-[11.5px]">
+            <div>
+                <h5 class="text-white font-bold uppercase mb-2 border-b border-govNavy-800 pb-1">शीर्ष निकाय / Apex
+                    Bodies</h5>
+                <ul class="space-y-1.5">
+                    <li class=""><a class="hover:underline hover:text-white" href="#">शिक्षा मंत्रालय (Ministry of
+                            Education)</a></li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">AICTE Central Portal</a></li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">Reserve Bank of India (RBI)</a>
+                    </li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">National Informatics Centre
+                            (NIC)</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold uppercase mb-2 border-b border-govNavy-800 pb-1">दिशानिर्देश /
+                    Guidelines</h5>
+                <ul class="space-y-1.5">
+                    <li class=""><a class="hover:underline hover:text-white" href="#">Approval Process Handbook
+                            (APH)</a></li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">Public Financial Mgmt System
+                            (PFMS)</a></li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">Right to Information (RTI Act)</a>
+                    </li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">Central Vigilance Commission
+                            (CVC)</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold uppercase mb-2 border-b border-govNavy-800 pb-1">बैंक / Empanelled Banks
+                </h5>
+                <ul class="space-y-1.5">
+                    <li class=""><a class="hover:underline hover:text-white" href="#">State Bank of India (SBI)</a></li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">Bank of Baroda</a></li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">Punjab National Bank (PNB)</a>
+                    </li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">Canara Bank Institutional
+                            Banking</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold uppercase mb-2 border-b border-govNavy-800 pb-1">सरकारी पोर्टल / Gov
+                    Portals</h5>
+                <ul class="space-y-1.5">
+                    <li class=""><a class="hover:underline hover:text-white" href="#">National Portal of India
+                            (india.gov.in)</a></li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">Digital India Initiative</a></li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">GIGW Compliance Declaration</a>
+                    </li>
+                    <li class=""><a class="hover:underline hover:text-white" href="#">Website Policies &amp; Terms of
+                            Use</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- Bottom Section: NIC Hosting & Copyright -->
+        <div class="bg-black/30 border-t border-govNavy-800 py-4 px-4 sm:px-8 text-[11px] text-slate-400">
+            <div
+                class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+                <div class="">
+                    © 2026 अखिल भारतीय तकनीकी शिक्षा परिषद (AICTE), शिक्षा मंत्रालय, भारत सरकार। सर्वाधिकार सुरक्षित।
+                </div>
+                <div class="">
+                    Designed, Developed and Hosted by <strong class="text-white">National Informatics Centre
+                        (NIC)</strong>.
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- ========================================================================= -->
+    <!-- 10. OFFICIAL INSTRUMENT CERTIFICATE DOSSIER MODAL (Formal Print Format)   -->
+    <!-- ========================================================================= -->
+    <div class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden" id="lookup-modal">
+        <div class="bg-white rounded-lg max-w-2xl w-full border border-slate-400 shadow-xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="bg-govNavy-800 text-white px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <img alt="AICTE Saksham" class="h-6 w-6 object-contain bg-white rounded p-0.5"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjerUXwbFySWAyu7pz9i5Sr0D6eMsiRxEzKVs_DcjSCOMFWpeISdSrSZRVFNsYv9qjl7UizFIHKgD4f1PSDr4_20fkvCn99V5pL6m5Lh13VCGgpZuXTKHm4ysEYhc5GI6lEKMIbP4WmTg42oCmJ2iADMPf0odzpgRmwTkuRWFb9RWXloxc0ZnfTupPr2l0IZ6LpQFFYKfkdByPMsksWNF6Lk4LDHqijrFeQi_pGOzfHgjI2etj_fI18A">
+                    <div>
+                        <span class="text-[10px] text-amber-300 font-bold uppercase block leading-none">Government of
+                            India • AICTE</span>
+                        <h4 class="text-xs sm:text-sm font-bold text-white">Statutory Fixed Deposit Receipt Dossier</h4>
+                    </div>
+                </div>
+                <button class="text-slate-300 hover:text-white" onclick="closeLookupModal()">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            <!-- Modal Content: Certificate Style Table -->
+            <div class="p-5 text-xs text-slate-800 space-y-4 max-h-[75vh] overflow-y-auto">
+                <div class="p-3 bg-green-50 border border-green-300 rounded flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-green-700 text-[24px]">verified</span>
+                        <div>
+                            <span class="font-bold text-green-950 block text-[11px]">LIEN STATUS: ACTIVE &amp;
+                                STATUTORILY VALID</span>
+                            <span class="text-[11px] text-green-800">Recorded under the custody of Member Secretary,
+                                AICTE New Delhi.</span>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 bg-green-700 text-white font-bold rounded text-[10px]">VERIFIED</span>
+                </div>
+                <div class="border border-slate-300 rounded overflow-hidden">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <tbody>
+                            <tr class="border-b border-slate-200 bg-slate-50">
+                                <th class="py-2 px-3 font-semibold text-slate-700 w-1/3 border-r border-slate-200">
+                                    Instrument Registration ID</th>
+                                <td class="py-2 px-3 font-mono font-bold text-govNavy-800" id="modal-inst-id">
+                                    FDR/2026/DEL/7821-A</td>
+                            </tr>
+                            <tr class="border-b border-slate-200">
+                                <th class="py-2 px-3 font-semibold text-slate-700 border-r border-slate-200">Principal
+                                    Deposit Amount</th>
+                                <td class="py-2 px-3 font-mono font-bold text-slate-900">₹35,00,000.00 (Thirty-Five
+                                    Lakhs Only)</td>
+                            </tr>
+                            <tr class="border-b border-slate-200 bg-slate-50">
+                                <th class="py-2 px-3 font-semibold text-slate-700 border-r border-slate-200">Scheduled
+                                    Bank &amp; Branch</th>
+                                <td class="py-2 px-3 font-semibold text-slate-900">State Bank of India, Parliament
+                                    Street Branch</td>
+                            </tr>
+                            <tr class="border-b border-slate-200">
+                                <th class="py-2 px-3 font-semibold text-slate-700 border-r border-slate-200">Branch IFSC
+                                    Code</th>
+                                <td class="py-2 px-3 font-mono text-slate-800">SBIN0000691 (RBI Validated)</td>
+                            </tr>
+                            <tr class="border-b border-slate-200 bg-slate-50">
+                                <th class="py-2 px-3 font-semibold text-slate-700 border-r border-slate-200">Institution
+                                    Name &amp; PID</th>
+                                <td class="py-2 px-3 text-slate-900">Delhi Institute of Technology (PID: 1-4928172)</td>
+                            </tr>
+                            <tr class="border-b border-slate-200">
+                                <th class="py-2 px-3 font-semibold text-slate-700 border-r border-slate-200">Lien
+                                    Endorsement Holder</th>
+                                <td class="py-2 px-3 text-slate-900">Member Secretary, All India Council for Technical
+                                    Education</td>
+                            </tr>
+                            <tr class="border-b border-slate-200 bg-slate-50">
+                                <th class="py-2 px-3 font-semibold text-slate-700 border-r border-slate-200">Instrument
+                                    Creation Date</th>
+                                <td class="py-2 px-3 font-mono text-slate-900">14-DEC-2024</td>
+                            </tr>
+                            <tr>
+                                <th class="py-2 px-3 font-semibold text-slate-700 border-r border-slate-200">Maturity
+                                    Escrow Expiry</th>
+                                <td class="py-2 px-3 font-mono font-bold text-govNavy-800">14-DEC-2029 (Mandatory 5-Year
+                                    Lock)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div
+                    class="p-3 bg-slate-50 border border-slate-200 rounded flex items-center justify-between text-[11px]">
+                    <div>
+                        <span class="font-bold text-slate-900 block">Digital Verification Hash (SHA-256):</span>
+                        <span class="font-mono text-slate-600 break-all text-[10px]">sha256:
+                            8f9a2b1c4e7d9834a0129bce81c0...</span>
+                        <span class="text-green-700 font-semibold block mt-0.5">Hardware Security Module (HSM)
+                            Signed</span>
+                    </div>
+                    <button
+                        class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-semibold rounded shrink-0"
+                        onclick="window.print()">
+                        Print Record
+                    </button>
+                </div>
+            </div>
+            <!-- Modal Footer -->
+            <div class="bg-slate-100 px-5 py-2.5 border-t border-slate-300 flex items-center justify-between text-xs">
+                <span class="text-[11px] text-slate-600 font-mono">Ref: AICTE/FDR/APH-2026-REG</span>
+                <button class="px-3.5 py-1.5 bg-govNavy-800 hover:bg-govNavy-900 text-white rounded font-bold"
+                    onclick="closeLookupModal()">
+                    बंद करें (Close)
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- ========================================================================= -->
+    <!-- JAVASCRIPT CONTROLS                                                       -->
+    <!-- ========================================================================= -->
+    <script>
+        function openLookupModal(instId) {
+            const modal = document.getElementById('lookup-modal');
+            const inputVal = document.getElementById('fdr-input').value;
+            const targetId = instId || inputVal || 'FDR/2026/DEL/7821-A';
+
+            const label = document.getElementById('modal-inst-id');
+            if (label) label.textContent = targetId;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeLookupModal() {
+            const modal = document.getElementById('lookup-modal');
+            modal.classList.add('hidden');
+        }
+
+        function simulateSSO(email, roleTitle) {
+            alert(
+                'भारत सरकार ई-प्रमाण प्रमाणीकरण (e-Pramaan Single Sign-On):\n\n' +
+                'Authorizing Role: ' + roleTitle + '\n' +
+                'Credential: ' + email + '\n\n' +
+                'Redirecting to official AICTE SAKSHAM Regulatory Console session...'
+            );
+        }
+
+        function filterTable(type) {
+            const rows = document.querySelectorAll('#table-body tr');
+            const buttons = ['all', 'active', 'maturity', 'legal'];
+
+            buttons.forEach(b => {
+                const btn = document.getElementById('filter-' + b);
+                if (btn) {
+                    if (b === type) {
+                        btn.className = 'px-2.5 py-1 bg-govNavy-800 text-white rounded text-xs font-semibold';
+                    } else {
+                        btn.className = 'px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded text-xs font-semibold';
+                    }
+                }
+            });
+
+            rows.forEach(row => {
+                if (type === 'all') {
+                    row.style.display = '';
+                } else {
+                    const rowStatus = row.getAttribute('data-status');
+                    if (rowStatus === type) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLookupModal();
+        });
+    </script>
+
+
+</body>
+
+</html>

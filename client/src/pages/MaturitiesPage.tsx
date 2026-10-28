@@ -110,15 +110,33 @@ export default function MaturitiesPage() {
 
     if (diffDays < 0) {
       return (
-        <span className="text-amber-700 font-medium">
-          Matured {Math.abs(diffDays)} days ago
+        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]">
+          Matured {Math.abs(diffDays)}d ago
         </span>
       );
     } else if (diffDays === 0) {
-      return <span className="text-rose-600 font-bold">Matures today</span>;
+      return (
+        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#FEE2E2] text-[#DC2626] border border-[#FCA5A5]">
+          Matures today
+        </span>
+      );
+    } else if (diffDays <= 30) {
+      return (
+        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D]">
+          Due in {diffDays} days
+        </span>
+      );
+    } else if (diffDays <= 90) {
+      return (
+        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-[#FEF3C7] text-[#92400E] border border-[#FCD34D]">
+          Due in {diffDays} days
+        </span>
+      );
     } else {
       return (
-        <span className="text-slate-500 font-medium">In {diffDays} days</span>
+        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#F1F5F9] text-[#475569] border border-[#CBD5E1]">
+          In {diffDays} days
+        </span>
       );
     }
   }
@@ -126,19 +144,26 @@ export default function MaturitiesPage() {
   function renderGroupTable(title: string, list: Instrument[]) {
     if (list.length === 0) return null;
 
+    const totalAmount = list.reduce((sum, i) => sum + (Number(i.amount) || 0), 0);
+
     return (
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-2">
-        <div className="p-4 bg-white border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-          <span className="text-xs text-slate-400">
-            {list.length} deposit{list.length === 1 ? "" : "s"}
+      <div className="bg-white border border-[#CBD5E1] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-0">
+        <div className="p-3.5 sm:p-4 bg-[#F8FAFC] border-b border-[#CBD5E1] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h3 className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">{title}</h3>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white border border-[#CBD5E1] text-[#334155]">
+              {list.length} deposit{list.length === 1 ? "" : "s"}
+            </span>
+          </div>
+          <span className="text-xs font-mono font-bold text-[#0F172A]">
+            Total: {formatINR(totalAmount)}
           </span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-50/50">
+              <tr className="border-b border-[#CBD5E1] text-[10px] font-bold uppercase tracking-wider text-[#64748B] bg-white">
                 <th className="py-2.5 px-4 font-semibold">FDR NUMBER</th>
                 {isOfficerOrAdmin && (
                   <th className="py-2.5 px-4 font-semibold">INSTITUTION</th>
@@ -151,33 +176,33 @@ export default function MaturitiesPage() {
                 <th className="py-2.5 px-3 w-8"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
+            <tbody className="divide-y divide-[#E2E8F0] text-[#0F172A]">
               {list.map((inst) => (
                 <tr
                   key={inst.id}
                   onClick={() => navigate(`/instruments/${inst.id}`)}
-                  className="hover:bg-slate-50/80 cursor-pointer transition group"
+                  className="hover:bg-[#F8FAFC] cursor-pointer transition group"
                 >
-                  <td className="py-3 px-4 font-semibold text-slate-900 font-mono">
+                  <td className="py-3 px-4 font-semibold text-[#0B192C] font-mono group-hover:text-[#1D4ED8]">
                     {inst.instrumentNumber}
                   </td>
                   {isOfficerOrAdmin && (
-                    <td className="py-3 px-4 font-medium text-slate-800 max-w-[180px] truncate">
+                    <td className="py-3 px-4 font-medium text-[#0F172A] max-w-[180px] truncate">
                       {inst.institution?.name || "Institution"}
                     </td>
                   )}
-                  <td className="py-3 px-4 text-slate-600">
-                    <span className="font-medium text-slate-800 block">
+                  <td className="py-3 px-4 text-[#334155]">
+                    <span className="font-semibold text-[#0F172A] block">
                       {inst.bankName}
                     </span>
-                    <span className="text-[11px] text-slate-400 block truncate">
+                    <span className="text-[11px] text-[#64748B] block truncate">
                       {inst.branchName}
                     </span>
                   </td>
-                  <td className="py-3 px-4 font-bold text-slate-900 text-right font-mono">
+                  <td className="py-3 px-4 font-bold text-[#0F172A] text-right font-mono">
                     {formatINR(Number(inst.amount))}
                   </td>
-                  <td className="py-3 px-4 text-slate-500 whitespace-nowrap">
+                  <td className="py-3 px-4 text-[#64748B] whitespace-nowrap">
                     {new Date(inst.issueDate).toLocaleDateString("en-IN", {
                       day: "numeric",
                       month: "short",
@@ -185,21 +210,21 @@ export default function MaturitiesPage() {
                     })}
                   </td>
                   <td className="py-3 px-4 whitespace-nowrap">
-                    <span className="block font-medium text-slate-800">
+                    <div className="font-semibold text-[#0F172A]">
                       {new Date(inst.maturityDate).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       })}
-                    </span>
-                    <span className="text-[10px] block">
+                    </div>
+                    <div className="mt-0.5">
                       {getDaysLabel(inst.maturityDate)}
-                    </span>
+                    </div>
                   </td>
                   <td className="py-3 px-4">
                     <StatusBadge status={inst.status} />
                   </td>
-                  <td className="py-3 px-3 text-right text-slate-300 group-hover:text-slate-600 transition">
+                  <td className="py-3 px-3 text-right text-[#94A3B8] group-hover:text-[#0B192C] transition">
                     <ChevronRight className="w-4 h-4 ml-auto" />
                   </td>
                 </tr>
@@ -215,80 +240,81 @@ export default function MaturitiesPage() {
     <AppShell>
       <div className="space-y-6 animate-fade-in" id="maturities-page">
         {/* Header and Breadcrumb */}
-        <div className="space-y-1">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500">
-            <Link to="/dashboard" className="hover:text-slate-800 transition">
+        <div className="pb-3 border-b border-[#CBD5E1] space-y-1">
+          <div className="flex items-center gap-1.5 text-xs text-[#64748B]">
+            <Link to="/dashboard" className="hover:text-[#1D4ED8] transition font-medium">
               Dashboard
             </Link>
-            <span>&gt;</span>
-            <span className="text-slate-700 font-medium">Maturities</span>
+            <span>/</span>
+            <span className="text-[#0F172A] font-semibold">Maturities</span>
           </div>
 
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block pt-1">
-            MONITORING
-          </span>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            Maturities
+          <h1 className="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight">
+            Statutory Maturity Radar • Multi-Tenure Tracking
           </h1>
-          <p className="text-xs text-slate-500">
-            Open deposits grouped by how soon they mature. Released and rejected
-            FDRs are excluded.
+          <p className="text-xs sm:text-sm text-[#64748B]">
+            Automated tracking across 30-day, 90-day, and 1-year maturity horizons to prevent silent encashment or lapse. Released and rejected FDRs are excluded.
           </p>
         </div>
 
         {/* Error banner */}
         {error && (
-          <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+          <div className="p-3.5 rounded-md bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B] text-xs flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-[#DC2626] shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        {/* Summary Metric Ribbon matching fi.pdf Page 3, 6, 7 */}
+        {/* Summary Metric Ribbon */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-1">
-            <span className="text-[11px] font-semibold text-slate-500 block">
+          <div className="p-4 rounded-lg bg-white border border-[#CBD5E1] border-t-4 border-t-[#DC2626] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-1">
+            <span className="text-[10px] uppercase font-bold text-[#64748B] block tracking-wider">
               Past maturity
             </span>
-            <span className="text-xl font-bold text-amber-700 block">
+            <span className="text-2xl font-bold text-[#991B1B] font-mono block">
               {categorized.pastMaturity.length}
             </span>
+            <span className="text-[10px] text-[#64748B] block">Requires action</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-1">
-            <span className="text-[11px] font-semibold text-slate-500 block">
+          <div className="p-4 rounded-lg bg-white border border-[#CBD5E1] border-t-4 border-t-[#D97706] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-1">
+            <span className="text-[10px] uppercase font-bold text-[#64748B] block tracking-wider">
               Within 30 days
             </span>
-            <span className="text-xl font-bold text-rose-600 block">
+            <span className="text-2xl font-bold text-[#D97706] font-mono block">
               {categorized.within30.length}
             </span>
+            <span className="text-[10px] text-[#D97706] font-medium block">Urgent renewal</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-1">
-            <span className="text-[11px] font-semibold text-slate-500 block">
+          <div className="p-4 rounded-lg bg-white border border-[#CBD5E1] border-t-4 border-t-[#F59E0B] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-1">
+            <span className="text-[10px] uppercase font-bold text-[#64748B] block tracking-wider">
               31 to 90 days
             </span>
-            <span className="text-xl font-bold text-slate-800 block">
+            <span className="text-2xl font-bold text-[#B45309] font-mono block">
               {categorized.within31To90.length}
             </span>
+            <span className="text-[10px] text-[#64748B] block">T-90 window open</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-1">
-            <span className="text-[11px] font-semibold text-slate-500 block">
+          <div className="p-4 rounded-lg bg-white border border-[#CBD5E1] border-t-4 border-t-[#1D4ED8] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-1">
+            <span className="text-[10px] uppercase font-bold text-[#64748B] block tracking-wider">
               91 days to 1 year
             </span>
-            <span className="text-xl font-bold text-slate-800 block">
+            <span className="text-2xl font-bold text-[#1D4ED8] font-mono block">
               {categorized.within91To365.length}
             </span>
+            <span className="text-[10px] text-[#64748B] block">Monitoring normal</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-1">
-            <span className="text-[11px] font-semibold text-slate-500 block">
+          <div className="p-4 rounded-lg bg-white border border-[#CBD5E1] border-t-4 border-t-[#16A34A] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-1">
+            <span className="text-[10px] uppercase font-bold text-[#64748B] block tracking-wider">
               Beyond 1 year
             </span>
-            <span className="text-xl font-bold text-slate-800 block">
+            <span className="text-2xl font-bold text-[#166534] font-mono block">
               {categorized.beyond1Year.length}
             </span>
+            <span className="text-[10px] text-[#64748B] block">Active secure lien</span>
           </div>
         </div>
 

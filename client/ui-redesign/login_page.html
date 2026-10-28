@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="web_blank" name="shell-type" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        @layer base {
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                overscroll-behavior: none;
+            }
+
+            main>:first-child {
+                margin-top: 0 !important;
+            }
+
+            main>:last-child {
+                margin-bottom: 0 !important;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+        id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-error-container": "#93000a", "on-tertiary-fixed": "#002114", "inverse-primary": "#bac7e1", "on-background": "#191c1e", "primary-fixed-dim": "#bac7e1", "tertiary-container": "#002114", "background": "#f7f9fb", "surface-tint": "#525f75", "on-primary": "#ffffff", "surface-bright": "#f7f9fb", "secondary-container": "#4069f2", "tertiary-fixed-dim": "#68dba9", "primary": "#000000", "tertiary": "#000000", "on-tertiary": "#ffffff", "on-secondary-fixed": "#001551", "tertiary-fixed": "#85f8c4", "outline-variant": "#c5c6cd", "secondary-fixed-dim": "#b7c4ff", "outline": "#75777d", "surface-container-high": "#e6e8ea", "on-primary-fixed-variant": "#3a475c", "secondary-fixed": "#dce1ff", "on-error": "#ffffff", "on-secondary-container": "#fffbff", "surface-container-low": "#f2f4f6", "on-primary-fixed": "#0e1c2f", "surface-container-lowest": "#ffffff", "inverse-on-surface": "#eff1f3", "on-tertiary-container": "#069669", "on-secondary": "#ffffff", "surface": "#f7f9fb", "error": "#ba1a1a", "on-tertiary-fixed-variant": "#005137", "on-primary-container": "#77849c", "surface-dim": "#d8dadc", "primary-container": "#0e1c2f", "inverse-surface": "#2d3133", "surface-container": "#eceef0", "on-secondary-fixed-variant": "#0039b5", "on-surface": "#191c1e", "surface-container-highest": "#e0e3e5", "error-container": "#ffdad6", "secondary": "#1d4ed8", "surface-variant": "#e0e3e5", "primary-fixed": "#d6e3fe", "on-surface-variant": "#44474c" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-md": "1rem", "gutter": "1.5rem", "margin": "2rem", "space-xs": "0.25rem", "space-xl": "2rem", "space-lg": "1.5rem", "space-sm": "0.5rem" }, "fontFamily": { "label-lg": ["Inter"], "label-md": ["Inter"], "tabular-currency": ["Inter"], "body-md": ["Inter"], "headline-lg": ["Inter"], "headline-sm": ["Inter"], "tabular-code": ["Inter"], "body-sm": ["Inter"], "headline-xl": ["Inter"], "label-sm": ["Inter"], "body-lg": ["Inter"], "headline-md": ["Inter"] }, "fontSize": { "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "600" }], "tabular-currency": ["15px", { "lineHeight": "20px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "tabular-code": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "headline-xl": ["30px", { "lineHeight": "38px", "fontWeight": "700" }], "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-md": ["18px", { "lineHeight": "26px", "fontWeight": "600" }] } } } };</script>
+</head>
+
+<body class="bg-surface font-body-md text-on-surface antialiased flex items-center justify-center min-h-screen">
+    <main class="w-full flex items-center justify-center">
+        <div class="flex flex-col w-full items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
+            <!-- Regulatory Super-Header (Government Hierarchy) -->
+            <div class="flex flex-col items-center text-center mb-6 max-w-xl mx-auto space-y-2">
+                <div
+                    class="flex items-center justify-center space-x-3 text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+                    <span class="inline-flex items-center text-on-surface-variant">
+                        <svg class="w-4 h-4 mr-1 text-secondary" fill="currentColor" viewbox="0 0 24 24">
+                            <path d="M12 2L1 21h22L12 2zm0 3.8l7.53 13.2H4.47L12 5.8zM11 10h2v4h-2zm0 6h2v2h-2z"></path>
+                        </svg>
+                        AICTE Statutory Oversight
+                    </span>
+                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                    <span>Ministry of Education, GoI</span>
+                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                    <span
+                        class="text-on-tertiary-container font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container-high">NIC
+                        Hosted</span>
+                </div>
+                <!-- Official Portal Logo & Title Badge -->
+                <div class="flex items-center justify-center space-x-3 pt-2">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-center p-2 border border-outline-variant/40">
+                        <!-- SVG Emblem / Ashoka Chakra & Saksham Motif -->
+                        <svg class="w-full h-full text-secondary" fill="none" viewbox="0 0 48 48">
+                            <circle class="opacity-40" cx="24" cy="24" r="20" stroke="currentColor"
+                                stroke-dasharray="2 2" stroke-width="2.5"></circle>
+                            <circle cx="24" cy="24" r="14" stroke="#1d4ed8" stroke-width="2"></circle>
+                            <circle cx="24" cy="24" fill="#0e1c2f" r="4"></circle>
+                            <path
+                                d="M24 6V10M24 38V42M6 24H10M38 24H42M11.27 11.27L14.1 14.1M33.9 33.9L36.73 36.73M11.27 36.73L14.1 33.9M33.9 14.1L36.73 11.27"
+                                stroke="#1d4ed8" stroke-linecap="round" stroke-width="2"></path>
+                        </svg>
+                    </div>
+                    <h1 class="font-headline-xl text-headline-xl tracking-tight text-on-surface font-bold">Saksham</h1>
+                </div>
+                <div class="space-y-0.5">
+                    <p class="font-headline-sm text-headline-sm text-on-surface font-semibold">Security Deposit &amp;
+                        FDR Management</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Intelligent Security Deposit Compliance
+                        &amp; Clearance Management</p>
+                </div>
+            </div>
+            <!-- Central Authentication Card -->
+            <div
+                class="w-full max-w-[490px] bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/50 overflow-hidden">
+                <div class="p-6 sm:p-8 space-y-6">
+                    <!-- Card Header -->
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h2 class="font-headline-md text-headline-md font-semibold text-on-surface">Sign in to your
+                                account</h2>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Official institutional
+                                or regulatory credentials</p>
+                        </div>
+                        <div
+                            class="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary">
+                            <span class="material-symbols-outlined text-[18px]">vpn_key</span>
+                        </div>
+                    </div>
+                    <!-- Authentication Form -->
+                    <form class="space-y-4" id="loginForm" onsubmit="handleLoginSubmit(event)">
+                        <!-- Email Input -->
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface-variant font-medium"
+                                for="email">Official Email Address</label>
+                            <div class="relative">
+                                <div
+                                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+                                    <span class="material-symbols-outlined text-[18px]">mail</span>
+                                </div>
+                                <input
+                                    class="w-full pl-10 pr-3.5 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-secondary transition-colors"
+                                    id="email" name="email" placeholder="name@institution.edu.in" required=""
+                                    type="email" />
+                            </div>
+                        </div>
+                        <!-- Password Input -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <label class="block font-label-md text-label-md text-on-surface-variant font-medium"
+                                    for="password">Password</label>
+                                <a class="font-label-sm text-label-sm text-secondary hover:underline"
+                                    href="javascript:void(0)">Forgot access key?</a>
+                            </div>
+                            <div class="relative">
+                                <div
+                                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+                                    <span class="material-symbols-outlined text-[18px]">lock</span>
+                                </div>
+                                <input
+                                    class="w-full pl-10 pr-10 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-secondary transition-colors"
+                                    id="password" name="password" placeholder="••••••••••••" required="" type="password"
+                                    value="DemoAccessPass#2025" />
+                                <button aria-label="Toggle password visibility"
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-on-surface transition-colors"
+                                    id="togglePasswordBtn" onclick="togglePasswordVisibility()" type="button">
+                                    <span class="material-symbols-outlined text-[18px]"
+                                        id="passwordEyeIcon">visibility</span>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Submit Button -->
+                        <button
+                            class="w-full mt-2 bg-primary-container hover:bg-primary-container/90 text-on-primary font-label-lg text-label-lg font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center space-x-2 transition-all shadow-sm active:scale-[0.99]"
+                            id="submitButton" type="submit">
+                            <span id="buttonText">Sign In</span>
+                            <span class="material-symbols-outlined text-[18px]" id="buttonArrow">arrow_forward</span>
+                            <svg class="hidden animate-spin h-5 w-5 text-on-primary" fill="none" id="buttonSpinner"
+                                viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" d="M4 12a8 8 0 018-8v8H4z" fill="currentColor"></path>
+                            </svg>
+                        </button>
+                    </form>
+                    <!-- Synthetic / Demo Accounts Section -->
+                    <div class="pt-4 border-t border-outline-variant/40 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span
+                                class="font-label-sm text-label-sm tracking-wider uppercase font-semibold text-on-surface-variant">DEMO
+                                ACCOUNTS (DEVELOPMENT ONLY)</span>
+                            <span
+                                class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-medium">Synthetic
+                                Data</span>
+                        </div>
+                        <div class="space-y-2">
+                            <!-- Role 1: Institution -->
+                            <div
+                                class="group flex items-center justify-between p-2.5 rounded-lg border border-outline-variant/40 hover:border-secondary/50 bg-surface-container-low hover:bg-surface-container transition-all">
+                                <div class="min-w-0 pr-2">
+                                    <div class="font-label-md text-label-md font-semibold text-on-surface truncate">
+                                        Delhi Engineering (Institution)</div>
+                                    <div class="font-tabular-code text-[12px] text-on-surface-variant truncate">
+                                        inst.delhi@demo.fdr-sentinel.gov.in</div>
+                                </div>
+                                <div class="flex items-center space-x-1.5 flex-shrink-0">
+                                    <span
+                                        class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-medium">Institution</span>
+                                    <button
+                                        class="font-label-md text-label-md px-2.5 py-1 rounded bg-surface-container-lowest text-secondary border border-outline-variant hover:border-secondary transition-all"
+                                        onclick="fillCredential('inst.delhi@demo.fdr-sentinel.gov.in')" type="button">
+                                        Fill
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Role 2: Scrutiny Officer -->
+                            <div
+                                class="group flex items-center justify-between p-2.5 rounded-lg border border-outline-variant/40 hover:border-secondary/50 bg-surface-container-low hover:bg-surface-container transition-all">
+                                <div class="min-w-0 pr-2">
+                                    <div class="font-label-md text-label-md font-semibold text-on-surface truncate">
+                                        Scrutiny Officer (Desk)</div>
+                                    <div class="font-tabular-code text-[12px] text-on-surface-variant truncate">
+                                        officer.sharma@demo.fdr-sentinel.gov.in</div>
+                                </div>
+                                <div class="flex items-center space-x-1.5 flex-shrink-0">
+                                    <span
+                                        class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-medium">Officer</span>
+                                    <button
+                                        class="font-label-md text-label-md px-2.5 py-1 rounded bg-surface-container-lowest text-secondary border border-outline-variant hover:border-secondary transition-all"
+                                        onclick="fillCredential('officer.sharma@demo.fdr-sentinel.gov.in')"
+                                        type="button">
+                                        Fill
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Role 3: Approver -->
+                            <div
+                                class="group flex items-center justify-between p-2.5 rounded-lg border border-outline-variant/40 hover:border-secondary/50 bg-surface-container-low hover:bg-surface-container transition-all">
+                                <div class="min-w-0 pr-2">
+                                    <div class="font-label-md text-label-md font-semibold text-on-surface truncate">
+                                        Competent Authority (Approver)</div>
+                                    <div class="font-tabular-code text-[12px] text-on-surface-variant truncate">
+                                        approver.verma@demo.fdr-sentinel.gov.in</div>
+                                </div>
+                                <div class="flex items-center space-x-1.5 flex-shrink-0">
+                                    <span
+                                        class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-medium">Approver</span>
+                                    <button
+                                        class="font-label-md text-label-md px-2.5 py-1 rounded bg-surface-container-lowest text-secondary border border-outline-variant hover:border-secondary transition-all"
+                                        onclick="fillCredential('approver.verma@demo.fdr-sentinel.gov.in')"
+                                        type="button">
+                                        Fill
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Role 4: System Admin -->
+                            <div
+                                class="group flex items-center justify-between p-2.5 rounded-lg border border-outline-variant/40 hover:border-secondary/50 bg-surface-container-low hover:bg-surface-container transition-all">
+                                <div class="min-w-0 pr-2">
+                                    <div class="font-label-md text-label-md font-semibold text-on-surface truncate">
+                                        System Administrator</div>
+                                    <div class="font-tabular-code text-[12px] text-on-surface-variant truncate">
+                                        admin.sentinel@demo.fdr-sentinel.gov.in</div>
+                                </div>
+                                <div class="flex items-center space-x-1.5 flex-shrink-0">
+                                    <span
+                                        class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-medium">Admin</span>
+                                    <button
+                                        class="font-label-md text-label-md px-2.5 py-1 rounded bg-surface-container-lowest text-secondary border border-outline-variant hover:border-secondary transition-all"
+                                        onclick="fillCredential('admin.sentinel@demo.fdr-sentinel.gov.in')"
+                                        type="button">
+                                        Fill
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Role 5: Oversight Auditor -->
+                            <div
+                                class="group flex items-center justify-between p-2.5 rounded-lg border border-outline-variant/40 hover:border-secondary/50 bg-surface-container-low hover:bg-surface-container transition-all">
+                                <div class="min-w-0 pr-2">
+                                    <div class="font-label-md text-label-md font-semibold text-on-surface truncate">
+                                        Oversight Auditor (Read-Only)</div>
+                                    <div class="font-tabular-code text-[12px] text-on-surface-variant truncate">
+                                        auditor.patel@demo.fdr-sentinel.gov.in</div>
+                                </div>
+                                <div class="flex items-center space-x-1.5 flex-shrink-0">
+                                    <span
+                                        class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-medium">Auditor</span>
+                                    <button
+                                        class="font-label-md text-label-md px-2.5 py-1 rounded bg-surface-container-lowest text-secondary border border-outline-variant hover:border-secondary transition-all"
+                                        onclick="fillCredential('auditor.patel@demo.fdr-sentinel.gov.in')"
+                                        type="button">
+                                        Fill
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Security Compliance & Statutory Footnotes -->
+            <div
+                class="mt-6 flex flex-col items-center text-center space-y-1 text-on-surface-variant font-body-sm text-body-sm max-w-lg">
+                <div class="flex items-center space-x-2">
+                    <span class="material-symbols-outlined text-[16px] text-on-tertiary-container">verified_user</span>
+                    <p class="font-label-sm text-label-sm">Protected by HttpOnly JWT cookies &amp; server-side role
+                        validation.</p>
+                </div>
+                <p class="font-label-sm text-label-sm text-outline">GIGW 3.0 &amp; CERT-In Compliant • Sovereign Cloud
+                    Infrastructure • 256-bit TLS</p>
+            </div>
+        </div>
+        <script>
+            function togglePasswordVisibility() {
+                const passwordInput = document.getElementById('password');
+                const eyeIcon = document.getElementById('passwordEyeIcon');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.innerText = 'visibility_off';
+                } else {
+                    passwordInput.type = 'password';
+                    eyeIcon.innerText = 'visibility';
+                }
+            }
+
+            function fillCredential(email) {
+                const emailInput = document.getElementById('email');
+                emailInput.value = email;
+                emailInput.focus();
+
+                // Quick highlight animation on input
+                emailInput.classList.add('border-secondary');
+                setTimeout(() => {
+                    emailInput.classList.remove('border-secondary');
+                }, 400);
+            }
+
+            function handleLoginSubmit(event) {
+                event.preventDefault();
+                const btn = document.getElementById('submitButton');
+                const text = document.getElementById('buttonText');
+                const arrow = document.getElementById('buttonArrow');
+                const spinner = document.getElementById('buttonSpinner');
+
+                // UI Loading state
+                btn.disabled = true;
+                text.innerText = 'Authenticating...';
+                arrow.classList.add('hidden');
+                spinner.classList.remove('hidden');
+
+                setTimeout(() => {
+                    text.innerText = 'Redirecting to Console...';
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        text.innerText = 'Sign In';
+                        arrow.classList.remove('hidden');
+                        spinner.classList.add('hidden');
+                    }, 1000);
+                }, 1200);
+            }
+        </script>
+    </main>
+</body>
+
+</html>

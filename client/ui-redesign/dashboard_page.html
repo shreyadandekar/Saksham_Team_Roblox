@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="web_dashboard" name="shell-type">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+    <style>
+        @layer base {
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                overscroll-behavior: none;
+            }
+
+            main>:first-child {
+                margin-top: 0 !important;
+            }
+
+            main>:last-child {
+                margin-bottom: 0 !important;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+        id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-error-container": "#93000a", "on-tertiary-fixed": "#002114", "inverse-primary": "#bac7e1", "on-background": "#191c1e", "primary-fixed-dim": "#bac7e1", "tertiary-container": "#002114", "background": "#f7f9fb", "surface-tint": "#525f75", "on-primary": "#ffffff", "surface-bright": "#f7f9fb", "secondary-container": "#4069f2", "tertiary-fixed-dim": "#68dba9", "primary": "#000000", "tertiary": "#000000", "on-tertiary": "#ffffff", "on-secondary-fixed": "#001551", "tertiary-fixed": "#85f8c4", "outline-variant": "#c5c6cd", "secondary-fixed-dim": "#b7c4ff", "outline": "#75777d", "surface-container-high": "#e6e8ea", "on-primary-fixed-variant": "#3a475c", "secondary-fixed": "#dce1ff", "on-error": "#ffffff", "on-secondary-container": "#fffbff", "surface-container-low": "#f2f4f6", "on-primary-fixed": "#0e1c2f", "surface-container-lowest": "#ffffff", "inverse-on-surface": "#eff1f3", "on-tertiary-container": "#069669", "on-secondary": "#ffffff", "surface": "#f7f9fb", "error": "#ba1a1a", "on-tertiary-fixed-variant": "#005137", "on-primary-container": "#77849c", "surface-dim": "#d8dadc", "primary-container": "#0e1c2f", "inverse-surface": "#2d3133", "surface-container": "#eceef0", "on-secondary-fixed-variant": "#0039b5", "on-surface": "#191c1e", "surface-container-highest": "#e0e3e5", "error-container": "#ffdad6", "secondary": "#1d4ed8", "surface-variant": "#e0e3e5", "primary-fixed": "#d6e3fe", "on-surface-variant": "#44474c" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-md": "1rem", "gutter": "1.5rem", "margin": "2rem", "space-xs": "0.25rem", "space-xl": "2rem", "space-lg": "1.5rem", "space-sm": "0.5rem" }, "fontFamily": { "label-lg": ["Inter"], "label-md": ["Inter"], "tabular-currency": ["Inter"], "body-md": ["Inter"], "headline-lg": ["Inter"], "headline-sm": ["Inter"], "tabular-code": ["Inter"], "body-sm": ["Inter"], "headline-xl": ["Inter"], "label-sm": ["Inter"], "body-lg": ["Inter"], "headline-md": ["Inter"] }, "fontSize": { "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "500" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "600" }], "tabular-currency": ["15px", { "lineHeight": "20px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "tabular-code": ["13px", { "lineHeight": "18px", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "headline-xl": ["30px", { "lineHeight": "38px", "fontWeight": "700" }], "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-md": ["18px", { "lineHeight": "26px", "fontWeight": "600" }] } } } };</script>
+</head>
+
+<body class="bg-surface font-body-md text-on-surface antialiased">
+    <header
+        class="fixed top-0 left-0 right-0 h-16 bg-surface-container-lowest z-50 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <div class="h-16 w-full px-gutter flex items-center justify-between">
+            <div class="flex items-center gap-space-md"><img alt="saksham_logo.png" class="h-8 w-auto object-contain"
+                    src="https://lh3.googleusercontent.com/aida/AEtjO1UdbwwWqtecNt2AgBVA33fP8Ey0G0XC1Ft2ynjPQ9Yae4EgbEIK3b97HzrNTZU2XTCAAVyH_aiQv_8M-JNnCQaHdgMwO-HmKe43pgIiVjUtL-uLaLmI8DNGsKSqaVbnwjetmP5X08CR0am8HL-iyviS4gbc0AGKHqLJWVDuBkMOf0ol_jhEV1wvVG1_CUEVtAjorEhG_HmTz0q2GANbXRnPSISdWIUghZX2LdUmP9hGr4JjHocravNVtWbU">
+                <div class="flex flex-col justify-center border-l border-outline-variant pl-space-md"><span
+                        class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Govt of
+                        India • AICTE Regulatory Authority</span><span
+                        class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Saksham
+                        <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">| Security Deposit
+                            &amp; FDR Management Portal</span></span></div>
+            </div>
+            <div class="flex items-center gap-space-lg">
+                <div
+                    class="hidden xl:flex items-center gap-space-xs px-space-md py-1 bg-surface-container-low rounded-lg">
+                    <span class="w-2 h-2 rounded-full bg-secondary"></span><span
+                        class="font-tabular-code text-tabular-code text-on-surface-variant">Production
+                        System</span><span class="text-outline-variant">•</span><span
+                        class="font-label-sm text-label-sm text-secondary font-medium">NIC Cloud Node Active</span>
+                </div>
+                <div class="flex items-center gap-space-md">
+                    <div class="flex items-center gap-space-sm pl-space-md border-l border-outline-variant">
+                        <div class="text-right hidden sm:block">
+                            <div class="font-label-md text-label-md text-on-surface">Dr. Sanjay Verma</div>
+                            <div class="flex items-center justify-end gap-1"><span
+                                    class="inline-block px-1.5 py-0.2 bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm rounded">Approving
+                                    Authority</span></div>
+                        </div><img alt="Profile" class="w-8 h-8 rounded-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida/AEtjO1VnrYGCeWXdWG86TUMlL257Ms_zCASTI3HG-OboH03mP-3iyHnaD1LYMxctsHBw6jRRAwtkQccayxF3A2Bvhw83wqnNIbki3iKfZxCXXauzULJWhEs3UEJmvCT6CweU7hRnesBW_jaNlgJF3jKLu9LS3ZSlBpmhO0BzSa-K0JIs1Xk3J_9lza-SMeAQhu6XrLLZrxpx9ncIF6lZTYX3_lbXO2NGB4Dar4rDzWOUw2YSoYGmdRXFyttgnr4">
+                    </div><a
+                        class="flex items-center gap-1 font-label-md text-label-md text-on-surface-variant hover:text-error transition-colors px-2 py-1 rounded hover:bg-surface-container-high"
+                        data-path="login" href="#"><span class="material-symbols-outlined text-sm">logout</span><span
+                            class="hidden md:inline">Sign Out</span></a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <aside
+        class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-lowest z-40 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <div class="flex flex-col flex-1 overflow-y-auto pt-space-md">
+            <div class="px-gutter pb-space-sm"><span
+                    class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Core
+                    Administration</span></div>
+            <nav class="flex flex-col gap-0.5 px-space-sm"
+                data-active-classes="bg-primary-container text-on-primary-fixed border-l-4 border-secondary"><a
+                    aria-current="page"
+                    class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg font-label-lg transition-all bg-primary-container text-on-primary-fixed border-l-4 border-secondary"
+                    data-path="dashboard" href="#"><span
+                        class="material-symbols-outlined text-lg">dashboard</span>Dashboard</a><a
+                    class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+                    data-path="fdr-registry" href="#"><span
+                        class="material-symbols-outlined text-lg">account_balance</span>FDR Registry</a><a
+                    class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+                    data-path="maturities" href="#"><span
+                        class="material-symbols-outlined text-lg">event_repeat</span>Maturities</a><a
+                    class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+                    data-path="profile" href="#"><span class="material-symbols-outlined text-lg">badge</span>Profile</a>
+            </nav>
+            <div class="px-gutter pt-space-lg pb-space-sm"><span
+                    class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Workflows &amp;
+                    Modules</span></div>
+            <nav class="flex flex-col gap-0.5 px-space-sm"
+                data-active-classes="bg-primary-container text-on-primary-fixed border-l-4 border-secondary"><a
+                    class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+                    data-path="scrutiny-queue" href="#"><span
+                        class="material-symbols-outlined text-lg">fact_check</span>Scrutiny Queue</a><a
+                    class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+                    data-path="clearances" href="#"><span
+                        class="material-symbols-outlined text-lg">verified_user</span>Clearances</a><a
+                    class="flex items-center gap-space-md px-space-md py-2.5 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+                    data-path="audit-log" href="#"><span
+                        class="material-symbols-outlined text-lg">receipt_long</span>Audit Log</a></nav>
+        </div>
+        <div class="p-space-md bg-surface-container-low m-space-sm rounded-lg">
+            <div class="flex items-center justify-between text-on-surface-variant mb-1"><span
+                    class="font-label-sm text-label-sm">Production Node</span><span
+                    class="font-tabular-code text-tabular-code text-secondary font-medium">ND-DELHI-04</span></div>
+            <div class="font-body-sm text-body-sm text-on-surface-variant">GIGW 3.0 &amp; MeitY Certified Production
+                System</div>
+        </div>
+    </aside>
+    <div class="pl-64">
+        <main class="w-full pt-16 min-h-screen bg-surface px-gutter py-space-lg">
+            <div class="flex flex-col w-full">
+                <!-- Role Switching Demo Strip -->
+                <div
+                    class="mb-space-lg p-space-md bg-surface-container-lowest rounded-xl flex flex-wrap items-center justify-between gap-space-md shadow-sm border-l-4 border-secondary">
+                    <div class="flex items-center gap-space-md min-w-0">
+                        <div
+                            class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed shrink-0">
+                            <span class="material-symbols-outlined text-xl">verified_user</span></div>
+                        <div class="flex flex-col min-w-0">
+                            <div class="flex items-center gap-space-xs"><span
+                                    class="font-label-lg text-label-lg text-on-surface font-semibold truncate">Dr.
+                                    Sanjay Verma</span><span
+                                    class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-secondary-fixed text-on-secondary-fixed font-medium">Approving
+                                    Authority</span></div><span
+                                class="font-body-sm text-body-sm text-on-surface-variant truncate">Regional Directorate
+                                • Authorized Regulatory Clearing Officer</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-space-md flex-wrap">
+                        <div class="flex items-center gap-1.5 px-space-md py-1 bg-surface-container-low rounded-lg">
+                            <span class="w-2 h-2 rounded-full bg-[#059669]"></span><span
+                                class="font-label-sm text-label-sm text-on-surface-variant">Session: <span
+                                    class="font-tabular-code text-on-surface font-medium">Active • Digital Signature
+                                    Verified</span></span></div>
+                    </div>
+                </div>
+                <!-- Top Analytical Cards Grid (2-column layout) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter mb-gutter">
+                    <!-- Lifecycle Distribution Card -->
+                    <div
+                        class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-space-md">
+                                <h2 class="font-headline-sm text-headline-sm text-on-surface">Where open FDRs currently
+                                    sit in their lifecycle</h2>
+                                <span class="material-symbols-outlined text-outline text-lg">info</span>
+                            </div>
+                            <!-- Standard Active State Graphic (Dynamic via Role) -->
+                            <div class="pt-space-md pb-space-sm" id="lifecycle-content">
+                                <div class="relative w-full h-44 flex flex-col justify-center">
+                                    <!-- Background Grid Lines -->
+                                    <div class="absolute inset-0 flex justify-between pointer-events-none pl-36 pr-4">
+                                        <div class="h-full w-px bg-surface-container-highest"></div>
+                                        <div class="h-full w-px bg-surface-container-highest"></div>
+                                        <div class="h-full w-px bg-surface-container-highest"></div>
+                                        <div class="h-full w-px bg-surface-container-highest"></div>
+                                        <div class="h-full w-px bg-surface-container-highest"></div>
+                                    </div>
+                                    <!-- Horizontal Bars -->
+                                    <div class="relative z-10 flex flex-col gap-4 pl-2 pr-4">
+                                        <!-- Submitted -->
+                                        <div class="flex items-center">
+                                            <span
+                                                class="w-32 font-label-md text-label-md text-on-surface-variant text-right pr-4">Submitted</span>
+                                            <div class="flex-1 flex items-center">
+                                                <div class="h-5 rounded-sm bg-secondary transition-all duration-500"
+                                                    style="width: 25%;"></div>
+                                            </div>
+                                        </div>
+                                        <!-- Active -->
+                                        <div class="flex items-center">
+                                            <span
+                                                class="w-32 font-label-md text-label-md text-on-surface-variant text-right pr-4">Active</span>
+                                            <div class="flex-1 flex items-center">
+                                                <div class="h-5 rounded-sm bg-on-tertiary-container transition-all duration-500"
+                                                    style="width: 75%;"></div>
+                                            </div>
+                                        </div>
+                                        <!-- Release requested -->
+                                        <div class="flex items-center">
+                                            <span
+                                                class="w-32 font-label-md text-label-md text-on-surface-variant text-right pr-4">Release
+                                                requested</span>
+                                            <div class="flex-1 flex items-center">
+                                                <div
+                                                    class="h-5 w-1 rounded-sm bg-on-tertiary-fixed-variant transition-all duration-500">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- X-Axis Labels -->
+                                    <div
+                                        class="relative flex justify-between pl-36 pr-4 pt-3 font-tabular-code text-tabular-code text-outline">
+                                        <span class="-ml-1">0</span>
+                                        <span class="-ml-1">1</span>
+                                        <span class="-ml-1">2</span>
+                                        <span class="-ml-1">3</span>
+                                        <span class="-ml-1">4</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Empty / Loading placeholder state (used in Institution User persona) -->
+                            <div class="hidden h-44 flex flex-col items-center justify-center gap-space-sm text-outline"
+                                id="lifecycle-loading">
+                                <span class="material-symbols-outlined animate-spin text-secondary">sync</span>
+                                <span class="font-body-sm text-body-sm">Loading lifecycle data...</span>
+                            </div>
+                        </div>
+                        <!-- Legend -->
+                        <div class="pt-space-md mt-space-md bg-surface-container-lowest flex items-center justify-center gap-space-lg font-label-sm text-label-sm text-on-surface-variant"
+                            id="lifecycle-legend">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+                                <span class="">Submitted: <strong class="text-on-surface font-semibold"
+                                        id="count-submitted">1</strong></span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-on-tertiary-container"></span>
+                                <span class="">Active: <strong class="text-on-surface font-semibold"
+                                        id="count-active">3</strong></span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-on-tertiary-fixed-variant"></span>
+                                <span class="">Release requested: <strong class="text-on-surface font-semibold"
+                                        id="count-release">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Monthly Maturity Exposure Card -->
+                    <div
+                        class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-space-md">
+                                <h2 class="font-headline-sm text-headline-sm text-on-surface">How FDR maturities balance
+                                    monthly this year</h2>
+                                <span class="material-symbols-outlined text-outline text-lg">calendar_month</span>
+                            </div>
+                            <div class="pt-space-xs" id="maturities-content">
+                                <!-- Exposure Graph -->
+                                <div class="relative w-full h-44 flex">
+                                    <!-- Y-Axis Labels -->
+                                    <div
+                                        class="w-12 h-full flex flex-col justify-between items-end pr-2 font-tabular-code text-[11px] text-outline">
+                                        <span class="">₹20 L</span>
+                                        <span class="">₹15 L</span>
+                                        <span class="">₹10 L</span>
+                                        <span class="">₹5 L</span>
+                                        <span class="">₹0</span>
+                                    </div>
+                                    <!-- Plot Canvas Area -->
+                                    <div class="flex-1 h-full relative flex flex-col justify-between">
+                                        <!-- Grid lines -->
+                                        <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+                                            <div class="w-full h-px bg-surface-container-highest"></div>
+                                            <div class="w-full h-px bg-surface-container-highest"></div>
+                                            <div class="w-full h-px bg-surface-container-highest"></div>
+                                            <div class="w-full h-px bg-surface-container-highest"></div>
+                                            <div class="w-full h-px bg-surface-container-highest"></div>
+                                        </div>
+                                        <!-- Columns Area -->
+                                        <div
+                                            class="relative z-10 w-full h-full flex items-end justify-around px-2 pb-px">
+                                            <!-- Oct 26 -->
+                                            <div class="flex flex-col items-center gap-1 h-full justify-end group">
+                                                <div class="w-6 bg-transparent h-0 rounded-t transition-all"></div>
+                                            </div>
+                                            <!-- Dec 26 -->
+                                            <div class="flex flex-col items-center gap-1 h-full justify-end group">
+                                                <div class="w-6 bg-transparent h-0 rounded-t transition-all"></div>
+                                            </div>
+                                            <!-- Feb 27 (Has Value) -->
+                                            <div class="flex flex-col items-center gap-1 h-full justify-end group">
+                                                <div
+                                                    class="w-6 bg-primary-container h-1/4 rounded-t shadow-sm transition-all duration-300 hover:brightness-125 relative">
+                                                    <div
+                                                        class="opacity-0 group-hover:opacity-100 absolute -top-6 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-primary text-on-primary font-tabular-code text-[10px] rounded pointer-events-none whitespace-nowrap transition-opacity">
+                                                        ₹5,00,000
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Apr 27 -->
+                                            <div class="flex flex-col items-center gap-1 h-full justify-end group">
+                                                <div class="w-6 bg-transparent h-0 rounded-t transition-all"></div>
+                                            </div>
+                                            <!-- Jun 27 -->
+                                            <div class="flex flex-col items-center gap-1 h-full justify-end group">
+                                                <div class="w-6 bg-transparent h-0 rounded-t transition-all"></div>
+                                            </div>
+                                            <!-- Sept 27 -->
+                                            <div class="flex flex-col items-center gap-1 h-full justify-end group">
+                                                <div class="w-6 bg-transparent h-0 rounded-t transition-all"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- X-Axis Timeline Labels -->
+                                <div
+                                    class="flex justify-around pl-12 pr-2 pt-2 font-tabular-code text-[11px] text-on-surface-variant">
+                                    <span class="">Oct 26</span>
+                                    <span class="">Dec 26</span>
+                                    <span class="font-semibold text-on-surface">Feb 27</span>
+                                    <span class="">Apr 27</span>
+                                    <span class="">Jun 27</span>
+                                    <span class="">Sept 27</span>
+                                </div>
+                            </div>
+                            <!-- Empty state placeholder for Institution Head view -->
+                            <div class="hidden h-44 flex flex-col items-center justify-center gap-space-sm text-outline"
+                                id="maturities-loading">
+                                <span class="material-symbols-outlined animate-spin text-secondary">sync</span>
+                                <span class="font-body-sm text-body-sm">Loading maturity exposure...</span>
+                            </div>
+                        </div>
+                        <!-- Footer Sub-caption -->
+                        <div class="pt-space-md text-center">
+                            <span class="font-body-sm text-body-sm text-on-surface-variant">Aggregated institutional
+                                deposit exposure in Lakhs (₹ L)</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Due within 90 days Ledger Section -->
+                <div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm mb-gutter">
+                    <div class="flex items-start justify-between mb-space-md">
+                        <div>
+                            <h2 class="font-headline-md text-headline-md text-on-surface">Due within 90 days</h2>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Open deposits at or near
+                                maturity, soonest first.</p>
+                        </div>
+                        <a class="font-label-md text-label-md text-secondary hover:underline flex items-center gap-0.5"
+                            href="#">
+                            View all maturities
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                    <!-- Active List of 5 Specific FDRs -->
+                    <div class="flex flex-col" id="due-deposits-list">
+                        <!-- Record 1: FDR-SBI-204-907 -->
+                        <div
+                            class="py-space-md flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low px-space-sm rounded-lg transition-colors">
+                            <div class="flex items-start gap-space-md min-w-0">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary shrink-0">
+                                    <span class="material-symbols-outlined text-lg">account_balance</span>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span
+                                        class="font-tabular-code text-tabular-code text-on-surface tracking-tight font-semibold">FDR-SBI-204-907</span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant truncate">SBI •
+                                        Sector 04, Branch Ghatkopar east</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between md:justify-end gap-space-lg shrink-0">
+                                <div class="text-right">
+                                    <span
+                                        class="font-tabular-currency text-tabular-currency text-on-surface block">₹10,00,000.00</span>
+                                </div>
+                                <div class="w-32 flex justify-start">
+                                    <span
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-[#ECFDF5] text-[#059669]">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+                                        Active
+                                    </span>
+                                </div>
+                                <div class="text-right min-w-[110px]">
+                                    <span class="font-label-md text-label-md text-on-surface block">14 Apr 2026</span>
+                                    <span class="font-label-sm text-label-sm text-error font-medium block">Matured 197
+                                        days ago</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-px bg-surface-container-low my-1"></div>
+                        <!-- Record 2: FDR-BOB-2026-801 -->
+                        <div
+                            class="py-space-md flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low px-space-sm rounded-lg transition-colors">
+                            <div class="flex items-start gap-space-md min-w-0">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary shrink-0">
+                                    <span class="material-symbols-outlined text-lg">account_balance</span>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span
+                                        class="font-tabular-code text-tabular-code text-on-surface tracking-tight font-semibold">FDR-BOB-2026-801</span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant truncate">Bank of
+                                        Baroda • Shivaji Nagar Pune Branch</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between md:justify-end gap-space-lg shrink-0">
+                                <div class="text-right">
+                                    <span
+                                        class="font-tabular-currency text-tabular-currency text-on-surface block">₹4,50,000.00</span>
+                                </div>
+                                <div class="w-32 flex justify-start">
+                                    <span
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-[#ECFDF5] text-[#059669]">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+                                        Active
+                                    </span>
+                                </div>
+                                <div class="text-right min-w-[110px]">
+                                    <span class="font-label-md text-label-md text-on-surface block">10 Aug 2030</span>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant block">Due in 1382
+                                        days</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-px bg-surface-container-low my-1"></div>
+                        <!-- Record 3: FDR-PNB-2026-902 -->
+                        <div
+                            class="py-space-md flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low px-space-sm rounded-lg transition-colors">
+                            <div class="flex items-start gap-space-md min-w-0">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary shrink-0">
+                                    <span class="material-symbols-outlined text-lg">account_balance</span>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span
+                                        class="font-tabular-code text-tabular-code text-on-surface tracking-tight font-semibold">FDR-PNB-2026-902</span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant truncate">Punjab
+                                        National Bank • Connaught Place Branch</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between md:justify-end gap-space-lg shrink-0">
+                                <div class="text-right">
+                                    <span
+                                        class="font-tabular-currency text-tabular-currency text-on-surface block">₹3,50,000.00</span>
+                                </div>
+                                <div class="w-32 flex justify-start">
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-[#FFFBEB] text-[#D97706]">
+                                        <span class="material-symbols-outlined text-xs">schedule</span>
+                                        Under Scrutiny
+                                    </span>
+                                </div>
+                                <div class="text-right min-w-[110px]">
+                                    <span class="font-label-md text-label-md text-on-surface block">15 Jan 2031</span>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant block">Due in 1540
+                                        days</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-px bg-surface-container-low my-1"></div>
+                        <!-- Record 4: FDR-SBI-2026-901 -->
+                        <div
+                            class="py-space-md flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low px-space-sm rounded-lg transition-colors">
+                            <div class="flex items-start gap-space-md min-w-0">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary shrink-0">
+                                    <span class="material-symbols-outlined text-lg">account_balance</span>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span
+                                        class="font-tabular-code text-tabular-code text-on-surface tracking-tight font-semibold">FDR-SBI-2026-901</span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant truncate">State Bank
+                                        of India • Dwarka Sector 14 Branch</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between md:justify-end gap-space-lg shrink-0">
+                                <div class="text-right">
+                                    <span
+                                        class="font-tabular-currency text-tabular-currency text-on-surface block">₹5,00,000.00</span>
+                                </div>
+                                <div class="w-32 flex justify-start">
+                                    <span
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm bg-[#ECFDF5] text-[#059669]">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+                                        Active
+                                    </span>
+                                </div>
+                                <div class="text-right min-w-[110px]">
+                                    <span class="font-label-md text-label-md text-on-surface block">01 Apr 2030</span>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant block">Due in 1251
+                                        days</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-px bg-surface-container-low my-1"></div>
+                        <!-- Record 5: FDR-PNB-2026-903 -->
+                        <div
+                            class="py-space-md flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low px-space-sm rounded-lg transition-colors">
+                            <div class="flex items-start gap-space-md min-w-0">
+                                <div
+                                    class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary shrink-0">
+                                    <span class="material-symbols-outlined text-lg">account_balance</span>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span
+                                        class="font-tabular-code text-tabular-code text-on-surface tracking-tight font-semibold">FDR-PNB-2026-903</span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant truncate">State Bank
+                                        of India • Sector 14 Branch</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between md:justify-end gap-space-lg shrink-0">
+                                <div class="text-right">
+                                    <span
+                                        class="font-tabular-currency text-tabular-currency text-on-surface block">₹5,00,000.00</span>
+                                </div>
+                                <div class="w-32 flex justify-start">
+                                    <span
+                                        class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-[10px] tracking-wide uppercase bg-surface-container-high text-on-surface-variant">
+                                        CORRECTION REQUIRED
+                                    </span>
+                                </div>
+                                <div class="text-right min-w-[110px]">
+                                    <span class="font-label-md text-label-md text-on-surface block">24 Mar 2027</span>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant block">Due in 147
+                                        days</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Empty Loading State For Specific Roles -->
+                    <div class="hidden py-12 flex flex-col items-center justify-center gap-space-sm text-outline"
+                        id="due-deposits-loading">
+                        <span class="material-symbols-outlined animate-spin text-secondary">sync</span>
+                        <span class="font-body-sm text-body-sm">Checking deposit maturities...</span>
+                    </div>
+                </div>
+                <!-- Bottom Module Action Banners (USP 1 & USP 2 Cards) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-space-xl">
+                    <!-- USP 1 Card -->
+                    <div
+                        class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
+                        <div class="flex items-center gap-space-md">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary shrink-0">
+                                <span class="material-symbols-outlined text-xl">auto_fix_high</span>
+                            </div>
+                            <div class="flex flex-col"><span
+                                    class="font-headline-sm text-headline-sm text-on-surface">APH Compliance
+                                    Engine</span><span
+                                    class="font-body-sm text-body-sm text-on-surface-variant">Automated Table 1.4
+                                    regulatory verification &amp; shortfall detection.</span></div>
+                        </div>
+                        <a class="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1 shrink-0 ml-4"
+                            href="#">
+                            <span class="">View Engine</span>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                    <!-- USP 2 Card -->
+                    <div
+                        class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
+                        <div class="flex items-center gap-space-md">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-tertiary-container shrink-0">
+                                <span class="material-symbols-outlined text-xl">verified</span>
+                            </div>
+                            <div class="flex flex-col"><span
+                                    class="font-headline-sm text-headline-sm text-on-surface">Clearance Command
+                                    Center</span><span
+                                    class="font-body-sm text-body-sm text-on-surface-variant">Multi-department statutory
+                                    clearance orchestration.</span></div>
+                        </div>
+                        <a class="font-label-md text-label-md text-secondary hover:underline flex items-center gap-1 shrink-0 ml-4"
+                            href="#">
+                            <span class="">Open Clearances</span>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Statutory Demonstration Sub-Footer -->
+                <footer class="pt-space-md pb-space-lg text-center">
+                    <p class="font-body-sm text-body-sm text-outline">Saksham — Central Regulatory Repository for Fixed
+                        Deposit Receipts &amp; Security Deposits • AICTE, Ministry of Education, Government of India •
+                        Hosted on National Informatics Centre (NIC) Sovereign Cloud</p>
+                </footer>
+            </div>
+            <script>
+                function switchRole(roleKey) {
+                    const badge = document.getElementById('current-role-badge');
+                    const lifecycleContent = document.getElementById('lifecycle-content');
+                    const lifecycleLoading = document.getElementById('lifecycle-loading');
+                    const maturitiesContent = document.getElementById('maturities-content');
+                    const maturitiesLoading = document.getElementById('maturities-loading');
+                    const dueList = document.getElementById('due-deposits-list');
+                    const dueLoading = document.getElementById('due-deposits-loading');
+
+                    // Role definitions matching the 5 screenshots
+                    const roles = {
+                        kavita: {
+                            title: "Kavita Patel (Auditor)",
+                            hasData: true
+                        },
+                        sanjay: {
+                            title: "Dr. Sanjay Verma (Approver)",
+                            hasData: true
+                        },
+                        anil: {
+                            title: "Anil Sharma (AICTE Officer)",
+                            hasData: true
+                        },
+                        pooja: {
+                            title: "Pooja Kulkarni (System Admin)",
+                            hasData: true
+                        },
+                        rajesh: {
+                            title: "Dr. Rajesh Verma (Institution Head)",
+                            hasData: false
+                        }
+                    };
+
+                    const target = roles[roleKey] || roles.sanjay;
+                    badge.textContent = target.title;
+
+                    // Toggle button active styling
+                    const buttons = document.querySelectorAll('.role-btn');
+                    buttons.forEach(btn => {
+                        btn.classList.remove('bg-primary-container', 'text-on-primary');
+                        btn.classList.add('bg-surface-container-lowest', 'text-on-surface');
+                    });
+
+                    event.currentTarget.classList.add('bg-primary-container', 'text-on-primary');
+                    event.currentTarget.classList.remove('bg-surface-container-lowest', 'text-on-surface');
+
+                    // Simulation of Institution view which has loading spinners as depicted in Screenshot 23
+                    if (!target.hasData) {
+                        lifecycleContent.classList.add('hidden');
+                        lifecycleLoading.classList.remove('hidden');
+                        maturitiesContent.classList.add('hidden');
+                        maturitiesLoading.classList.remove('hidden');
+                        dueList.classList.add('hidden');
+                        dueLoading.classList.remove('hidden');
+                        document.getElementById('count-submitted').textContent = '0';
+                        document.getElementById('count-active').textContent = '0';
+                        document.getElementById('count-release').textContent = '0';
+                    } else {
+                        lifecycleContent.classList.remove('hidden');
+                        lifecycleLoading.classList.add('hidden');
+                        maturitiesContent.classList.remove('hidden');
+                        maturitiesLoading.classList.add('hidden');
+                        dueList.classList.remove('hidden');
+                        dueLoading.classList.add('hidden');
+                        document.getElementById('count-submitted').textContent = '1';
+                        document.getElementById('count-active').textContent = '3';
+                        document.getElementById('count-release').textContent = '0';
+                    }
+                }
+            </script>
+        </main>
+    </div>
+
+</body>
+
+</html>

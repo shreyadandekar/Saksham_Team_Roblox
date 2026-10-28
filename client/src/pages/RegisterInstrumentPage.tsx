@@ -144,31 +144,31 @@ export default function RegisterInstrumentPage() {
 
   return (
     <AppShell>
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <div className="w-full max-w-5xl mx-auto space-y-6">
         {/* ── Breadcrumb & Navigation ────────────────────────────── */}
-        <div className="flex items-center gap-2 text-sm text-slate-500">
+        <div className="flex items-center gap-2 text-xs text-[#64748B]">
           <Link
             to="/instruments"
-            className="hover:text-blue-700 flex items-center gap-1 transition-colors"
+            className="hover:text-[#1D4ED8] flex items-center gap-1 transition-colors font-medium"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-3.5 w-3.5" />
             Back to Registry
           </Link>
           <span>/</span>
-          <span className="text-slate-800 font-medium">New FDR Registration</span>
+          <span className="text-[#0F172A] font-semibold">New FDR Registration</span>
         </div>
 
         {/* ── Title Banner ───────────────────────────────────────── */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-6 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-              <FileText className="h-6 w-6" />
+            <div className="h-10 w-10 rounded-lg bg-[#EFF6FF] text-[#1E40AF] flex items-center justify-center border border-[#BFDBFE]">
+              <FileText className="h-5 w-5 text-[#1D4ED8]" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+              <h1 className="text-xl font-bold text-[#0F172A] tracking-tight">
                 Register Security Deposit / Fixed Deposit Receipt (FDR)
               </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-[#64748B] mt-0.5">
                 Record institutional security deposit details and attach verified bank receipt metadata for AICTE compliance.
               </p>
             </div>
@@ -177,11 +177,11 @@ export default function RegisterInstrumentPage() {
 
         {/* ── Error Banner ───────────────────────────────────────── */}
         {error && (
-          <div className="p-4 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-start gap-2.5">
-            <AlertCircle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+          <div className="p-4 rounded-lg bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B] text-xs flex items-start gap-2.5">
+            <AlertCircle className="h-5 w-5 text-[#DC2626] shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold">Unable to complete registration</p>
-              <p className="mt-0.5 text-xs text-rose-700">{error}</p>
+              <p className="mt-0.5 text-xs text-[#991B1B]">{error}</p>
             </div>
           </div>
         )}
@@ -189,7 +189,7 @@ export default function RegisterInstrumentPage() {
         {/* ── Registration Form ──────────────────────────────────── */}
         <form
           onSubmit={(e) => e.preventDefault()}
-          className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-6"
+          className="bg-white p-6 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-6"
         >
           {/* Section 1: Instrument & Bank Particulars */}
           <div>
@@ -463,9 +463,9 @@ export default function RegisterInstrumentPage() {
                 type="button"
                 onClick={() => handleSubmit(false)}
                 disabled={loading}
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 rounded-lg text-sm font-semibold shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2 border border-[#CBD5E1] bg-white hover:bg-[#F8FAFC] text-[#334155] rounded-md text-xs font-semibold shadow-xs transition-colors cursor-pointer disabled:opacity-50"
               >
-                <Save className="h-4 w-4 text-slate-500" />
+                <Save className="h-4 w-4 text-[#64748B]" />
                 <span>{loading ? "Processing..." : "Save as Draft"}</span>
               </button>
 
@@ -474,15 +474,15 @@ export default function RegisterInstrumentPage() {
                 type="button"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-sm font-semibold shadow-sm transition-colors cursor-pointer disabled:opacity-50"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2 bg-[#0B192C] hover:bg-[#15284F] text-white rounded-md text-xs font-semibold shadow-xs transition cursor-pointer disabled:opacity-50"
               >
-                <Send className="h-4 w-4 text-blue-200" />
+                <Send className="h-4 w-4 text-amber-400" />
                 <span>{loading ? "Submitting..." : "Submit for Scrutiny"}</span>
               </button>
             </div>
           </div>
         </form>
-      </main>
+      </div>
     </AppShell>
   );
 }

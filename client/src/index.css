@@ -1,44 +1,62 @@
 @import "tailwindcss";
 
 /*
- * Saksham – Global Design Tokens
- * Rebranded visual identity matching SIH 2026 Reference Specification.
- *
- * Characteristics:
- * - Clean off-white page background (#f8f9fa)
- * - Pure white cards (#ffffff) with crisp, minimal borders (#e5e7eb)
- * - Deep navy brand primary (#0b192c)
- * - Warm amber active indicator (#d97706)
- * - Restrained typography and subtle hover states
+ * Saksham – SIH 2026 PS26265
+ * Security Deposit & FDR Management System
+ * Government-Style Institutional UI Design Tokens
  */
 @theme {
-  --color-brand-dark: #0b192c;
-  --color-brand-primary: #0f172a;
+  --color-gov-navy-950: #081220;
+  --color-gov-navy-900: #0b1a30;
+  --color-gov-navy-850: #0e1c2f;
+  --color-gov-navy-800: #15284f;
+  --color-gov-navy-700: #1c355e;
+  --color-gov-navy-600: #244376;
+
+  --color-gov-blue-600: #1d4ed8;
+  --color-gov-blue-700: #1e40af;
+  --color-gov-blue-50: #eff6ff;
+
+  --color-gov-surface: #f7f9fb;
+  --color-gov-surface-low: #f1f4f8;
+  --color-gov-card: #ffffff;
+
+  --color-gov-border: #e2e8f0;
+  --color-gov-border-subtle: #cbd5e1;
+
+  --color-gov-text: #111827;
+  --color-gov-text-muted: #64748b;
+  --color-gov-text-subtle: #94a3b8;
+
+  --color-gov-gold: #d97706;
+  --color-gov-gold-light: #fef3c7;
+
+  /* Backward compatibility tokens */
+  --color-brand-dark: #0b1a30;
+  --color-brand-primary: #0e1c2f;
   --color-brand-accent: #d97706;
   --color-brand-accent-hover: #b45309;
 
-  --color-page-bg: #fbfaf8;
+  --color-page-bg: #f7f9fb;
   --color-card-bg: #ffffff;
   --color-sidebar-bg: #ffffff;
   --color-sidebar-active: #eef2f6;
 
-  --color-border-subtle: #e5e7eb;
+  --color-border-subtle: #e2e8f0;
   --color-border-light: #f1f5f9;
 
-  --color-text-main: #0f172a;
+  --color-text-main: #111827;
   --color-text-muted: #64748b;
   --color-text-subtle: #94a3b8;
 
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-
-  --radius-card: 0.75rem;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 :root {
   color-scheme: light;
 }
 
-/* Smooth font rendering */
 html {
   color-scheme: light;
   -webkit-font-smoothing: antialiased;
@@ -47,8 +65,8 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-page-bg);
-  color: var(--color-text-main);
+  background-color: #f7f9fb;
+  color: #111827;
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -71,4 +89,23 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Marquee scroll for government news/announcements ticker */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.gov-ticker-track {
+  display: inline-flex;
+  animation: marqueeScroll 40s linear infinite;
+}
+
+.gov-ticker-track:hover {
+  animation-play-state: paused;
 }

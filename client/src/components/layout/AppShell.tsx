@@ -1,13 +1,11 @@
 /**
  * src/components/layout/AppShell.tsx
  *
- * Master Application Shell matching SIH 2026 Reference Specification (fi.pdf).
- * Features:
- * - Topmost service notification bar (#0d1527) with status indicator
- * - Clean white navbar with dark navy brand icon, title, user profile, and sign-out
- * - Left vertical sidebar with active amber accent bar indicator
- * - Warm off-white content canvas (#fbfaf8) with responsive container
- * - Mobile sidebar drawer toggle
+ * SAKSHAM — Security Deposit & FDR Management Portal
+ * SIH 2026 Problem Statement PS26265
+ *
+ * Institutional Government-Style Application Shell inspired by dashboard_page.html.
+ * Preserves all role permissions, navigation rules, real user state, and session logout.
  */
 
 import { useState, type ReactNode } from "react";
@@ -44,15 +42,25 @@ export default function AppShell({ children }: AppShellProps) {
 
   const roleLabels: Record<string, string> = {
     INSTITUTION_USER: "Institution User",
-    SCRUTINY_OFFICER: "AICTE Officer",
+    SCRUTINY_OFFICER: "Scrutiny Officer",
     APPROVER: "Competent Authority",
     ADMIN: "System Administrator",
-    AUDITOR: "Auditor",
+    AUDITOR: "Oversight Auditor",
     AICTE_OFFICER: "AICTE Officer",
     SYSTEM_ADMIN: "System Administrator",
   };
 
-  // Derive initials from full name (e.g. "Ritu Malhotra" -> "RM")
+  const roleBadgeColors: Record<string, string> = {
+    INSTITUTION_USER: "bg-blue-100 text-blue-900 border-blue-200",
+    SCRUTINY_OFFICER: "bg-amber-100 text-amber-900 border-amber-200",
+    APPROVER: "bg-emerald-100 text-emerald-900 border-emerald-200",
+    ADMIN: "bg-purple-100 text-purple-900 border-purple-200",
+    AUDITOR: "bg-indigo-100 text-indigo-900 border-indigo-200",
+    AICTE_OFFICER: "bg-amber-100 text-amber-900 border-amber-200",
+    SYSTEM_ADMIN: "bg-purple-100 text-purple-900 border-purple-200",
+  };
+
+  // Derive initials from full name
   const initials = user?.fullName
     ? user.fullName
         .split(" ")
@@ -62,7 +70,7 @@ export default function AppShell({ children }: AppShellProps) {
         .slice(0, 2)
     : "US";
 
-  // Navigation Items
+  // Core navigation items
   const primaryNavItems = [
     { label: "Dashboard", to: "/dashboard", icon: LayoutGrid },
     { label: "FDR Registry", to: "/instruments", icon: Files },
@@ -70,14 +78,14 @@ export default function AppShell({ children }: AppShellProps) {
     { label: "Profile", to: "/profile", icon: UserCircle },
   ];
 
-  // Secondary workflows based on user role
+  // Role permissions checks
   const canRegisterFdr = user?.role === "INSTITUTION_USER";
   const canScrutinize =
     user?.role === "SCRUTINY_OFFICER" ||
     user?.role === "AICTE_OFFICER" ||
     user?.role === "SYSTEM_ADMIN" ||
     user?.role === "ADMIN";
-  const canViewClearances = true; // All authenticated users can track clearances
+  const canViewClearances = true;
   const canViewAudit =
     user?.role === "AUDITOR" ||
     user?.role === "ADMIN" ||
@@ -85,11 +93,18 @@ export default function AppShell({ children }: AppShellProps) {
     user?.role === "SCRUTINY_OFFICER";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8f9fa] text-slate-900 font-sans antialiased">
-      {/* ── Main Top Navbar (Clean White matching IMAGE 3) ──────────── */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div className="w-full px-4 sm:px-6 lg:px-8 h-15 flex items-center justify-between">
-          {/* Left: Mobile hamburger & Brand */}
+    <div className="min-h-screen flex flex-col bg-[#f7f9fb] text-slate-900 font-sans antialiased">
+      {/* ── 1. Top Masthead & Navigation Header ─────────────────────── */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        {/* Tricolor ribbon */}
+        <div className="h-0.5 w-full flex">
+          <div className="h-full flex-1 bg-[#FF9933]" />
+          <div className="h-full flex-1 bg-white" />
+          <div className="h-full flex-1 bg-[#138808]" />
+        </div>
+
+        <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          {/* Left: Mobile hamburger & Institutional Branding */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -102,199 +117,241 @@ export default function AppShell({ children }: AppShellProps) {
             {/* Brand Logo & Title */}
             <div
               onClick={() => navigate("/dashboard")}
-              className="flex items-center gap-3 cursor-pointer group select-none"
+              className="flex items-center gap-2.5 cursor-pointer group select-none"
             >
-              <div className="w-8 h-8 rounded-lg bg-white overflow-hidden flex items-center justify-center border border-slate-200/90 shadow-xs group-hover:border-slate-300 transition p-0.5 shrink-0">
+              <div className="h-10 w-auto flex items-center justify-center shrink-0">
+                <img
+                  src="/assets/national-emblem.png"
+                  alt="National Emblem of India"
+                  className="h-10 w-auto object-contain"
+                />
+              </div>
+              <div className="h-6 w-px bg-slate-200 hidden sm:block" />
+              <div className="w-8 h-8 rounded-lg bg-white overflow-hidden flex items-center justify-center border border-slate-200 shadow-xs group-hover:border-slate-300 transition p-0.5 shrink-0">
                 <img
                   src="/assets/saksham-logo.png"
-                  alt="Saksham Logo"
+                  alt="Saksham Emblem"
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-900 tracking-tight leading-tight">
-                  Saksham
+              <div className="flex flex-col justify-center border-l border-slate-200 pl-2.5">
+                <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold leading-none">
+                  SIH 2026 PS26265 • Regulatory Authority
                 </span>
-                <span className="text-[11px] text-slate-500 leading-tight">
-                  Security Deposit Management
+                <span className="text-sm sm:text-base font-bold text-[#0e1c2f] tracking-tight leading-tight mt-0.5">
+                  Saksham{" "}
+                  <span className="text-xs text-slate-500 font-normal hidden sm:inline">
+                    | Security Deposit &amp; FDR Management
+                  </span>
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Right: User Profile & Sign Out Button */}
-          {user && (
-            <div className="flex items-center gap-4">
-              {/* User text details */}
-              <div className="text-right hidden sm:block">
-                <p className="text-xs font-semibold text-slate-900 leading-tight">
-                  {user.fullName}
-                </p>
-                <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
-                  {roleLabels[user.role] || user.role}
-                </p>
-              </div>
+          {/* Right: User Profile & Sign Out */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            {user && (
+              <div className="flex items-center gap-3">
+                {/* User text details */}
+                <div className="text-right hidden sm:block">
+                  <div className="text-xs font-semibold text-slate-900 leading-tight">
+                    {user.fullName}
+                  </div>
+                  <div className="flex items-center justify-end gap-1 mt-0.5">
+                    <span
+                      className={`inline-block px-1.5 py-0.2 font-semibold text-[10px] rounded border ${
+                        roleBadgeColors[user.role] || "bg-slate-100 text-slate-700 border-slate-200"
+                      }`}
+                    >
+                      {roleLabels[user.role] || user.role}
+                    </span>
+                  </div>
+                </div>
 
-              {/* Avatar circle with initials */}
-              <div
-                onClick={() => navigate("/profile")}
-                className="w-8 h-8 rounded-full bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center border border-slate-300 hover:ring-2 hover:ring-sky-500/20 cursor-pointer transition select-none"
-                title="View Profile"
-              >
-                {initials}
-              </div>
+                {/* Avatar with initials */}
+                <div
+                  onClick={() => navigate("/profile")}
+                  className="w-8 h-8 rounded-full bg-[#15284F] text-amber-400 font-bold text-xs flex items-center justify-center border border-[#1c355e] hover:ring-2 hover:ring-blue-500/20 cursor-pointer transition select-none shrink-0"
+                  title="View Profile"
+                >
+                  {initials}
+                </div>
 
-              {/* Sign out button */}
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer transition shadow-none"
-              >
-                <LogOut className="w-3.5 h-3.5 text-slate-500" />
-                <span className="hidden sm:inline">Sign out</span>
-              </button>
-            </div>
-          )}
+                {/* Sign out button */}
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-red-700 hover:bg-red-50 transition px-2.5 py-1.5 rounded-lg border border-slate-200 cursor-pointer"
+                  title="Sign out of Saksham"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Sign Out</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
-      {/* ── 3. Main Body: Sidebar + Content Canvas ────────────────────── */}
-      <div className="flex flex-1 max-w-[1600px] w-full mx-auto">
-        {/* Left Sidebar (Desktop) */}
-        <aside className="w-56 lg:w-60 shrink-0 bg-white border-r border-slate-200 hidden lg:flex flex-col justify-between py-6 select-none">
+      {/* ── 2. Main Body: Sidebar + Content Canvas ────────────────────── */}
+      <div className="flex flex-1 w-full">
+        {/* Left Vertical Sidebar (Desktop) */}
+        <aside className="w-64 shrink-0 bg-white border-r border-slate-200 hidden lg:flex flex-col justify-between py-5 select-none shadow-[1px_0_4px_rgba(0,0,0,0.02)]">
           <div className="space-y-6 px-3">
-            {/* Primary Navigation */}
-            <nav className="space-y-1">
-              {primaryNavItems.map((item) => {
-                const Icon = item.icon;
-                const isActive =
-                  item.to === "/instruments"
-                    ? location.pathname.startsWith("/instruments") &&
-                      location.pathname !== "/instruments/new"
-                    : location.pathname === item.to;
+            {/* Core Administration Section */}
+            <div>
+              <span className="block text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3.5 mb-2">
+                Core Administration
+              </span>
+              <nav className="space-y-1">
+                {primaryNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive =
+                    item.to === "/instruments"
+                      ? location.pathname.startsWith("/instruments") &&
+                        location.pathname !== "/instruments/new"
+                      : location.pathname === item.to;
 
-                return (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition ${
-                      isActive
-                        ? "bg-[#eef2f6] text-slate-900 font-semibold"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-                    }`}
-                  >
-                    {/* Amber active indicator bar on the left */}
-                    {isActive && (
-                      <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-600 rounded-r" />
-                    )}
-                    <Icon
-                      className={`w-4 h-4 ${
-                        isActive ? "text-slate-900" : "text-slate-500"
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
+                        isActive
+                          ? "bg-[#0e1c2f] text-white font-semibold shadow-xs"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                       }`}
-                    />
-                    <span>{item.label}</span>
-                  </NavLink>
-                );
-              })}
-            </nav>
+                    >
+                      {isActive && (
+                        <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-400 rounded-r" />
+                      )}
+                      <Icon
+                        className={`w-4 h-4 ${
+                          isActive ? "text-amber-400" : "text-slate-400"
+                        }`}
+                      />
+                      <span>{item.label}</span>
+                    </NavLink>
+                  );
+                })}
+              </nav>
+            </div>
 
-            {/* Separator / Modules Section */}
+            {/* Workflows & Modules Section */}
             <div className="pt-2 border-t border-slate-100">
               <span className="block text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3.5 mb-2">
-                Workflows & Modules
+                Workflows &amp; Modules
               </span>
 
               <nav className="space-y-1">
-                {/* Institution FDR Registration */}
+                {/* Register FDR (Institution only) */}
                 {canRegisterFdr && (
                   <NavLink
                     to="/instruments/new"
                     className={({ isActive }) =>
-                      `relative flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition ${
+                      `relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
                         isActive
-                          ? "bg-[#eef2f6] text-slate-900 font-semibold"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                          ? "bg-[#0e1c2f] text-white font-semibold shadow-xs"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                       }`
                     }
                   >
                     {({ isActive }) => (
                       <>
                         {isActive && (
-                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-600 rounded-r" />
+                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-400 rounded-r" />
                         )}
-                        <FilePlus className="w-4 h-4 text-slate-500" />
+                        <FilePlus
+                          className={`w-4 h-4 ${
+                            isActive ? "text-amber-400" : "text-slate-400"
+                          }`}
+                        />
                         <span>Register FDR</span>
                       </>
                     )}
                   </NavLink>
                 )}
 
-                {/* Scrutiny Queue for Officers */}
+                {/* Scrutiny Queue (Officers) */}
                 {canScrutinize && (
                   <NavLink
                     to="/scrutiny"
                     className={({ isActive }) =>
-                      `relative flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition ${
+                      `relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
                         isActive
-                          ? "bg-[#eef2f6] text-slate-900 font-semibold"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                          ? "bg-[#0e1c2f] text-white font-semibold shadow-xs"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                       }`
                     }
                   >
                     {({ isActive }) => (
                       <>
                         {isActive && (
-                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-600 rounded-r" />
+                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-400 rounded-r" />
                         )}
-                        <FileCheck2 className="w-4 h-4 text-slate-500" />
+                        <FileCheck2
+                          className={`w-4 h-4 ${
+                            isActive ? "text-amber-400" : "text-slate-400"
+                          }`}
+                        />
                         <span>Scrutiny Queue</span>
                       </>
                     )}
                   </NavLink>
                 )}
 
-                {/* Clearance Command Center */}
+                {/* Clearances (All roles) */}
                 {canViewClearances && (
                   <NavLink
                     to="/clearances"
                     className={({ isActive }) =>
-                      `relative flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition ${
-                        isActive
-                          ? "bg-[#eef2f6] text-slate-900 font-semibold"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                      `relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
+                        isActive || location.pathname.startsWith("/clearances")
+                          ? "bg-[#0e1c2f] text-white font-semibold shadow-xs"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                       }`
                     }
                   >
                     {({ isActive }) => (
                       <>
-                        {isActive && (
-                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-600 rounded-r" />
+                        {(isActive || location.pathname.startsWith("/clearances")) && (
+                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-400 rounded-r" />
                         )}
-                        <Award className="w-4 h-4 text-slate-500" />
+                        <Award
+                          className={`w-4 h-4 ${
+                            isActive || location.pathname.startsWith("/clearances")
+                              ? "text-amber-400"
+                              : "text-slate-400"
+                          }`}
+                        />
                         <span>Clearances</span>
                       </>
                     )}
                   </NavLink>
                 )}
 
-                {/* Audit Log */}
+                {/* Audit Log (Auditors & Admins) */}
                 {canViewAudit && (
                   <NavLink
                     to="/audit"
                     className={({ isActive }) =>
-                      `relative flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition ${
+                      `relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
                         isActive
-                          ? "bg-[#eef2f6] text-slate-900 font-semibold"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                          ? "bg-[#0e1c2f] text-white font-semibold shadow-xs"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                       }`
                     }
                   >
                     {({ isActive }) => (
                       <>
                         {isActive && (
-                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-600 rounded-r" />
+                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-400 rounded-r" />
                         )}
-                        <History className="w-4 h-4 text-slate-500" />
+                        <History
+                          className={`w-4 h-4 ${
+                            isActive ? "text-amber-400" : "text-slate-400"
+                          }`}
+                        />
                         <span>Audit Log</span>
                       </>
                     )}
@@ -304,40 +361,38 @@ export default function AppShell({ children }: AppShellProps) {
             </div>
           </div>
 
-          {/* Sidebar bottom institution info */}
-          {user?.institution && (
-            <div className="px-4 py-3 border-t border-slate-100 mx-3 rounded-xl bg-slate-50/80">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
-                Institution
+          {/* Bottom node information box */}
+          <div className="p-3 bg-[#f1f4f8] m-3 rounded-lg border border-slate-200">
+            <div className="flex items-center justify-between text-slate-600 mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider">
+                SIH 2026 Prototype
               </span>
-              <p className="text-xs font-semibold text-slate-800 truncate mt-0.5">
-                {user.institution.name}
-              </p>
-              <p className="text-[10px] text-slate-500 font-mono truncate">
-                {user.institution.aicteId}
-              </p>
+              <span className="font-mono text-[10px] font-semibold text-blue-700">
+                ND-DELHI-04
+              </span>
             </div>
-          )}
+            <div className="text-[11px] text-slate-500 leading-tight">
+              Centralized Regulatory Deposit &amp; Lien Management Ledger
+            </div>
+          </div>
         </aside>
 
-        {/* Mobile Sidebar Drawer Overlay */}
+        {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
           <div className="fixed inset-0 z-40 lg:hidden flex">
             <div
               className="fixed inset-0 bg-black/40 backdrop-blur-xs"
               onClick={() => setMobileMenuOpen(false)}
             />
-            <div className="relative w-64 bg-white h-full p-6 shadow-2xl flex flex-col justify-between z-50">
-              <div className="space-y-6">
+            <div className="relative w-64 bg-white h-full p-5 shadow-2xl flex flex-col justify-between z-50">
+              <div className="space-y-5">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-200">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-md bg-white border border-slate-200 flex items-center justify-center p-0.5 overflow-hidden">
-                      <img
-                        src="/assets/saksham-logo.png"
-                        alt="Saksham Logo"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
+                    <img
+                      src="/assets/saksham-logo.png"
+                      alt="Saksham"
+                      className="w-6 h-6 object-contain"
+                    />
                     <span className="text-sm font-bold text-slate-900">Saksham</span>
                   </div>
                   <button
@@ -357,13 +412,13 @@ export default function AppShell({ children }: AppShellProps) {
                         key={item.to}
                         to={item.to}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium ${
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium ${
                           isActive
-                            ? "bg-[#eef2f6] text-slate-900 font-semibold"
-                            : "text-slate-600 hover:bg-slate-50"
+                            ? "bg-[#0e1c2f] text-white font-semibold"
+                            : "text-slate-600 hover:bg-slate-100"
                         }`}
                       >
-                        <Icon className="w-4 h-4 text-slate-500" />
+                        <Icon className="w-4 h-4" />
                         <span>{item.label}</span>
                       </NavLink>
                     );
@@ -372,9 +427,9 @@ export default function AppShell({ children }: AppShellProps) {
                     <NavLink
                       to="/instruments/new"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
                     >
-                      <FilePlus className="w-4 h-4 text-slate-500" />
+                      <FilePlus className="w-4 h-4" />
                       <span>Register FDR</span>
                     </NavLink>
                   )}
@@ -382,27 +437,27 @@ export default function AppShell({ children }: AppShellProps) {
                     <NavLink
                       to="/scrutiny"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
                     >
-                      <FileCheck2 className="w-4 h-4 text-slate-500" />
+                      <FileCheck2 className="w-4 h-4" />
                       <span>Scrutiny Queue</span>
                     </NavLink>
                   )}
                   <NavLink
                     to="/clearances"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
                   >
-                    <Award className="w-4 h-4 text-slate-500" />
+                    <Award className="w-4 h-4" />
                     <span>Clearances</span>
                   </NavLink>
                   {canViewAudit && (
                     <NavLink
                       to="/audit"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
                     >
-                      <History className="w-4 h-4 text-slate-500" />
+                      <History className="w-4 h-4" />
                       <span>Audit Log</span>
                     </NavLink>
                   )}
@@ -420,15 +475,20 @@ export default function AppShell({ children }: AppShellProps) {
           </div>
         )}
 
-        {/* ── Main Content Canvas ───────────────────────────────────── */}
+        {/* ── 3. Main Content Canvas ─────────────────────────────────── */}
         <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
-          <div className="w-full max-w-7xl mx-auto space-y-6">
+          <div className="w-full space-y-6">
             {children}
           </div>
 
-          {/* Reference matched footer */}
-          <footer className="text-center text-[11px] text-slate-400 py-6 mt-12 border-t border-slate-200">
-            Saksham · SIH 2026 prototype (PS26265) · All records shown are synthetic demonstration data.
+          {/* Reference matched institutional footer */}
+          <footer className="text-center text-[11px] text-slate-400 py-6 mt-12 border-t border-slate-200 flex flex-col items-center justify-center gap-2">
+            <img
+              src="/assets/national-emblem.png"
+              alt="National Emblem of India"
+              className="h-8 w-auto object-contain opacity-75"
+            />
+            <span>Saksham · SIH 2026 PS26265 Prototype · Security Deposit &amp; FDR Management · Synthetic Demonstration Data</span>
           </footer>
         </main>
       </div>

@@ -256,19 +256,19 @@ export default function InstrumentDetailPage() {
 
   return (
     <AppShell>
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <div className="w-full space-y-6">
         {/* ── Breadcrumb ─────────────────────────────────────────── */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-[#64748B]">
             <Link
               to={isOfficer ? "/scrutiny" : "/instruments"}
-              className="hover:text-blue-700 flex items-center gap-1 transition-colors"
+              className="hover:text-[#1D4ED8] flex items-center gap-1 transition-colors font-medium"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-3.5 w-3.5" />
               {isOfficer ? "Back to Scrutiny Queue" : "Back to Registry"}
             </Link>
             <span>/</span>
-            <span className="text-slate-800 font-mono font-medium">
+            <span className="text-[#0F172A] font-mono font-semibold">
               {instrument.instrumentNumber}
             </span>
           </div>
@@ -278,14 +278,14 @@ export default function InstrumentDetailPage() {
 
         {/* ── Notification Banner ────────────────────────────────── */}
         {successMessage && (
-          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center justify-between">
+          <div className="p-4 rounded-lg bg-[#DCFCE7] border border-[#86EFAC] text-[#166534] text-xs flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-              <span>{successMessage}</span>
+              <CheckCircle2 className="h-5 w-5 text-[#16A34A]" />
+              <span className="font-medium">{successMessage}</span>
             </div>
             <button
               onClick={() => setSuccessMessage(null)}
-              className="text-emerald-700 hover:text-emerald-900 font-bold ml-4 cursor-pointer"
+              className="text-[#166534] hover:text-emerald-950 font-bold ml-4 cursor-pointer"
             >
               ×
             </button>
@@ -293,30 +293,30 @@ export default function InstrumentDetailPage() {
         )}
 
         {/* ── Instrument Header Card ─────────────────────────────── */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-6 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <span className="text-xs uppercase font-semibold text-slate-400 tracking-wider">
+              <span className="text-[10px] uppercase font-bold text-[#64748B] tracking-wider">
                 Fixed Deposit Receipt Ref
               </span>
-              <h1 className="text-2xl font-bold font-mono text-blue-900 mt-0.5">
+              <h1 className="text-2xl font-bold font-mono text-[#0B192C] mt-0.5">
                 {instrument.instrumentNumber}
               </h1>
-              <p className="mt-1 text-sm text-slate-600 flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-slate-400" />
+              <p className="mt-1 text-xs text-[#334155] flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-[#64748B]" />
                 <span className="font-semibold">{instrument.institution?.name}</span>
-                <span className="text-xs text-slate-400">({instrument.institution?.code})</span>
+                <span className="text-[11px] text-[#64748B]">({instrument.institution?.code})</span>
               </p>
             </div>
 
             <div className="sm:text-right">
-              <span className="text-xs uppercase font-semibold text-slate-400 tracking-wider">
+              <span className="text-[10px] uppercase font-bold text-[#64748B] tracking-wider">
                 Principal Amount
               </span>
-              <p className="text-2xl font-bold font-mono text-emerald-700 mt-0.5">
+              <p className="text-2xl font-bold font-mono text-[#166534] mt-0.5">
                 {formatINR(instrument.amount)}
               </p>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-[#64748B] mt-0.5">
                 Favouring: {instrument.favouringDetails}
               </p>
             </div>
@@ -324,23 +324,23 @@ export default function InstrumentDetailPage() {
         </div>
 
         {/* ── Workflow Action Panel ──────────────────────────────── */}
-        <div className="bg-slate-900 text-white p-5 rounded-xl shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-[#0B192C] text-white p-5 rounded-lg border border-[#15284F] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center shrink-0">
+            <div className="h-10 w-10 rounded-md bg-[#15284F] flex items-center justify-center shrink-0 border border-blue-900/50">
               {instrument.status === "DRAFT" ? (
-                <Send className="h-5 w-5 text-white" />
+                <Send className="h-5 w-5 text-amber-400" />
               ) : instrument.status === "ACTIVE" ? (
-                <CheckCircle2 className="h-5 w-5 text-white" />
+                <CheckCircle2 className="h-5 w-5 text-emerald-400" />
               ) : instrument.status === "UNDER_SCRUTINY" ? (
-                <Eye className="h-5 w-5 text-white" />
+                <Eye className="h-5 w-5 text-sky-400" />
               ) : instrument.status === "CORRECTION_REQUIRED" ? (
-                <AlertTriangle className="h-5 w-5 text-amber-300" />
+                <AlertTriangle className="h-5 w-5 text-amber-400" />
               ) : (
                 <Eye className="h-5 w-5 text-white" />
               )}
             </div>
             <div>
-              <p className="font-semibold text-sm">
+              <p className="font-bold text-sm text-white">
                 {instrument.status === "DRAFT"
                   ? "Draft Saved in Registry"
                   : instrument.status === "SUBMITTED"
@@ -870,7 +870,7 @@ export default function InstrumentDetailPage() {
             loadData();
           }}
         />
-      </main>
+      </div>
     </AppShell>
   );
 }

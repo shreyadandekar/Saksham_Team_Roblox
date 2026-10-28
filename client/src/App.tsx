@@ -3,9 +3,10 @@
  * Root component – provides AuthContext and defines route structure.
  */
 
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import InstrumentsPage from "./pages/InstrumentsPage";
@@ -23,6 +24,9 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
+        {/* Public landing page */}
+        <Route path="/" element={<LandingPage />} />
+
         {/* Public login route */}
         <Route path="/login" element={<LoginPage />} />
 
@@ -116,9 +120,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* Redirect root to dashboard (ProtectedRoute will forward to /login if unauthenticated) */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
         {/* 404 Fallback */}
         <Route path="*" element={<NotFoundPage />} />

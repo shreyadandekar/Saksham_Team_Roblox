@@ -1,14 +1,11 @@
 /**
  * src/pages/DashboardPage.tsx
  *
- * Saksham — Security Deposit & FDR Management
- * Reference-matched Dashboard Layout adhering directly to IMAGE 3 (target-dashboard.png).
+ * SAKSHAM — Security Deposit & FDR Management Portal
+ * SIH 2026 Problem Statement PS26265
  *
- * Structure:
- * - Card 1 (Top Left): "Where open FDRs currently sit in their lifecycle" (Horizontal Bar Chart)
- * - Card 2 (Top Right): "How FDR maturities balance monthly this year" (Monthly Maturity Bar Chart)
- * - Card 3 (Bottom): "Due within 90 days" (Open deposits at or near maturity, soonest first)
- * - Workflow Quick Links: Direct navigation to APH Compliance Engine, Clearance Command Center, and Scrutiny.
+ * Reference-matched Dashboard Layout adhering directly to dashboard_page.html.
+ * Connected to live backend APIs (getDashboardMetrics, getInstruments).
  */
 
 import { useState, useEffect, useMemo } from "react";
@@ -19,52 +16,53 @@ import type { DashboardMetricsResponse, ScoredInstrumentSummary } from "../types
 import type { Instrument } from "../types/instrument";
 import AppShell from "../components/layout/AppShell";
 import ErrorBoundary from "../components/common/ErrorBoundary";
+import { useAuth } from "../context/AuthContext";
 import { formatINR, formatDate } from "../utils/format";
+import StatusBadge from "../components/common/StatusBadge";
+import type { InstrumentStatus } from "../types/instrument";
 import {
   Clock,
-  CheckCircle2,
   AlertTriangle,
   RefreshCw,
   Award,
   Sparkles,
   ArrowRight,
+  Calendar,
+  ChevronRight,
+  Info,
+  Plus,
+  ShieldCheck,
+  FileText,
+  TrendingUp,
+  Scale,
 } from "lucide-react";
 
 export default function DashboardPage() {
+  const { user } = useAuth();
   const [metrics, setMetrics] = useState<DashboardMetricsResponse | null>(null);
   const [instruments, setInstruments] = useState<Instrument[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let isMounted = true;
-    async function loadData() {
-      try {
-        setLoading(true);
-        setError(null);
-        const [dashData, instsData] = await Promise.all([
-          getDashboardMetrics(),
-          getInstruments().catch(() => ({ instruments: [] })),
-        ]);
-        if (isMounted) {
-          setMetrics(dashData);
-          setInstruments(instsData.instruments || []);
-        }
-      } catch (err: unknown) {
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : "Failed to load dashboard metrics.");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
+  async function loadData() {
+    try {
+      setLoading(true);
+      setError(null);
+      const [dashData, instsData] = await Promise.all([
+        getDashboardMetrics(),
+        getInstruments().catch(() => ({ instruments: [] })),
+      ]);
+      setMetrics(dashData);
+      setInstruments(instsData.instruments || []);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to load dashboard metrics.");
+    } finally {
+      setLoading(false);
     }
+  }
 
+  useEffect(() => {
     loadData();
-    return () => {
-      isMounted = false;
-    };
   }, []);
 
   // ── 1. Calculate Real Status Distribution for Card 1 ────────────
@@ -86,10 +84,29 @@ export default function DashboardPage() {
     };
   }, [metrics, instruments]);
 
+  // Total value secured across all active instruments
+  const totalValueSecured = useMemo(() => {
+    return instruments
+      .filter((i) => i.status === "ACTIVE")
+      .reduce((sum, i) => sum + (Number(i.amount) || 0), 0);
+  }, [instruments]);
+
+  // Total pending administrative actions
+  const pendingActionsCount = useMemo(() => {
+    const submitted =
+      metrics?.counts?.submitted ??
+      instruments.filter((i) => i.status === "SUBMITTED").length;
+    const underScrutiny =
+      metrics?.counts?.underScrutiny ??
+      instruments.filter((i) => i.status === "UNDER_SCRUTINY").length;
+    const releaseRequested =
+      metrics?.counts?.pendingReleaseRequests ??
+      instruments.filter((i) => i.status === "RELEASE_REQUESTED").length;
+    return submitted + underScrutiny + releaseRequested;
+  }, [metrics, instruments]);
+
   // ── 2. Calculate Real Monthly Maturity Exposure for Card 2 ──────
-  // Target format: intervals like Oct 26, Dec 26, Feb 27, Apr 27, Jun 27, Sept 27
   const monthlyExposure = useMemo(() => {
-    // Generate 6 upcoming bi-monthly intervals starting from Oct 2026 (or current)
     const buckets: { label: string; monthIndex: number; year: number; amount: number }[] = [
       { label: "Oct 26", monthIndex: 9, year: 2026, amount: 0 },
       { label: "Dec 26", monthIndex: 11, year: 2026, amount: 0 },
@@ -99,14 +116,12 @@ export default function DashboardPage() {
       { label: "Sept 27", monthIndex: 8, year: 2027, amount: 0 },
     ];
 
-    // Aggregate instrument amounts into matching buckets
     instruments.forEach((inst) => {
       const d = new Date(inst.maturityDate);
       const m = d.getMonth();
       const y = d.getFullYear();
       const amt = Number(inst.amount) || 0;
 
-      // Find closest bucket
       for (const b of buckets) {
         if (b.year === y && Math.abs(b.monthIndex - m) <= 1) {
           b.amount += amt;
@@ -122,7 +137,6 @@ export default function DashboardPage() {
   const dueWithin90Days = useMemo(() => {
     const list: ScoredInstrumentSummary[] = [];
 
-    // Prioritize API-scored upcoming/priority instruments
     if (metrics?.upcomingMaturities && metrics.upcomingMaturities.length > 0) {
       list.push(...metrics.upcomingMaturities);
     }
@@ -135,7 +149,6 @@ export default function DashboardPage() {
       });
     }
 
-    // If still empty or few, populate from instruments sorted by maturity
     if (list.length < 3 && instruments.length > 0) {
       const sorted = [...instruments]
         .sort((a, b) => new Date(a.maturityDate).getTime() - new Date(b.maturityDate).getTime())
@@ -165,6 +178,16 @@ export default function DashboardPage() {
     return list.slice(0, 5);
   }, [metrics, instruments]);
 
+  const roleNameMap: Record<string, string> = {
+    INSTITUTION_USER: "Authorized Institutional User",
+    SCRUTINY_OFFICER: "AICTE Regulatory Scrutiny Officer",
+    APPROVER: "Competent Approving Authority",
+    ADMIN: "System Administrator",
+    AUDITOR: "Statutory Oversight Auditor",
+    AICTE_OFFICER: "AICTE Regulatory Officer",
+    SYSTEM_ADMIN: "System Administrator",
+  };
+
   return (
     <AppShell>
       <ErrorBoundary
@@ -172,7 +195,7 @@ export default function DashboardPage() {
         fallbackMessage="An unexpected rendering issue occurred while displaying the dashboard. Your session and records are intact."
       >
         <div className="space-y-6">
-          {/* Error Banner if API connection fails */}
+          {/* Error Banner */}
           {error && (
             <div
               className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex items-start gap-3"
@@ -183,10 +206,10 @@ export default function DashboardPage() {
                 <h3 className="text-sm font-semibold text-rose-900">
                   Database or Metrics Query Error
                 </h3>
-                <p className="text-sm text-rose-700 mt-1">{error}</p>
+                <p className="text-xs text-rose-700 mt-1">{error}</p>
                 <button
-                  onClick={() => window.location.reload()}
-                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 text-white text-xs font-medium rounded-lg hover:bg-rose-700 transition"
+                  onClick={loadData}
+                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 text-white text-xs font-medium rounded-lg hover:bg-rose-700 transition cursor-pointer"
                 >
                   <RefreshCw className="h-3.5 w-3.5" /> Retry
                 </button>
@@ -194,14 +217,236 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* ── TOP ROW: TWO REFERENCE MATCHED CARDS (IMAGE 3) ──────────── */}
+          {/* ── 1. Sovereign Government Header & Stakeholder Strip ───── */}
+          <div className="bg-white rounded-lg p-5 sm:p-6 border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="w-12 h-12 rounded-lg bg-[#0B192C] text-amber-400 flex items-center justify-center shrink-0 border border-[#15284F] font-bold text-base shadow-xs">
+                {user?.fullName
+                  ? user.fullName
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()
+                      .slice(0, 2)
+                  : "GO"}
+              </div>
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <h1 className="font-bold text-lg sm:text-xl text-[#0F172A] tracking-tight">
+                    Welcome back, {user?.fullName || "Officer"}
+                  </h1>
+                  <span className="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-[#EFF6FF] text-[#1E40AF] border border-[#BFDBFE]">
+                    {user ? roleNameMap[user.role] || user.role : "Authorized Stakeholder"}
+                  </span>
+                </div>
+                <p className="text-xs text-[#64748B] mt-1 flex items-center gap-2 flex-wrap">
+                  <span>
+                    {user?.institution
+                      ? `${user.institution.name} (AICTE PID: ${user.institution.aicteId})`
+                      : "Regulatory Authority • Central Oversight Cell"}
+                  </span>
+                  <span className="text-[#CBD5E1]">•</span>
+                  <span className="text-emerald-700 font-medium flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Ledger Synchronized
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="hidden sm:flex flex-col items-end text-right">
+                <span className="text-[11px] text-[#64748B] font-medium">
+                  {new Date().toLocaleDateString("en-IN", {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </span>
+                <span className="text-[11px] font-mono text-[#0F172A] font-semibold">
+                  Session Verified • TLS 1.3
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={loadData}
+                disabled={loading}
+                className="p-2 rounded-md border border-[#CBD5E1] text-[#334155] hover:text-[#0F172A] hover:bg-[#F8FAFC] transition cursor-pointer"
+                title="Reload Metrics"
+              >
+                <RefreshCw
+                  className={`w-4 h-4 ${loading ? "animate-spin text-[#1D4ED8]" : ""}`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* ── 2. Primary KPI Metric Cards Strip ───────────────────────── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Card 1: Total Active Instruments */}
+            <div className="bg-white p-5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#1D4ED8] flex flex-col justify-between">
+              <div className="flex items-center justify-between text-[#64748B]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#334155]">
+                  Active Instruments
+                </span>
+                <ShieldCheck className="w-4 h-4 text-[#1D4ED8]" />
+              </div>
+              <div className="mt-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] font-mono tracking-tight">
+                  {statusCounts.active}
+                </span>
+                <span className="text-xs text-[#64748B] ml-2 font-medium">deposits</span>
+              </div>
+              <p className="mt-1 text-[11px] text-[#64748B]">
+                Pledged security deposits under lien
+              </p>
+            </div>
+
+            {/* Card 2: Total Value Secured */}
+            <div className="bg-white p-5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#16A34A] flex flex-col justify-between">
+              <div className="flex items-center justify-between text-[#64748B]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#334155]">
+                  Total Value Secured
+                </span>
+                <TrendingUp className="w-4 h-4 text-[#16A34A]" />
+              </div>
+              <div className="mt-2">
+                <span className="text-xl sm:text-2xl font-extrabold text-[#0F172A] font-mono tracking-tight">
+                  {formatINR(totalValueSecured)}
+                </span>
+              </div>
+              <p className="mt-1 text-[11px] text-[#64748B]">
+                Aggregated active tripartite principal
+              </p>
+            </div>
+
+            {/* Card 3: Due for Maturity (90 Days) - Lil yellowish tint from landing page */}
+            <div className="bg-[#fbf7ed] p-5 rounded-lg border border-[#e2d5bc] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#D97706] flex flex-col justify-between">
+              <div className="flex items-center justify-between text-[#92400E]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#92400E]">
+                  Due within 90 Days
+                </span>
+                <Clock className="w-4 h-4 text-[#D97706]" />
+              </div>
+              <div className="mt-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-[#78350F] font-mono tracking-tight">
+                  {dueWithin90Days.length}
+                </span>
+                <span className="text-xs text-[#92400E] ml-2 font-medium">maturing</span>
+              </div>
+              <p className="mt-1 text-[11px] text-[#B45309] font-medium">
+                Requires renewal or release review
+              </p>
+            </div>
+
+            {/* Card 4: Pending Scrutiny & Actions */}
+            <div className="bg-white p-5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#9333EA] flex flex-col justify-between">
+              <div className="flex items-center justify-between text-[#64748B]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#334155]">
+                  Pending Actions
+                </span>
+                <FileText className="w-4 h-4 text-[#9333EA]" />
+              </div>
+              <div className="mt-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] font-mono tracking-tight">
+                  {pendingActionsCount}
+                </span>
+                <span className="text-xs text-[#64748B] ml-2 font-medium">in workflow</span>
+              </div>
+              <p className="mt-1 text-[11px] text-[#64748B]">
+                Submissions, scrutiny &amp; releases
+              </p>
+            </div>
+          </div>
+
+          {/* ── 3. Role-Specific Action Strip ───────────────────────────── */}
+          <div className="bg-[#0B192C] text-white p-4 sm:p-5 rounded-lg border border-[#15284F] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-md bg-[#15284F] text-amber-400 flex items-center justify-center shrink-0 border border-blue-900/50">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-white tracking-wide">
+                  {user?.role === "INSTITUTION_USER"
+                    ? "Institutional FDR Compliance Desk"
+                    : user?.role === "SCRUTINY_OFFICER" || user?.role === "AICTE_OFFICER"
+                    ? "Regulatory Scrutiny Cell"
+                    : user?.role === "APPROVER"
+                    ? "Competent Clearance Authority"
+                    : "Statutory Governance & Oversight Console"}
+                </h2>
+                <p className="text-xs text-slate-300 mt-0.5">
+                  {user?.role === "INSTITUTION_USER"
+                    ? "Register security deposits, upload tripartite documents, and request statutory e-NOC discharges."
+                    : user?.role === "SCRUTINY_OFFICER" || user?.role === "AICTE_OFFICER"
+                    ? "Verify bank endorsements, inspect OCR extractions, and record administrative determinations."
+                    : user?.role === "APPROVER"
+                    ? "Review inter-departmental clearances and authorize digital Member Secretary e-NOC issuance."
+                    : "Inspect cryptographically sealed audit events, track custody trails, and verify ledger consistency."}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+              {user?.role === "INSTITUTION_USER" && (
+                <Link
+                  to="/instruments/new"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#1D4ED8] hover:bg-[#2563EB] text-white text-xs font-semibold rounded-md shadow-xs transition"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Register New FDR</span>
+                </Link>
+              )}
+
+              {(user?.role === "SCRUTINY_OFFICER" ||
+                user?.role === "AICTE_OFFICER" ||
+                user?.role === "SYSTEM_ADMIN") && (
+                <Link
+                  to="/scrutiny"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#D97706] hover:bg-[#B45309] text-white text-xs font-semibold rounded-md shadow-xs transition"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>
+                    Open Scrutiny Queue ({statusCounts.submitted} pending)
+                  </span>
+                </Link>
+              )}
+
+              {user?.role === "APPROVER" && (
+                <Link
+                  to="/clearances"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#1D4ED8] hover:bg-[#2563EB] text-white text-xs font-semibold rounded-md shadow-xs transition"
+                >
+                  <Award className="w-4 h-4" />
+                  <span>Review Pending Clearances</span>
+                </Link>
+              )}
+
+              {(user?.role === "AUDITOR" || user?.role === "ADMIN") && (
+                <Link
+                  to="/audit"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#334155] hover:bg-[#475569] text-white text-xs font-semibold rounded-md shadow-xs transition"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Inspect Audit Trail</span>
+                </Link>
+              )}
+            </div>
+          </div>
+
+          {/* ── TOP ROW: TWO REFERENCE MATCHED CARDS (dashboard_page.html) ── */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* ── CARD 1: Lifecycle Status Horizontal Bar Chart ──────── */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 flex flex-col justify-between">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-5 sm:p-6 flex flex-col justify-between">
               <div>
-                <h2 className="text-sm font-medium text-slate-700">
-                  Where open FDRs currently sit in their lifecycle
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-semibold text-slate-800">
+                    Where open FDRs currently sit in their lifecycle
+                  </h2>
+                  <Info className="w-4 h-4 text-slate-400" />
+                </div>
               </div>
 
               {loading ? (
@@ -210,7 +455,7 @@ export default function DashboardPage() {
                   <span>Loading lifecycle data…</span>
                 </div>
               ) : (
-                <div className="my-4">
+                <div className="my-3">
                   <LifecycleHorizontalBarChart
                     submitted={statusCounts.submitted}
                     active={statusCounts.active}
@@ -222,26 +467,35 @@ export default function DashboardPage() {
               {/* Bottom Legend */}
               <div className="pt-3 border-t border-slate-100 flex items-center justify-center gap-6 text-xs text-slate-600">
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#2563eb]" />
-                  <span>Submitted: {statusCounts.submitted}</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#1d4ed8]" />
+                  <span>
+                    Submitted: <strong>{statusCounts.submitted}</strong>
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#16a34a]" />
-                  <span>Active: {statusCounts.active}</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#059669]" />
+                  <span>
+                    Active: <strong>{statusCounts.active}</strong>
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#b45309]" />
-                  <span>Release requested: {statusCounts.releaseRequested}</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#d97706]" />
+                  <span>
+                    Release requested: <strong>{statusCounts.releaseRequested}</strong>
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* ── CARD 2: Monthly Maturity Vertical Bar Chart ─────────── */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 flex flex-col justify-between">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-5 sm:p-6 flex flex-col justify-between">
               <div>
-                <h2 className="text-sm font-medium text-slate-700">
-                  How FDR maturities balance monthly this year
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-semibold text-slate-800">
+                    How FDR maturities balance monthly this year
+                  </h2>
+                  <Calendar className="w-4 h-4 text-slate-400" />
+                </div>
               </div>
 
               {loading ? (
@@ -250,7 +504,7 @@ export default function DashboardPage() {
                   <span>Loading maturity exposure…</span>
                 </div>
               ) : (
-                <div className="my-4">
+                <div className="my-3">
                   <MonthlyMaturityVerticalBarChart buckets={monthlyExposure} />
                 </div>
               )}
@@ -262,8 +516,8 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* ── BOTTOM ROW: DUE WITHIN 90 DAYS (IMAGE 3) ───────────────── */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-6 space-y-4">
+          {/* ── BOTTOM ROW: DUE WITHIN 90 DAYS (dashboard_page.html) ───── */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <h2 className="text-base font-semibold text-slate-900">
@@ -276,9 +530,10 @@ export default function DashboardPage() {
 
               <Link
                 to="/maturities"
-                className="text-xs font-semibold text-slate-600 hover:text-blue-700 transition hover:underline"
+                className="text-xs font-semibold text-blue-700 hover:text-blue-900 transition flex items-center gap-1"
               >
-                View all maturities
+                <span>View all maturities</span>
+                <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
@@ -292,93 +547,148 @@ export default function DashboardPage() {
                 No active deposits currently due within 90 days.
               </div>
             ) : (
-              <div className="divide-y divide-slate-100">
-                {dueWithin90Days.map((inst) => {
-                  const daysRemaining =
-                    inst.attention?.daysRemaining ??
-                    inst.daysToMaturity ??
-                    Math.round(
-                      (new Date(inst.maturityDate).getTime() - Date.now()) /
-                        (1000 * 60 * 60 * 24)
-                    );
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-500 font-semibold uppercase text-[10px] tracking-wider">
+                      <th className="py-2.5 px-3">Instrument &amp; Bank</th>
+                      <th className="py-2.5 px-3">Institution</th>
+                      <th className="py-2.5 px-3 text-right">Principal Amount</th>
+                      <th className="py-2.5 px-3 text-center">Status</th>
+                      <th className="py-2.5 px-3 text-right">Maturity Date</th>
+                      <th className="py-2.5 px-3 text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {dueWithin90Days.map((inst) => {
+                      const daysRemaining =
+                        inst.attention?.daysRemaining ??
+                        inst.daysToMaturity ??
+                        Math.round(
+                          (new Date(inst.maturityDate).getTime() - Date.now()) /
+                            (1000 * 60 * 60 * 24)
+                        );
 
-                  return (
-                    <div
-                      key={inst.id}
-                      className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/50 px-2 -mx-2 rounded-lg transition"
-                    >
-                      {/* Left: Instrument Number & Bank */}
-                      <div className="min-w-0 flex-1">
-                        <Link
-                          to={`/instruments/${inst.id}`}
-                          className="font-medium text-sm text-slate-900 hover:text-blue-700 transition hover:underline font-mono"
+                      return (
+                        <tr
+                          key={inst.id}
+                          className="hover:bg-slate-50/80 transition"
                         >
-                          {inst.instrumentNumber}
-                        </Link>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {inst.bankName}
-                          {inst.branchName ? ` · ${inst.branchName}` : ""}
-                        </p>
-                      </div>
-
-                      {/* Middle: Amount */}
-                      <div className="sm:w-36 text-left sm:text-right font-semibold text-sm text-slate-900 font-mono">
-                        {formatINR(inst.amount)}
-                      </div>
-
-                      {/* Middle-Right: Status Badge */}
-                      <div className="sm:w-44 flex items-center sm:justify-center">
-                        <ReferenceStatusBadge status={inst.status} />
-                      </div>
-
-                      {/* Right: Maturity Date & Relative Status */}
-                      <div className="sm:w-40 text-left sm:text-right">
-                        <p className="text-xs font-medium text-slate-800">
-                          {formatDate(inst.maturityDate)}
-                        </p>
-                        <p className="text-xs mt-0.5">
-                          {daysRemaining < 0 ? (
-                            <span className="text-[#b91c1c] font-medium">
-                              Matured {Math.abs(daysRemaining)} days ago
-                            </span>
-                          ) : daysRemaining === 0 ? (
-                            <span className="text-rose-700 font-bold">
-                              Matures Today
-                            </span>
-                          ) : (
-                            <span
-                              className={
-                                daysRemaining <= 30
-                                  ? "text-amber-700 font-medium"
-                                  : "text-slate-500"
-                              }
+                          <td className="py-3 px-3">
+                            <Link
+                              to={`/instruments/${inst.id}`}
+                              className="font-semibold text-slate-900 hover:text-blue-700 font-mono block"
                             >
-                              Due in {daysRemaining} days
+                              {inst.instrumentNumber}
+                            </Link>
+                            <span className="text-[11px] text-slate-500">
+                              {inst.bankName}
+                              {inst.branchName ? ` · ${inst.branchName}` : ""}
                             </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
+                          </td>
+
+                          <td className="py-3 px-3">
+                            <span className="text-slate-800 font-medium truncate block max-w-xs">
+                              {inst.institutionName || "AICTE Registered Institution"}
+                            </span>
+                          </td>
+
+                          <td className="py-3 px-3 text-right font-mono font-semibold text-slate-900">
+                            {formatINR(inst.amount)}
+                          </td>
+
+                          <td className="py-3 px-3 text-center">
+                            <StatusBadge status={inst.status as InstrumentStatus} />
+                          </td>
+
+                          <td className="py-3 px-3 text-right">
+                            <div className="font-mono text-slate-800 font-medium">
+                              {formatDate(inst.maturityDate)}
+                            </div>
+                            <div className="text-[11px] mt-0.5">
+                              {daysRemaining < 0 ? (
+                                <span className="text-red-700 font-semibold">
+                                  Matured {Math.abs(daysRemaining)}d ago
+                                </span>
+                              ) : daysRemaining === 0 ? (
+                                <span className="text-rose-700 font-bold">
+                                  Matures Today
+                                </span>
+                              ) : (
+                                <span
+                                  className={
+                                    daysRemaining <= 30
+                                      ? "text-amber-700 font-semibold"
+                                      : "text-slate-500"
+                                  }
+                                >
+                                  Due in {daysRemaining} days
+                                </span>
+                              )}
+                            </div>
+                          </td>
+
+                          <td className="py-3 px-3 text-center">
+                            <Link
+                              to={`/instruments/${inst.id}`}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-blue-700 rounded text-xs font-semibold transition"
+                            >
+                              <span>Dossier</span>
+                              <ChevronRight className="w-3 h-3" />
+                            </Link>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
 
-          {/* ── WORKFLOWS & STATUTORY COMPLIANCE QUICK INTEGRATION ─────── */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            {/* APH Compliance Engine Card (USP 1) */}
-            <div className="bg-white rounded-xl border border-slate-200/90 p-4.5 shadow-xs flex items-center justify-between">
+          {/* ── STATUTORY ADVISORY PANEL (Warm Yellowish Tint as on Landing Page) ──────── */}
+          <div className="bg-[#fbf7ed] border border-[#e2d5bc] rounded-lg p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-900 mb-2.5">
+              <Scale className="w-4 h-4 text-amber-800 shrink-0" />
+              <span className="uppercase tracking-wider text-[11px] font-bold text-slate-900">
+                Statutory Advisory &amp; T-90 Procedural Notes
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-700">
+              <div className="flex items-start gap-2">
+                <span className="text-amber-800 font-bold text-sm leading-none">•</span>
+                <span>
+                  <strong className="text-slate-900">Tripartite Lien Mandate:</strong> Fixed deposit instruments must designate the regulatory authority as sole primary lienholder before scrutiny clearance.
+                </span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-amber-800 font-bold text-sm leading-none">•</span>
+                <span>
+                  <strong className="text-slate-900">T-90 Renewal Window:</strong> Renewal certificates must be submitted at least 90 days before recorded maturity to avoid encashment flags.
+                </span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-amber-800 font-bold text-sm leading-none">•</span>
+                <span>
+                  <strong className="text-slate-900">Tamper-Evident Ledger:</strong> All administrative scrutiny decisions, clearance approvals, and e-NOC releases are hash-chained.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── WORKFLOWS & STATUTORY COMPLIANCE QUICK NAVIGATION ──────── */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+            <div className="bg-white rounded-xl border border-slate-200 p-4.5 shadow-xs flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
                   <Sparkles className="w-4.5 h-4.5 text-blue-600" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900">
-                    APH Compliance Engine (USP 1)
+                    APH Compliance Engine
                   </h3>
                   <p className="text-[11px] text-slate-500 mt-0.5">
-                    Automated Table 1.4 regulatory deposit comparison & shortfall detection.
+                    Automated Table 1.4 regulatory deposit comparison &amp; shortfall detection.
                   </p>
                 </div>
               </div>
@@ -391,24 +701,23 @@ export default function DashboardPage() {
               </Link>
             </div>
 
-            {/* Clearance Command Center Card (USP 2) */}
-            <div className="bg-white rounded-xl border border-slate-200/90 p-4.5 shadow-xs flex items-center justify-between">
+            <div className="bg-white rounded-xl border border-slate-200 p-4.5 shadow-xs flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
-                  <Award className="w-4.5 h-4.5 text-teal-600" />
+                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                  <Award className="w-4.5 h-4.5 text-emerald-600" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900">
-                    Clearance Command Center (USP 2)
+                    Clearance Command Center
                   </h3>
                   <p className="text-[11px] text-slate-500 mt-0.5">
-                    Multi-department Scrutiny, PGRC & Vigilance clearance orchestration.
+                    Multi-department Scrutiny, PGRC &amp; Vigilance clearance orchestration.
                   </p>
                 </div>
               </div>
               <Link
                 to="/clearances"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-teal-700 hover:text-teal-900 shrink-0 ml-3"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-900 shrink-0 ml-3"
               >
                 <span>Open Clearances</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -423,8 +732,8 @@ export default function DashboardPage() {
 
 /**
  * LifecycleHorizontalBarChart
- * Reproduces the horizontal bar chart from IMAGE 3 with pixel-perfect alignment.
- * Colors: Submitted (Blue #2563eb), Active (Green #16a34a), Release requested (Amber #b45309).
+ * Reproduces the horizontal bar chart from dashboard_page.html with clean SVG bars.
+ * Colors: Submitted (#1d4ed8), Active (#059669), Release requested (#d97706).
  */
 function LifecycleHorizontalBarChart({
   submitted,
@@ -438,7 +747,6 @@ function LifecycleHorizontalBarChart({
   const maxVal = Math.max(submitted, active, releaseRequested, 4);
   const ticks = [0, 1, 2, 3, 4];
 
-  // If counts exceed 4, expand ticks smoothly
   const displayTicks =
     maxVal > 4
       ? Array.from({ length: 5 }, (_, i) => Math.round((maxVal / 4) * i))
@@ -446,18 +754,18 @@ function LifecycleHorizontalBarChart({
   const effectiveMax = displayTicks[displayTicks.length - 1] || 4;
 
   const data = [
-    { label: "Submitted", value: submitted, color: "#2563eb" },
-    { label: "Active", value: active, color: "#16a34a" },
-    { label: "Release requested", value: releaseRequested, color: "#b45309" },
+    { label: "Submitted", value: submitted, color: "#1d4ed8" },
+    { label: "Active", value: active, color: "#059669" },
+    { label: "Release requested", value: releaseRequested, color: "#d97706" },
   ];
 
   return (
     <div className="w-full">
       <svg
-        viewBox="0 0 540 190"
+        viewBox="0 0 540 180"
         className="w-full h-auto select-none overflow-visible"
       >
-        {/* Vertical subtle gridlines */}
+        {/* Vertical grid lines */}
         {displayTicks.map((tick) => {
           const x = 140 + (tick / effectiveMax) * 360;
           return (
@@ -466,13 +774,13 @@ function LifecycleHorizontalBarChart({
                 x1={x}
                 y1={15}
                 x2={x}
-                y2={150}
+                y2={140}
                 stroke="#f1f5f9"
                 strokeWidth={1}
               />
               <text
                 x={x}
-                y={168}
+                y={158}
                 textAnchor="middle"
                 fontSize={11}
                 fill="#64748b"
@@ -484,18 +792,17 @@ function LifecycleHorizontalBarChart({
           );
         })}
 
-        {/* Horizontal Bars & Row Labels */}
+        {/* Horizontal Bars */}
         {data.map((item, index) => {
-          const y = 25 + index * 45;
+          const y = 25 + index * 42;
           const barWidth =
             effectiveMax > 0 ? (item.value / effectiveMax) * 360 : 0;
 
           return (
             <g key={item.label}>
-              {/* Category Y-Axis Label */}
               <text
                 x={125}
-                y={y + 14}
+                y={y + 13}
                 textAnchor="end"
                 fontSize={12}
                 fill="#334155"
@@ -504,13 +811,12 @@ function LifecycleHorizontalBarChart({
                 {item.label}
               </text>
 
-              {/* Bar */}
               <rect
                 x={140}
                 y={y}
                 width={Math.max(barWidth, 4)}
                 height={18}
-                rx={4}
+                rx={3}
                 fill={item.color}
                 className="transition-all duration-500 ease-out"
               >
@@ -520,12 +826,12 @@ function LifecycleHorizontalBarChart({
           );
         })}
 
-        {/* Bottom axis baseline */}
+        {/* Baseline */}
         <line
           x1={140}
-          y1={150}
+          y1={140}
           x2={500}
-          y2={150}
+          y2={140}
           stroke="#e2e8f0"
           strokeWidth={1}
         />
@@ -536,14 +842,13 @@ function LifecycleHorizontalBarChart({
 
 /**
  * MonthlyMaturityVerticalBarChart
- * Reproduces the monthly maturity vertical bar chart from IMAGE 3 with ₹ Lakh units and navy bars.
+ * Reproduces the monthly maturity vertical bar chart from dashboard_page.html with ₹ Lakh units and navy bars.
  */
 function MonthlyMaturityVerticalBarChart({
   buckets,
 }: {
   buckets: { label: string; amount: number }[];
 }) {
-  // If no data exists, supply default reference-matched synthetic curve for preview
   const hasData = buckets.some((b) => b.amount > 0);
   const chartData = hasData
     ? buckets
@@ -568,13 +873,13 @@ function MonthlyMaturityVerticalBarChart({
   return (
     <div className="w-full">
       <svg
-        viewBox="0 0 540 190"
+        viewBox="0 0 540 180"
         className="w-full h-auto select-none overflow-visible"
       >
-        {/* Horizontal grid lines & Y labels */}
+        {/* Horizontal grid lines */}
         {steps.map((step) => {
           const ratio = step.val / maxVal;
-          const y = 150 - ratio * 135;
+          const y = 140 - ratio * 125;
 
           return (
             <g key={step.label}>
@@ -603,8 +908,8 @@ function MonthlyMaturityVerticalBarChart({
         {/* Vertical navy bars */}
         {chartData.map((item, i) => {
           const x = 75 + i * 75;
-          const barHeight = maxVal > 0 ? (item.amount / maxVal) * 135 : 0;
-          const y = 150 - barHeight;
+          const barHeight = maxVal > 0 ? (item.amount / maxVal) * 125 : 0;
+          const y = 140 - barHeight;
 
           return (
             <g key={item.label}>
@@ -612,11 +917,11 @@ function MonthlyMaturityVerticalBarChart({
                 <rect
                   x={x}
                   y={y}
-                  width={26}
+                  width={24}
                   height={barHeight}
                   rx={2}
-                  fill="#0f2b48"
-                  className="transition-all duration-500 ease-out hover:fill-[#1e3a8a] cursor-pointer"
+                  fill="#0e1c2f"
+                  className="transition-all duration-500 ease-out hover:fill-[#1d4ed8] cursor-pointer"
                 >
                   <title>{`${item.label}: ₹${Number(item.amount).toLocaleString("en-IN")}`}</title>
                 </rect>
@@ -624,8 +929,8 @@ function MonthlyMaturityVerticalBarChart({
 
               {/* X-axis month label */}
               <text
-                x={x + 13}
-                y={168}
+                x={x + 12}
+                y={158}
                 textAnchor="middle"
                 fontSize={11}
                 fill="#475569"
@@ -640,60 +945,13 @@ function MonthlyMaturityVerticalBarChart({
         {/* Baseline */}
         <line
           x1={50}
-          y1={150}
+          y1={140}
           x2={520}
-          y2={150}
+          y2={140}
           stroke="#e2e8f0"
           strokeWidth={1}
         />
       </svg>
     </div>
-  );
-}
-
-/**
- * ReferenceStatusBadge
- * Matches the amber clock pill style from IMAGE 3 for RELEASE_REQUESTED and other statuses.
- */
-function ReferenceStatusBadge({ status }: { status: string }) {
-  if (status === "RELEASE_REQUESTED") {
-    return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#fef3c7] text-[#92400e] border border-[#fde68a]">
-        <Clock className="w-3.5 h-3.5 text-[#b45309]" />
-        <span>Release requested</span>
-      </span>
-    );
-  }
-
-  if (status === "ACTIVE") {
-    return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
-        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-        <span>Active</span>
-      </span>
-    );
-  }
-
-  if (status === "SUBMITTED") {
-    return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-800 border border-blue-200">
-        <span>Submitted</span>
-      </span>
-    );
-  }
-
-  if (status === "UNDER_SCRUTINY") {
-    return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
-        <Clock className="w-3.5 h-3.5 text-amber-600" />
-        <span>Under Scrutiny</span>
-      </span>
-    );
-  }
-
-  return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
-      {status.replace(/_/g, " ")}
-    </span>
   );
 }

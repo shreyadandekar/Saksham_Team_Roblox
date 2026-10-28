@@ -115,23 +115,25 @@ export default function ScrutinyQueuePage() {
 
   return (
     <AppShell>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div className="w-full space-y-6">
         {/* ── Page Header ────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-3 border-b border-[#CBD5E1]">
           <div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-6 w-6 text-amber-600" />
-              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                AICTE Scrutiny Queue
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-md bg-[#FEF3C7] text-[#92400E]">
+                <ShieldCheck className="h-5 w-5 text-[#D97706]" />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight">
+                Regulatory Scrutiny Queue • Cross-Institutional Intake
               </h1>
             </div>
-            <p className="mt-1 text-sm text-slate-600">
-              Regulatory queue of institutional fixed deposit receipts submitted for scrutiny, validation, and compliance verification.
+            <p className="mt-1 text-xs sm:text-sm text-[#64748B]">
+              Review submitted tripartite FDR instruments, verify lienholder endorsement, and record administrative determinations.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs px-2.5 py-1 rounded bg-amber-100 text-amber-800 font-bold border border-amber-300">
+            <span className="text-xs px-2.5 py-1 rounded-md bg-[#FEF3C7] text-[#92400E] font-bold border border-[#FCD34D]">
               Officer Scrutiny Desk
             </span>
           </div>
@@ -162,60 +164,60 @@ export default function ScrutinyQueuePage() {
 
         {/* ── Queue Metric Cards ─────────────────────────────────── */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#D97706]">
+            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
               Pending Scrutiny
             </p>
-            <p className="mt-1 text-2xl font-bold text-sky-700">{meta.pendingCount}</p>
-            <p className="text-[11px] text-slate-400 mt-0.5">
+            <p className="mt-1 text-2xl font-bold text-[#D97706] font-mono">{meta.pendingCount}</p>
+            <p className="text-[11px] text-[#64748B] mt-0.5">
               Newly submitted deposits awaiting review
             </p>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#1D4ED8]">
+            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
               Under Active Scrutiny
             </p>
-            <p className="mt-1 text-2xl font-bold text-amber-600">
+            <p className="mt-1 text-2xl font-bold text-[#1D4ED8] font-mono">
               {meta.underScrutinyCount}
             </p>
-            <p className="text-[11px] text-slate-400 mt-0.5">
+            <p className="text-[11px] text-[#64748B] mt-0.5">
               Under examination by AICTE officers
             </p>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#0B192C]">
+            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
               Total in Queue
             </p>
-            <p className="mt-1 text-2xl font-bold text-slate-900">{meta.totalCount}</p>
-            <p className="text-[11px] text-slate-400 mt-0.5">
+            <p className="mt-1 text-2xl font-bold text-[#0F172A] font-mono">{meta.totalCount}</p>
+            <p className="text-[11px] text-[#64748B] mt-0.5">
               Matching current filter conditions
             </p>
           </div>
         </div>
 
         {/* ── Filters & Search ───────────────────────────────────── */}
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+        <div className="bg-white p-4 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by institution name, code, FDR ref, or bank..."
-              className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full pl-9 pr-4 py-2 border border-[#CBD5E1] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-xs text-slate-600">
-              <Filter className="h-4 w-4 text-slate-400" />
-              <span>Status:</span>
+            <div className="flex items-center gap-1.5 text-xs text-[#334155]">
+              <Filter className="h-4 w-4 text-[#64748B]" />
+              <span className="font-medium">Status:</span>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="border border-slate-300 rounded-md px-2.5 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="border border-[#CBD5E1] rounded-md px-2.5 py-1.5 text-xs bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
               >
                 <option value="">All Pending & In-Review</option>
                 <option value="SUBMITTED">Submitted (Pending)</option>
@@ -227,15 +229,15 @@ export default function ScrutinyQueuePage() {
               type="button"
               onClick={() => loadQueue()}
               title="Refresh queue"
-              className="p-2 border border-slate-300 rounded-md hover:bg-slate-100 text-slate-600 cursor-pointer"
+              className="p-2 border border-[#CBD5E1] rounded-md hover:bg-[#F8FAFC] text-[#334155] cursor-pointer"
             >
-              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin text-[#1D4ED8]" : ""}`} />
             </button>
           </div>
         </div>
 
         {/* ── Queue Table ────────────────────────────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+        <div className="bg-white border border-[#CBD5E1] rounded-lg shadow-[0_1px_2px_rgba(0,0,0,0.05)] overflow-hidden">
           {loading ? (
             <div className="p-12 text-center text-slate-500">
               <RefreshCw className="h-8 w-8 animate-spin mx-auto text-blue-600 mb-3" />
@@ -251,8 +253,8 @@ export default function ScrutinyQueuePage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-700">
-                <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
+              <table className="w-full text-left text-xs text-[#0F172A]">
+                <thead className="bg-[#F8FAFC] text-[#64748B] text-[10px] uppercase font-bold border-b border-[#CBD5E1] tracking-wider">
                   <tr>
                     <th className="py-3 px-4">Institution</th>
                     <th className="py-3 px-4">FDR Ref Number</th>
@@ -263,41 +265,41 @@ export default function ScrutinyQueuePage() {
                     <th className="py-3 px-4 text-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[#E2E8F0]">
                   {instruments.map((item) => (
                     <tr
                       key={item.id}
-                      className="hover:bg-slate-50/80 transition-colors"
+                      className="hover:bg-[#F8FAFC] transition-colors"
                     >
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
-                          <Building2 className="h-4 w-4 text-slate-400 shrink-0" />
+                          <Building2 className="h-4 w-4 text-[#64748B] shrink-0" />
                           <div>
-                            <p className="font-semibold text-slate-900">
+                            <p className="font-semibold text-[#0F172A]">
                               {item.institution?.name}
                             </p>
-                            <p className="text-xs text-slate-500 font-mono">
+                            <p className="text-[11px] text-[#64748B] font-mono">
                               {item.institution?.code} • {item.institution?.institutionType}
                             </p>
                           </div>
                         </div>
                       </td>
 
-                      <td className="py-3 px-4 font-mono font-medium text-blue-900">
+                      <td className="py-3 px-4 font-mono font-semibold text-[#0B192C]">
                         <Link
                           to={`/instruments/${item.id}`}
-                          className="hover:underline"
+                          className="hover:text-[#1D4ED8]"
                         >
                           {item.instrumentNumber}
                         </Link>
                       </td>
 
                       <td className="py-3 px-4">
-                        <div className="font-medium text-slate-900">{item.bankName}</div>
-                        <div className="text-xs text-slate-500">{item.branchName}</div>
+                        <div className="font-semibold text-[#0F172A]">{item.bankName}</div>
+                        <div className="text-[11px] text-[#64748B]">{item.branchName}</div>
                       </td>
 
-                      <td className="py-3 px-4 text-right font-mono font-semibold text-slate-900">
+                      <td className="py-3 px-4 text-right font-mono font-bold text-[#0F172A]">
                         {formatINR(item.amount)}
                       </td>
 
@@ -305,7 +307,7 @@ export default function ScrutinyQueuePage() {
                         <StatusBadge status={item.status as InstrumentStatus} />
                       </td>
 
-                      <td className="py-3 px-4 text-xs text-slate-500 whitespace-nowrap">
+                      <td className="py-3 px-4 text-[11px] text-[#64748B] whitespace-nowrap">
                         {formatDateTime(item.updatedAt)}
                       </td>
 
@@ -314,7 +316,7 @@ export default function ScrutinyQueuePage() {
                           {/* Inspect details button */}
                           <Link
                             to={`/instruments/${item.id}`}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-[#0F172A] bg-white hover:bg-[#F8FAFC] border border-[#CBD5E1] rounded-md transition-colors hover:text-[#1D4ED8]"
                           >
                             <span>Inspect</span>
                             <ExternalLink className="h-3 w-3" />
@@ -326,7 +328,7 @@ export default function ScrutinyQueuePage() {
                               type="button"
                               onClick={(e) => handleStartScrutiny(item.id, e)}
                               disabled={actionLoadingId === item.id}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-slate-900 bg-amber-400 hover:bg-amber-300 rounded-md transition-colors cursor-pointer disabled:opacity-50"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-[#1D4ED8] hover:bg-[#2563EB] rounded-md transition-colors cursor-pointer disabled:opacity-50"
                               title="Begin scrutiny examination"
                             >
                               <Eye className="h-3 w-3" />
@@ -341,7 +343,7 @@ export default function ScrutinyQueuePage() {
                                 type="button"
                                 onClick={() => handleOpenDecision(item, "APPROVE")}
                                 disabled={actionLoadingId === item.id}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-md transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+                                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-[#166534] bg-[#DCFCE7] hover:bg-emerald-100 border border-[#86EFAC] rounded-md transition-colors cursor-pointer disabled:opacity-50"
                                 title="Approve and activate deposit"
                               >
                                 <CheckCircle2 className="h-3 w-3" />
@@ -352,7 +354,7 @@ export default function ScrutinyQueuePage() {
                                 type="button"
                                 onClick={() => handleOpenDecision(item, "REQUEST_CORRECTION")}
                                 disabled={actionLoadingId === item.id}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-500 rounded-md transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+                                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-[#92400E] bg-[#FEF3C7] hover:bg-amber-100 border border-[#FCD34D] rounded-md transition-colors cursor-pointer disabled:opacity-50"
                                 title="Request corrections from institution"
                               >
                                 <AlertTriangle className="h-3 w-3" />
@@ -363,7 +365,7 @@ export default function ScrutinyQueuePage() {
                                 type="button"
                                 onClick={() => handleOpenDecision(item, "REJECT")}
                                 disabled={actionLoadingId === item.id}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-500 rounded-md transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+                                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-[#991B1B] bg-[#FEE2E2] hover:bg-rose-100 border border-[#FCA5A5] rounded-md transition-colors cursor-pointer disabled:opacity-50"
                                 title="Reject deposit submission"
                               >
                                 <XCircle className="h-3 w-3" />
@@ -377,6 +379,12 @@ export default function ScrutinyQueuePage() {
                   ))}
                 </tbody>
               </table>
+
+              {/* Summary footer */}
+              <div className="p-3 bg-[#F8FAFC] border-t border-[#CBD5E1] text-[11px] text-[#64748B] flex items-center justify-between">
+                <span>Total {instruments.length} deposits pending officer determination</span>
+                <span className="font-mono">Central Regulatory Oversight</span>
+              </div>
             </div>
           )}
         </div>
@@ -394,7 +402,7 @@ export default function ScrutinyQueuePage() {
             onSuccess={handleDecisionSuccess}
           />
         )}
-      </main>
+      </div>
     </AppShell>
   );
 }

@@ -91,20 +91,22 @@ export default function InstrumentsPage() {
 
   return (
     <AppShell>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div className="w-full space-y-6">
         {/* ── Page Header ────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-3 border-b border-[#CBD5E1]">
           <div>
-            <div className="flex items-center gap-2">
-              <FileText className="h-6 w-6 text-blue-700" />
-              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-md bg-[#EFF6FF] text-[#1E40AF]">
+                <FileText className="h-5 w-5 text-[#1D4ED8]" />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight">
                 {isInstitutionUser ? "My FDR Registry" : "Security Deposit & FDR Registry"}
               </h1>
             </div>
-            <p className="mt-1 text-sm text-slate-600">
+            <p className="mt-1 text-xs sm:text-sm text-[#64748B]">
               {isInstitutionUser
                 ? "Manage and track security deposits, fixed deposit receipts, and scrutiny submissions for your institution."
-                : "System-wide registry of institutional security deposits and fixed deposit receipts under AICTE regulation."}
+                : "System-wide registry of institutional security deposits and fixed deposit receipts under regulatory oversight."}
             </p>
           </div>
 
@@ -112,21 +114,21 @@ export default function InstrumentsPage() {
           {isInstitutionUser && (
             <Link
               to="/instruments/new"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-sm font-semibold shadow-sm transition-colors cursor-pointer self-start sm:self-auto"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#0B192C] hover:bg-[#15284F] text-white rounded-md text-xs sm:text-sm font-semibold shadow-xs transition cursor-pointer self-start sm:self-auto"
             >
-              <PlusCircle className="h-4 w-4" />
-              Register New FDR
+              <PlusCircle className="h-4 w-4 text-amber-400" />
+              <span>Register New FDR</span>
             </Link>
           )}
         </div>
 
         {/* ── Feedback Banners ───────────────────────────────────── */}
         {actionSuccess && (
-          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center justify-between">
+          <div className="p-3.5 rounded-md bg-[#DCFCE7] border border-[#86EFAC] text-[#166534] text-xs sm:text-sm flex items-center justify-between">
             <span>✓ {actionSuccess}</span>
             <button
               onClick={() => setActionSuccess(null)}
-              className="text-emerald-700 hover:text-emerald-900 font-bold ml-4 cursor-pointer"
+              className="text-[#166534] hover:text-emerald-950 font-bold ml-4 cursor-pointer"
             >
               ×
             </button>
@@ -134,64 +136,64 @@ export default function InstrumentsPage() {
         )}
 
         {error && (
-          <div className="p-4 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-rose-600 shrink-0" />
+          <div className="p-3.5 rounded-md bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B] text-xs sm:text-sm flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 text-[#DC2626] shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {/* ── Metric Summary Cards ───────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#0B192C]">
+            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
               Total Records
             </p>
-            <p className="mt-1 text-2xl font-bold text-slate-900">{meta.totalCount}</p>
+            <p className="mt-1 text-2xl font-bold text-[#0F172A] font-mono">{meta.totalCount}</p>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#94A3B8]">
+            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
               Drafts
             </p>
-            <p className="mt-1 text-2xl font-bold text-slate-700">{meta.draftCount ?? 0}</p>
+            <p className="mt-1 text-2xl font-bold text-[#475569] font-mono">{meta.draftCount ?? 0}</p>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#D97706]">
+            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
               Submitted for Scrutiny
             </p>
-            <p className="mt-1 text-2xl font-bold text-sky-700">{meta.submittedCount ?? 0}</p>
+            <p className="mt-1 text-2xl font-bold text-[#B45309] font-mono">{meta.submittedCount ?? 0}</p>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#16A34A]">
+            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
               Active Deposits
             </p>
-            <p className="mt-1 text-2xl font-bold text-emerald-700">{meta.activeCount ?? 0}</p>
+            <p className="mt-1 text-2xl font-bold text-[#15803D] font-mono">{meta.activeCount ?? 0}</p>
           </div>
         </div>
 
         {/* ── Filters & Search Controls ───────────────────────────── */}
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+        <div className="bg-white p-4 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by FDR number, bank name, branch..."
-              className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full pl-9 pr-4 py-2 border border-[#CBD5E1] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#1D4ED8] focus:border-transparent"
             />
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 text-xs text-slate-600">
-              <Filter className="h-4 w-4 text-slate-400" />
-              <span>Status:</span>
+            <div className="flex items-center gap-1.5 text-xs text-[#334155]">
+              <Filter className="h-4 w-4 text-[#64748B]" />
+              <span className="font-medium">Status:</span>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="border border-slate-300 rounded-md px-2.5 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="border border-[#CBD5E1] rounded-md px-2.5 py-1.5 text-xs bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
               >
                 <option value="">All Statuses</option>
                 <option value="DRAFT">Draft</option>
@@ -206,13 +208,13 @@ export default function InstrumentsPage() {
               </select>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs text-slate-600">
-              <ArrowUpDown className="h-4 w-4 text-slate-400" />
-              <span>Sort:</span>
+            <div className="flex items-center gap-1.5 text-xs text-[#334155]">
+              <ArrowUpDown className="h-4 w-4 text-[#64748B]" />
+              <span className="font-medium">Sort:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="border border-slate-300 rounded-md px-2.5 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="border border-[#CBD5E1] rounded-md px-2.5 py-1.5 text-xs bg-white text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]"
               >
                 <option value="createdAt">Date Created</option>
                 <option value="amount">Principal Amount</option>
@@ -224,7 +226,7 @@ export default function InstrumentsPage() {
                 type="button"
                 onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
                 title={`Order: ${sortOrder.toUpperCase()}`}
-                className="p-1.5 border border-slate-300 rounded-md hover:bg-slate-100 text-xs font-semibold cursor-pointer"
+                className="p-1.5 border border-[#CBD5E1] rounded-md hover:bg-[#F8FAFC] text-xs font-semibold cursor-pointer text-[#334155]"
               >
                 {sortOrder === "asc" ? "↑ Asc" : "↓ Desc"}
               </button>
@@ -234,15 +236,15 @@ export default function InstrumentsPage() {
               type="button"
               onClick={() => loadInstruments()}
               title="Refresh list"
-              className="p-2 border border-slate-300 rounded-md hover:bg-slate-100 text-slate-600 cursor-pointer"
+              className="p-2 border border-[#CBD5E1] rounded-md hover:bg-[#F8FAFC] text-[#334155] cursor-pointer"
             >
-              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin text-[#1D4ED8]" : ""}`} />
             </button>
           </div>
         </div>
 
         {/* ── Table & Record List ─────────────────────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+        <div className="bg-white border border-[#CBD5E1] rounded-lg shadow-[0_1px_2px_rgba(0,0,0,0.05)] overflow-hidden">
           {loading ? (
             <div className="p-12 text-center text-slate-500">
               <RefreshCw className="h-8 w-8 animate-spin mx-auto text-blue-600 mb-3" />
@@ -273,8 +275,8 @@ export default function InstrumentsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-700">
-                <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
+              <table className="w-full text-left text-xs text-[#0F172A]">
+                <thead className="bg-[#F8FAFC] text-[#64748B] text-[10px] uppercase font-bold border-b border-[#CBD5E1] tracking-wider">
                   <tr>
                     <th className="py-3 px-4">FDR Ref Number</th>
                     <th className="py-3 px-4">Issuing Bank & Branch</th>
@@ -286,47 +288,47 @@ export default function InstrumentsPage() {
                     <th className="py-3 px-4 text-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[#E2E8F0]">
                   {instruments.map((item) => (
                     <tr
                       key={item.id}
-                      className="hover:bg-slate-50/80 transition-colors group"
+                      className="hover:bg-[#F8FAFC] transition-colors group"
                     >
-                      <td className="py-3 px-4 font-mono font-medium text-blue-900">
+                      <td className="py-3 px-4 font-mono font-semibold text-[#0B192C]">
                         <Link
                           to={`/instruments/${item.id}`}
-                          className="hover:underline flex items-center gap-1.5"
+                          className="hover:text-[#1D4ED8] flex items-center gap-1.5"
                         >
                           {item.instrumentNumber}
                         </Link>
                       </td>
 
                       <td className="py-3 px-4">
-                        <div className="font-medium text-slate-900">{item.bankName}</div>
-                        <div className="text-xs text-slate-500">{item.branchName}</div>
+                        <div className="font-semibold text-[#0F172A]">{item.bankName}</div>
+                        <div className="text-[11px] text-[#64748B]">{item.branchName}</div>
                       </td>
 
                       {!isInstitutionUser && (
                         <td className="py-3 px-4">
-                          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-800">
-                            <Building2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                          <div className="flex items-center gap-1.5 text-xs font-medium text-[#0F172A]">
+                            <Building2 className="h-3.5 w-3.5 text-[#64748B] shrink-0" />
                             <span>{item.institution?.name || "—"}</span>
                           </div>
-                          <span className="text-[10px] text-slate-500 font-mono">
+                          <span className="text-[10px] text-[#64748B] font-mono">
                             {item.institution?.code}
                           </span>
                         </td>
                       )}
 
-                      <td className="py-3 px-4 text-right font-mono font-semibold text-slate-900">
+                      <td className="py-3 px-4 text-right font-mono font-bold text-[#0F172A]">
                         {formatINR(item.amount)}
                       </td>
 
-                      <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
+                      <td className="py-3 px-4 text-[#334155] whitespace-nowrap">
                         {formatDate(item.issueDate)}
                       </td>
 
-                      <td className="py-3 px-4 text-slate-600 whitespace-nowrap">
+                      <td className="py-3 px-4 text-[#334155] whitespace-nowrap font-medium">
                         {formatDate(item.maturityDate)}
                       </td>
 
@@ -338,9 +340,9 @@ export default function InstrumentsPage() {
                         <div className="flex items-center justify-center gap-2">
                           <Link
                             to={`/instruments/${item.id}`}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-[#0F172A] bg-white hover:bg-[#F8FAFC] border border-[#CBD5E1] rounded-md transition-colors hover:text-[#1D4ED8]"
                           >
-                            <span>Inspect</span>
+                            <span>Dossier</span>
                             <ExternalLink className="h-3 w-3" />
                           </Link>
 
@@ -350,10 +352,10 @@ export default function InstrumentsPage() {
                               type="button"
                               onClick={(e) => handleSubmitDraft(item.id, e)}
                               disabled={submittingId === item.id}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white bg-sky-600 hover:bg-sky-700 rounded-md transition-colors cursor-pointer disabled:opacity-50"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-white bg-[#0B192C] hover:bg-[#15284F] rounded-md transition-colors cursor-pointer disabled:opacity-50"
                               title="Submit for scrutiny"
                             >
-                              <Send className="h-3 w-3" />
+                              <Send className="h-3 w-3 text-amber-400" />
                               <span>{submittingId === item.id ? "Submitting..." : "Submit"}</span>
                             </button>
                           )}
@@ -363,10 +365,16 @@ export default function InstrumentsPage() {
                   ))}
                 </tbody>
               </table>
+
+              {/* Summary footer */}
+              <div className="p-3 bg-[#F8FAFC] border-t border-[#CBD5E1] text-[11px] text-[#64748B] flex items-center justify-between">
+                <span>Showing {instruments.length} of {meta.totalCount} registered instruments</span>
+                <span className="font-mono">Security Deposit &amp; FDR Registry</span>
+              </div>
             </div>
           )}
         </div>
-      </main>
+      </div>
     </AppShell>
   );
 }
