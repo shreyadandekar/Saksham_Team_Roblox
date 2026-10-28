@@ -12,8 +12,12 @@ import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { getDashboardMetrics } from "../api/dashboard";
 import { getInstruments } from "../api/instruments";
+import { getClearanceQueue } from "../api/clearances";
+import { listOcrExtractions } from "../api/ocr";
 import type { DashboardMetricsResponse, ScoredInstrumentSummary } from "../types/dashboard";
 import type { Instrument } from "../types/instrument";
+import type { ClearanceQueueResponse } from "../types/clearance";
+import type { OcrExtraction } from "../types/ocr";
 import AppShell from "../components/layout/AppShell";
 import ErrorBoundary from "../components/common/ErrorBoundary";
 import { useAuth } from "../context/AuthContext";
@@ -37,10 +41,163 @@ import {
   Scale,
 } from "lucide-react";
 
+interface OcrKpiSummary {
+  flaggedInstruments: number;
+  cleanlyReviewedInstruments: number;
+  instrumentsWithOcr: number;
+  instrumentsChecked: number;
+  totalInstruments: number;
+}
+
+interface InstrumentOcrResult {
+  extractions: OcrExtraction[];
+  available: boolean;
+}
+
+async function loadOcrKpiSummary(instrumentList: Instrument[]): Promise<OcrKpiSummary> {
+  if (instrumentList.length === 0) {
+    return {
+      flaggedInstruments: 0,
+      cleanlyReviewedInstruments: 0,
+      instrumentsWithOcr: 0,
+      instrumentsChecked: 0,
+      totalInstruments: 0,
+    };
+  }
+
+  const results: InstrumentOcrResult[] = new Array(instrumentList.length);
+  let nextIndex = 0;
+  const workerCount = Math.min(4, instrumentList.length);
+
+  const workers = Array.from({ length: workerCount }, async () => {
+    while (nextIndex < instrumentList.length) {
+      const index = nextIndex++;
+      try {
+        const response = await listOcrExtractions(instrumentList[index].id);
+        results[index] = {
+          extractions: Array.isArray(response?.extractions) ? response.extractions : [],
+          available: true,
+        };
+      } catch {
+        results[index] = { extractions: [], available: false };
+      }
+    }
+  });
+
+  await Promise.all(workers);
+
+  let flaggedInstruments = 0;
+  let cleanlyReviewedInstruments = 0;
+  let instrumentsWithOcr = 0;
+  let instrumentsChecked = 0;
+
+  results.forEach((result) => {
+    if (!result?.available) return;
+    instrumentsChecked += 1;
+
+    // Use only the newest OCR attempt for each document.
+    const latestByDocument = new Map<string, OcrExtraction>();
+    result.extractions.forEach((extraction) => {
+      if (!extraction || typeof extraction.documentId !== "string") return;
+      const current = latestByDocument.get(extraction.documentId);
+      if (!current || extraction.attemptNumber > current.attemptNumber) {
+        latestByDocument.set(extraction.documentId, extraction);
+      }
+    });
+
+    const latestExtractions = Array.from(latestByDocument.values());
+    if (latestExtractions.length === 0) return;
+    instrumentsWithOcr += 1;
+
+    if (latestExtractions.some((extraction) =>
+      extraction.status === "EXTRACTED" && extraction.hasMismatches === true
+    )) {
+      flaggedInstruments += 1;
+      return;
+    }
+
+    if (latestExtractions.every((extraction) =>
+      extraction.status === "REVIEWED" && extraction.hasMismatches === false
+    )) {
+      cleanlyReviewedInstruments += 1;
+    }
+  });
+
+  return {
+    flaggedInstruments,
+    cleanlyReviewedInstruments,
+    instrumentsWithOcr,
+    instrumentsChecked,
+    totalInstruments: instrumentList.length,
+  };
+}
+
+const kolkataDateFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Kolkata",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+function countMaturityRisk(instrumentList: Instrument[], now = new Date()) {
+  const kolkataCalendarDay = (date: Date) => {
+    const parts = kolkataDateFormatter.formatToParts(date);
+    const year = Number(parts.find((part) => part.type === "year")?.value);
+    const month = Number(parts.find((part) => part.type === "month")?.value);
+    const day = Number(parts.find((part) => part.type === "day")?.value);
+    return Number.isFinite(year) && Number.isFinite(month) && Number.isFinite(day)
+      ? Date.UTC(year, month - 1, day)
+      : null;
+  };
+
+  const today = kolkataCalendarDay(now);
+  if (today === null) return { atRisk: 0, overdue: 0, within15Days: 0 };
+  let overdue = 0;
+  let within30Days = 0;
+  let within15Days = 0;
+
+  instrumentList.forEach((instrument) => {
+    if (instrument?.status !== "ACTIVE" || typeof instrument.maturityDate !== "string") return;
+
+    const maturity = new Date(instrument.maturityDate);
+    if (Number.isNaN(maturity.getTime())) return;
+
+    const maturityDay = kolkataCalendarDay(maturity);
+    if (maturityDay === null) return;
+    const daysToMaturity = Math.floor((maturityDay - today) / 86_400_000);
+
+    if (daysToMaturity < 0) {
+      overdue += 1;
+    } else if (daysToMaturity <= 30) {
+      within30Days += 1;
+      if (daysToMaturity <= 15) within15Days += 1;
+    }
+  });
+
+  return { atRisk: overdue + within30Days, overdue, within15Days };
+}
+
+function countClearanceBacklog(queue: ClearanceQueueResponse | null): number | null {
+  if (!Array.isArray(queue?.cases)) return null;
+
+  return queue.cases.filter((releaseCase) => {
+    if (releaseCase?.status !== "PENDING") return false;
+    if (releaseCase.currentStage === "CLEARANCES_PENDING") return true;
+    if (releaseCase.currentStage !== "ON_HOLD" || !Array.isArray(releaseCase.clearances)) return false;
+
+    return releaseCase.clearances.some((clearance) =>
+      clearance?.status === "OBJECTION_RAISED" || clearance?.status === "PENDING"
+    );
+  }).length;
+}
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState<DashboardMetricsResponse | null>(null);
   const [instruments, setInstruments] = useState<Instrument[]>([]);
+  const [instrumentsAvailable, setInstrumentsAvailable] = useState(false);
+  const [clearanceBacklog, setClearanceBacklog] = useState<number | null>(null);
+  const [ocrKpi, setOcrKpi] = useState<OcrKpiSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,12 +205,17 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       setError(null);
-      const [dashData, instsData] = await Promise.all([
+      const [dashData, instsData, clearanceData] = await Promise.all([
         getDashboardMetrics(),
-        getInstruments().catch(() => ({ instruments: [] })),
+        getInstruments().catch(() => null),
+        getClearanceQueue().catch(() => null),
       ]);
       setMetrics(dashData);
-      setInstruments(instsData.instruments || []);
+      const instrumentList = Array.isArray(instsData?.instruments) ? instsData.instruments : [];
+      setInstruments(instrumentList);
+      setInstrumentsAvailable(Boolean(instsData && Array.isArray(instsData.instruments)));
+      setClearanceBacklog(countClearanceBacklog(clearanceData));
+      setOcrKpi(instsData ? await loadOcrKpiSummary(instrumentList) : null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to load dashboard metrics.");
     } finally {
@@ -83,6 +245,11 @@ export default function DashboardPage() {
       releaseRequested,
     };
   }, [metrics, instruments]);
+
+  const maturityRisk = useMemo(
+    () => countMaturityRisk(instruments),
+    [instruments]
+  );
 
   // Total value secured across all active instruments
   const totalValueSecured = useMemo(() => {
@@ -284,6 +451,93 @@ export default function DashboardPage() {
           </div>
 
           {/* ── 2. Primary KPI Metric Cards Strip ───────────────────────── */}
+          <section aria-labelledby="regulatory-kpis-heading" className="mb-6">
+            <div className="mb-3">
+              <h2 id="regulatory-kpis-heading" className="text-sm font-bold text-[#0F172A]">
+                Regulatory Operations KPIs
+              </h2>
+              <p className="mt-0.5 text-[11px] text-[#64748B]">
+                Counts are based on records visible to your account.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <Link
+                to="/maturities"
+                className="rounded-lg border border-amber-200 border-l-4 border-l-amber-500 bg-amber-50 p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition hover:border-amber-300"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-900">
+                    Maturity Risk Queue
+                  </span>
+                  <Clock className="h-4 w-4 text-amber-700" aria-hidden="true" />
+                </div>
+                <div className="mt-2 flex flex-wrap items-baseline gap-2">
+                  <span className="font-mono text-3xl font-extrabold tracking-tight text-amber-950">
+                    {loading || !instrumentsAvailable ? "—" : maturityRisk.atRisk}
+                  </span>
+                  <span className="text-xs font-medium text-amber-900">active FDRs overdue or due in 30 days</span>
+                </div>
+                <p className="mt-1 text-[11px] text-amber-800">
+                  {loading || !instrumentsAvailable
+                    ? "Maturity data unavailable"
+                    : `${maturityRisk.overdue} overdue · ${maturityRisk.within15Days} due within 15 days`}
+                </p>
+              </Link>
+
+              <Link
+                to="/clearances"
+                className="rounded-lg border border-rose-200 border-l-4 border-l-rose-600 bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition hover:border-rose-300"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                    Release &amp; Clearance Backlog
+                  </span>
+                  <AlertTriangle className="h-4 w-4 text-rose-600" aria-hidden="true" />
+                </div>
+                <div className="mt-2 flex flex-wrap items-baseline gap-2">
+                  <span className="font-mono text-3xl font-extrabold tracking-tight text-slate-950">
+                    {loading || clearanceBacklog === null ? "—" : clearanceBacklog}
+                  </span>
+                  <span className="text-xs font-medium text-slate-600">pending requests</span>
+                </div>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  {loading || clearanceBacklog === null
+                    ? "Clearance queue unavailable"
+                    : "Awaiting departmental review or objection resolution"}
+                </p>
+              </Link>
+
+              <Link
+                to="/scrutiny"
+                className="rounded-lg border border-blue-200 border-l-4 border-l-blue-600 bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition hover:border-blue-300"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                    OCR Discrepancy Review
+                  </span>
+                  <FileText className="h-4 w-4 text-blue-600" aria-hidden="true" />
+                </div>
+                <div className="mt-2 flex flex-wrap items-baseline gap-2">
+                  <span className="font-mono text-2xl font-extrabold tracking-tight text-rose-700">
+                    {loading || !ocrKpi ? "—" : ocrKpi.flaggedInstruments}
+                  </span>
+                  <span className="text-xs font-medium text-slate-500">flagged</span>
+                  <span className="text-slate-300" aria-hidden="true">/</span>
+                  <span className="font-mono text-2xl font-extrabold tracking-tight text-emerald-700">
+                    {loading || !ocrKpi ? "—" : ocrKpi.cleanlyReviewedInstruments}
+                  </span>
+                  <span className="text-xs font-medium text-slate-500">reviewed clean</span>
+                </div>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  {!ocrKpi
+                    ? "OCR review data unavailable"
+                    : `${ocrKpi.flaggedInstruments + ocrKpi.cleanlyReviewedInstruments} classified / ${ocrKpi.instrumentsWithOcr} with OCR data · ${ocrKpi.instrumentsChecked}/${ocrKpi.totalInstruments} records loaded · not bank verification`}
+                </p>
+              </Link>
+            </div>
+          </section>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Card 1: Total Active Instruments */}
             <div className="bg-white p-5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#1D4ED8] flex flex-col justify-between">
