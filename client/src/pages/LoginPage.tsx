@@ -2,15 +2,15 @@
  * src/pages/LoginPage.tsx
  *
  * Saksham — Security Deposit & FDR Management
- * Intelligent Security Deposit Compliance & Clearance Management
+ * SIH 2026 Problem Statement PS26265
  *
- * Professional authentication screen designed in alignment with the Saksham design system.
- * Includes development-only synthetic demo account quick-fill buttons.
+ * Professional government-facing authentication screen designed in alignment
+ * with login_page.html reference, preserving real HttpOnly cookie-based auth.
  */
 
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   Lock,
@@ -22,6 +22,8 @@ import {
   CheckCircle2,
   KeyRound,
   ArrowRight,
+  ShieldCheck,
+  ChevronLeft,
 } from "lucide-react";
 
 const DEMO_ACCOUNTS = [
@@ -109,204 +111,249 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900">
-      {/* ── Brand Header ────────────────────────────────────────────── */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="inline-flex items-center justify-center gap-3 mb-2">
-          <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center justify-center p-1 overflow-hidden">
+    <div className="min-h-screen bg-[#f7f9fb] flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 font-sans text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900">
+      {/* ── Top Back Link & Institutional Context ───────────────────── */}
+      <div className="sm:mx-auto sm:w-full sm:max-w-[490px] mb-4">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-[#15284F] transition"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          <span>Back to Public Portal</span>
+        </Link>
+      </div>
+
+      {/* ── Regulatory Super-Header ─────────────────────────────────── */}
+      <div className="sm:mx-auto sm:w-full sm:max-w-[490px] text-center mb-6 space-y-2">
+        <div className="flex items-center justify-center space-x-2 text-slate-500 text-[11px] font-semibold uppercase tracking-wider">
+          <span className="inline-flex items-center text-slate-700">
+            <ShieldCheck className="w-3.5 h-3.5 mr-1 text-blue-700" />
+            Regulatory Deposit Oversight
+          </span>
+          <span className="w-1 h-1 rounded-full bg-slate-300" />
+          <span>SIH 2026 PS26265</span>
+          <span className="w-1 h-1 rounded-full bg-slate-300" />
+          <span className="text-emerald-700 font-bold px-1.5 py-0.2 rounded bg-emerald-50 border border-emerald-200">
+            Prototype
+          </span>
+        </div>
+
+        {/* Portal Emblem & Title */}
+        <div className="flex items-center justify-center space-x-3 pt-1">
+          <img
+            src="/assets/national-emblem.png"
+            alt="National Emblem of India"
+            className="h-12 w-auto object-contain"
+          />
+          <div className="h-8 w-px bg-slate-300" />
+          <div className="w-12 h-12 rounded-xl bg-white shadow-xs flex items-center justify-center p-1.5 border border-slate-200">
             <img
               src="/assets/saksham-logo.png"
-              alt="Saksham Official Logo"
+              alt="Saksham Emblem"
               className="w-full h-full object-contain"
             />
           </div>
-          <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0e1c2f]">
             Saksham
-          </span>
+          </h1>
         </div>
-        <h2 className="text-sm sm:text-base font-semibold text-slate-800">
-          Security Deposit & FDR Management
-        </h2>
-        <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
-          Intelligent Security Deposit Compliance & Clearance Management
-        </p>
+
+        <div>
+          <p className="text-sm font-semibold text-slate-800">
+            Security Deposit &amp; FDR Management
+          </p>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Intelligent Security Deposit Compliance &amp; Clearance Management
+          </p>
+        </div>
       </div>
 
-      {/* ── Authentication Card ─────────────────────────────────────── */}
-      <div className="mt-7 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-5 sm:px-9 rounded-2xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
-          <div className="mb-6 pb-4 border-b border-slate-100 flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">Sign in to your account</h3>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                Official institutional or regulatory credentials
-              </p>
-            </div>
-            <div className="p-1.5 rounded-lg bg-blue-50 text-blue-700">
-              <KeyRound className="w-4 h-4 text-blue-600" />
-            </div>
-          </div>
-
-          {localError && (
-            <div
-              className="mb-5 p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-2.5 text-xs text-rose-800"
-              role="alert"
-            >
-              <AlertCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
-              <span className="font-medium">{localError}</span>
-            </div>
-          )}
-
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            {/* Email Field */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-xs font-semibold text-slate-700 mb-1"
-              >
-                Official Email Address
-              </label>
-              <div className="relative rounded-xl shadow-xs">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setSelectedDemo(null);
-                  }}
-                  placeholder="name@institution.edu.in"
-                  className="block w-full pl-9.5 pr-3 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition"
-                />
+      {/* ── Central Authentication Card ─────────────────────────────── */}
+      <div className="sm:mx-auto sm:w-full sm:max-w-[490px]">
+        <div className="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+          <div className="p-6 sm:p-8 space-y-6">
+            {/* Card Header */}
+            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 className="text-base font-semibold text-slate-900">
+                  Sign in to your account
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Official institutional or regulatory credentials
+                </p>
+              </div>
+              <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-700">
+                <KeyRound className="w-4 h-4 text-blue-700" />
               </div>
             </div>
 
-            {/* Password Field */}
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-xs font-semibold text-slate-700 mb-1"
+            {/* Error Notification */}
+            {localError && (
+              <div
+                className="p-3 rounded-lg bg-rose-50 border border-rose-200 flex items-start gap-2.5 text-xs text-rose-800"
+                role="alert"
               >
-                Password
-              </label>
-              <div className="relative rounded-xl shadow-xs">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="block w-full pl-9.5 pr-10 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                <AlertCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
+                <span className="font-medium">{localError}</span>
+              </div>
+            )}
+
+            {/* Form */}
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              {/* Email Input */}
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="email"
+                  className="block text-xs font-semibold text-slate-700"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
+                  Official Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setSelectedDemo(null);
+                    }}
+                    placeholder="name@institution.edu.in"
+                    className="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#1d4ed8] focus:ring-1 focus:ring-[#1d4ed8] transition"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full flex justify-center items-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#0b192c] hover:bg-[#132845] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 shadow-xs transition-all disabled:opacity-60 cursor-pointer mt-2"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin text-sky-400" />
-                  <span>Authenticating…</span>
-                </>
-              ) : (
-                <>
-                  <span>Sign In</span>
-                  <ArrowRight className="h-4 w-4 text-sky-400" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* ── Demo Accounts Quick-Fill Section (Development Only) ── */}
-          <div className="mt-7 pt-5 border-t border-slate-100">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                Demo Accounts (Development Only)
-              </span>
-              <span className="text-[10px] bg-amber-50 text-amber-800 border border-amber-200/80 px-2 py-0.5 rounded-full font-medium">
-                Synthetic Data
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 gap-2">
-              {DEMO_ACCOUNTS.map((acc) => {
-                const isSelected = selectedDemo === acc.email;
-                return (
-                  <button
-                    key={acc.email}
-                    type="button"
-                    onClick={() => handleQuickFill(acc.email)}
-                    className={`w-full text-left p-2.5 rounded-xl border transition text-xs flex justify-between items-center group cursor-pointer ${
-                      isSelected
-                        ? "bg-blue-50/70 border-blue-400 ring-1 ring-blue-400/30"
-                        : "border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/70"
-                    }`}
+              {/* Password Input */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="password"
+                    className="block text-xs font-semibold text-slate-700"
                   >
-                    <div className="min-w-0 pr-2">
-                      <div className="flex items-center gap-1.5">
-                        <p
-                          className={`font-semibold truncate ${
-                            isSelected ? "text-blue-900" : "text-slate-800 group-hover:text-blue-900"
+                    Password
+                  </label>
+                  <span className="text-[11px] text-slate-400">
+                    Encrypted via HttpOnly Cookie
+                  </span>
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••••••"
+                    className="w-full pl-9 pr-10 py-2.5 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#1d4ed8] focus:ring-1 focus:ring-[#1d4ed8] transition"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full mt-2 bg-[#0e1c2f] hover:bg-[#15284F] text-white font-semibold text-xs sm:text-sm py-2.5 px-4 rounded-lg flex items-center justify-center space-x-2 transition shadow-xs active:scale-[0.99] disabled:opacity-60 cursor-pointer"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
+                    <span>Verifying Credentials…</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Sign In</span>
+                    <ArrowRight className="w-4 h-4 text-amber-400" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Synthetic / Demo Accounts Section */}
+            <div className="pt-4 border-t border-slate-200 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
+                  DEMO ACCOUNTS (DEVELOPMENT ONLY)
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium border border-slate-200">
+                  Synthetic Data
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                {DEMO_ACCOUNTS.map((acc) => {
+                  const isSelected = selectedDemo === acc.email;
+                  return (
+                    <div
+                      key={acc.email}
+                      onClick={() => handleQuickFill(acc.email)}
+                      className={`group flex items-center justify-between p-2.5 rounded-lg border transition cursor-pointer ${
+                        isSelected
+                          ? "bg-blue-50/70 border-blue-400 ring-1 ring-blue-400/30"
+                          : "border-slate-200/90 hover:border-slate-300 hover:bg-slate-50"
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div
+                          className={`text-xs font-semibold truncate ${
+                            isSelected
+                              ? "text-blue-900"
+                              : "text-slate-800 group-hover:text-blue-900"
                           }`}
                         >
                           {acc.label}
-                        </p>
+                        </div>
+                        <div className="text-[11px] text-slate-400 font-mono truncate">
+                          {acc.email}
+                        </div>
                       </div>
-                      <p className="text-[11px] text-slate-400 font-mono truncate">
-                        {acc.email}
-                      </p>
-                    </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium border border-slate-200">
-                        {acc.roleBadge}
-                      </span>
-                      {isSelected ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-                      ) : (
-                        <span className="text-[10px] text-slate-400 font-medium group-hover:text-blue-600 transition">
-                          Fill
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium border border-slate-200">
+                          {acc.roleBadge}
                         </span>
-                      )}
+                        {isSelected ? (
+                          <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                        ) : (
+                          <span className="text-[11px] text-slate-400 font-medium group-hover:text-blue-600 transition">
+                            Fill
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </button>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Security & Isolation Assurance Note */}
+        {/* Security / Isolation Assurance */}
         <p className="mt-4 text-center text-[11px] text-slate-400">
-          Protected by HttpOnly JWT cookies & server-side role validation.
+          Protected by HttpOnly JWT cookies &amp; server-side role validation.
         </p>
       </div>
     </div>

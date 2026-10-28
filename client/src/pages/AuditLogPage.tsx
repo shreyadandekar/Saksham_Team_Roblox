@@ -196,17 +196,17 @@ export default function AuditLogPage() {
 
   return (
     <AppShell>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div className="w-full space-y-6">
         {/* ── Page Header ────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[#CBD5E1]">
           <div>
             <div className="flex items-center gap-2">
-              <History className="h-6 w-6 text-blue-700" />
-              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                Centralized Audit & Regulatory Log
+              <History className="h-6 w-6 text-[#1D4ED8]" />
+              <h1 className="text-xl sm:text-2xl font-bold text-[#0F172A] tracking-tight">
+                Centralized Audit &amp; Regulatory Log
               </h1>
             </div>
-            <p className="mt-1 text-sm text-slate-600">
+            <p className="mt-1 text-xs sm:text-sm text-[#64748B]">
               {isOfficerOrAdmin
                 ? "System-wide, immutable audit trail of all FDR operations, custody events, and regulatory transitions."
                 : "Regulatory audit timeline of operations and decisions for your institution's deposits."}
@@ -219,9 +219,9 @@ export default function AuditLogPage() {
               type="button"
               onClick={() => loadAuditEvents()}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg shadow-2xs hover:bg-slate-50 transition-colors disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#334155] bg-white border border-[#CBD5E1] rounded-md shadow-2xs hover:bg-[#F8FAFC] transition-colors disabled:opacity-50 cursor-pointer"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-[#1D4ED8]" : ""}`} />
               Refresh
             </button>
 
@@ -231,17 +231,17 @@ export default function AuditLogPage() {
                 type="button"
                 onClick={() => handleExportCsv("page")}
                 disabled={exporting !== null || events.length === 0}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-blue-700 rounded-l-lg hover:bg-blue-800 transition-colors disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-[#0B192C] rounded-l-md hover:bg-[#15284F] transition-colors disabled:opacity-50 cursor-pointer"
                 title="Export currently displayed page to CSV"
               >
-                <Download className="h-3.5 w-3.5" />
+                <Download className="h-3.5 w-3.5 text-amber-400" />
                 {exporting === "page" ? "Exporting..." : "Export Page"}
               </button>
               <button
                 type="button"
                 onClick={() => handleExportCsv("all")}
                 disabled={exporting !== null || pagination.total === 0}
-                className="inline-flex items-center px-2.5 py-2 text-xs font-semibold text-blue-100 bg-blue-800 border-l border-blue-900 rounded-r-lg hover:bg-blue-900 transition-colors disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center px-2.5 py-2 text-xs font-semibold text-white bg-[#15284F] border-l border-blue-900 rounded-r-md hover:bg-[#1C355E] transition-colors disabled:opacity-50 cursor-pointer"
                 title={`Export all ${pagination.total} matching records`}
               >
                 {exporting === "all" ? (
@@ -681,7 +681,7 @@ export default function AuditLogPage() {
             </div>
           )}
         </div>
-      </main>
+      </div>
     </AppShell>
   );
 }
