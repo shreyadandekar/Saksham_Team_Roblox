@@ -136,12 +136,12 @@ export default function LandingPage() {
         {/* Tricolor Flag & Gov Notice Strip */}
         <div className="w-full bg-[#0F172A] text-slate-300 text-xs py-1.5 px-4 sm:px-8 border-b border-slate-800">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-3 w-4.5 overflow-hidden rounded-[2px] shadow-sm">
-                <span className="w-1/3 h-full bg-[#FF9933]" />
-                <span className="w-1/3 h-full bg-[#FFFFFF]" />
-                <span className="w-1/3 h-full bg-[#138808]" />
-              </div>
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/assets/india-flag.png"
+                alt="National Flag of India"
+                className="h-3.5 w-auto object-contain rounded-[1px] shadow-xs"
+              />
               <span className="font-medium tracking-wide text-slate-200">
                 भारत सरकार | Government of India
               </span>
@@ -207,34 +207,45 @@ export default function LandingPage() {
         {/* Official Portal Logo & Title Banner */}
         <div className="w-full bg-white py-3 px-4 sm:px-8">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-4 py-1">
-              <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-3 sm:gap-4 py-1">
+              <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                {/* 1st: Saksham Portal Logo */}
                 <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_HpcTBJisTKFWPpHtSamQhIRFLZjlUzDqgnIv3BRoZcr-tAP2g9pCqFM7j4gATLz_N6_SJx1iI_T3R45KTaTo_8xaYqt3ZDUmRDVPjoD7PUR6AjMFME34XMZeg9jgUyHz45PH71Fs1dILA0LDDPaVFPQnSND1K5HUe47lx9wgwbJ6aDr-8Vh96NiOta2IWUv9L2XrSjRaH0xJd7IwV4eJVxCrTy280P5CvtmGgvveOVv3vRXehb4"
-                  alt="Government of India Emblem"
-                  className="h-12 w-auto object-contain"
-                  onError={(e) => {
-                    e.currentTarget.src = "/assets/national-emblem.png";
-                  }}
-                />
-                <div className="h-9 w-[1px] bg-slate-200" />
-                <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI6rcLpxOVTL6JgZo2lfExwokIMFF5cHOjFRC5l8N4xiWWQboVYCeEa-f6g1rRwmMdpKyRxGXh68ASRu_m7ncsZ0jCYcXljVuWXpbCKnY7BB3l8NJS1bLUeAEsHGLvF9H_ZjulxUnTDQp2aVQ47THRBuI2WwqC3F4PIQxPn1Ltl4N41f7rOO_3hsTvG_XtLEUVVfVcqct3ay6BJkBEiu_mkqK0dS6ZL829gxa93QghDjwAJP8BXmY"
-                  alt="AICTE Logo"
-                  className="h-11 w-auto object-contain"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
-                />
-                <div className="h-9 w-[1px] bg-slate-200" />
-                <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYJrU5P8587cy0sA0HKVZoqfIs9gxdYDuTNXTc4DZYp_ZpYyoT1rlVS420iZst8xauQiYx6fTKC-v_c-jc54hR4B9JuXGMvRrJQ4v8VXoiWMivXSpV4R1NxSp4hbkJdTEV6ykK82Rg_LMXpur9KR1scCINOVYrQSkd94efUUwZ7FIraNsRZ3uClZ4_G2a8uBSUBIOt1hgNOr_3cPqaNCE53ov5HdltroBBbBz-y8QM14D-o7rbKHU"
+                  src="/assets/saksham-logo.png"
                   alt="Saksham Logo"
-                  className="h-11 w-auto object-contain"
+                  className="h-10 sm:h-11 w-auto object-contain shrink-0"
                   onError={(e) => {
-                    e.currentTarget.src = "/assets/saksham-logo.png";
+                    e.currentTarget.src = "https://lh3.googleusercontent.com/aida-public/AB6AXuDYJrU5P8587cy0sA0HKVZoqfIs9gxdYDuTNXTc4DZYp_ZpYyoT1rlVS420iZst8xauQiYx6fTKC-v_c-jc54hR4B9JuXGMvRrJQ4v8VXoiWMivXSpV4R1NxSp4hbkJdTEV6ykK82Rg_LMXpur9KR1scCINOVYrQSkd94efUUwZ7FIraNsRZ3uClZ4_G2a8uBSUBIOt1hgNOr_3cPqaNCE53ov5HdltroBBbBz-y8QM14D-o7rbKHU";
                   }}
                 />
+                <div className="h-8 w-[1px] bg-slate-200" />
+
+                {/* 2nd: AICTE Logo */}
+                <img
+                  src="/assets/aicte-logo.png"
+                  alt="AICTE Logo"
+                  className="h-10 sm:h-11 w-auto object-contain shrink-0"
+                  onError={(e) => {
+                    e.currentTarget.src = "https://lh3.googleusercontent.com/aida-public/AB6AXuDI6rcLpxOVTL6JgZo2lfExwokIMFF5cHOjFRC5l8N4xiWWQboVYCeEa-f6g1rRwmMdpKyRxGXh68ASRu_m7ncsZ0jCYcXljVuWXpbCKnY7BB3l8NJS1bLUeAEsHGLvF9H_ZjulxUnTDQp2aVQ47THRBuI2WwqC3F4PIQxPn1Ltl4N41f7rOO_3hsTvG_XtLEUVVfVcqct3ay6BJkBEiu_mkqK0dS6ZL829gxa93QghDjwAJP8BXmY";
+                  }}
+                />
+                <div className="h-8 w-[1px] bg-slate-200" />
+
+                {/* 3rd: National Emblem Logo */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <img
+                    src="/assets/national-emblem.png"
+                    alt="Government of India Emblem"
+                    className="h-10 sm:h-11 w-auto object-contain shrink-0"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://lh3.googleusercontent.com/aida-public/AB6AXuA_HpcTBJisTKFWPpHtSamQhIRFLZjlUzDqgnIv3BRoZcr-tAP2g9pCqFM7j4gATLz_N6_SJx1iI_T3R45KTaTo_8xaYqt3ZDUmRDVPjoD7PUR6AjMFME34XMZeg9jgUyHz45PH71Fs1dILA0LDDPaVFPQnSND1K5HUe47lx9wgwbJ6aDr-8Vh96NiOta2IWUv9L2XrSjRaH0xJd7IwV4eJVxCrTy280P5CvtmGgvveOVv3vRXehb4";
+                    }}
+                  />
+                  <div className="hidden xl:flex flex-col text-[9.5px] font-semibold text-slate-700 leading-tight">
+                    <span>शिक्षा मंत्रालय</span>
+                    <span className="uppercase text-[8.5px] text-slate-500 font-bold">Ministry of Education</span>
+                  </div>
+                </div>
               </div>
               <div className="h-10 w-[1px] bg-slate-200 hidden sm:block" />
               <div>
@@ -242,8 +253,8 @@ export default function LandingPage() {
                   <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                     SAKSHAM
                   </span>
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-50 text-[#A63B00] border border-amber-200/60">
-                    AICTE FDR PORTAL
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded bg-blue-50 text-[#0B2545] border border-blue-200/80">
+                    AICTE Statutory Portal
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 font-medium tracking-tight mt-0.5">
@@ -446,10 +457,6 @@ export default function LandingPage() {
                   Instant online validation of statutory security deposit lien certificates
                 </p>
               </div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full self-start sm:self-auto border border-emerald-200">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Live Statutory Ledger
-              </span>
             </div>
 
             {/* Search Bar */}

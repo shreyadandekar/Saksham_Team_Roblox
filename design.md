@@ -85,12 +85,8 @@
 <!-- Tricolor Flag & Gov Notice Strip -->
 <div class="w-full bg-[#0F172A] text-slate-300 text-xs py-1.5 px-4 sm:px-8 border-b border-slate-800">
 <div class="max-w-7xl mx-auto flex items-center justify-between">
-<div class="flex items-center gap-3">
-<div class="flex h-3 w-4.5 overflow-hidden rounded-[2px] shadow-sm">
-<span class="w-1/3 h-full bg-[#FF9933]"></span>
-<span class="w-1/3 h-full bg-[#FFFFFF]"></span>
-<span class="w-1/3 h-full bg-[#138808]"></span>
-</div>
+<div class="flex items-center gap-2.5">
+<img src="/assets/india-flag.png" alt="National Flag of India" class="h-3.5 w-auto object-contain rounded-[1px] shadow-xs">
 <span class="font-medium tracking-wide text-slate-200">भारत सरकार | Government of India</span>
 <span class="hidden md:inline text-slate-600">|</span>
 <span class="hidden md:inline text-slate-400">Ministry of Education</span>
@@ -115,7 +111,7 @@
 <!-- Official Portal Logo & Title Banner -->
 <div class="w-full bg-white py-3 px-4 sm:px-8">
 <div class="max-w-7xl mx-auto flex items-center justify-between">
-<div class="flex items-center gap-4 py-1"><div class="flex items-center gap-3 shrink-0"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_HpcTBJisTKFWPpHtSamQhIRFLZjlUzDqgnIv3BRoZcr-tAP2g9pCqFM7j4gATLz_N6_SJx1iI_T3R45KTaTo_8xaYqt3ZDUmRDVPjoD7PUR6AjMFME34XMZeg9jgUyHz45PH71Fs1dILA0LDDPaVFPQnSND1K5HUe47lx9wgwbJ6aDr-8Vh96NiOta2IWUv9L2XrSjRaH0xJd7IwV4eJVxCrTy280P5CvtmGgvveOVv3vRXehb4" alt="Government of India Emblem" class="h-12 w-auto object-contain"><div class="h-9 w-[1px] bg-slate-200"></div><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI6rcLpxOVTL6JgZo2lfExwokIMFF5cHOjFRC5l8N4xiWWQboVYCeEa-f6g1rRwmMdpKyRxGXh68ASRu_m7ncsZ0jCYcXljVuWXpbCKnY7BB3l8NJS1bLUeAEsHGLvF9H_ZjulxUnTDQp2aVQ47THRBuI2WwqC3F4PIQxPn1Ltl4N41f7rOO_3hsTvG_XtLEUVVfVcqct3ay6BJkBEiu_mkqK0dS6ZL829gxa93QghDjwAJP8BXmY" alt="AICTE Logo" class="h-11 w-auto object-contain"><div class="h-9 w-[1px] bg-slate-200"></div><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYJrU5P8587cy0sA0HKVZoqfIs9gxdYDuTNXTc4DZYp_ZpYyoT1rlVS420iZst8xauQiYx6fTKC-v_c-jc54hR4B9JuXGMvRrJQ4v8VXoiWMivXSpV4R1NxSp4hbkJdTEV6ykK82Rg_LMXpur9KR1scCINOVYrQSkd94efUUwZ7FIraNsRZ3uClZ4_G2a8uBSUBIOt1hgNOr_3cPqaNCE53ov5HdltroBBbBz-y8QM14D-o7rbKHU" alt="Saksham Logo" class="h-11 w-auto object-contain"></div><div class="h-10 w-[1px] bg-slate-200 hidden sm:block"></div><div><div class="flex items-baseline gap-2"><span class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">SAKSHAM</span><span class="text-xs font-semibold px-2 py-0.5 rounded bg-amber-50 text-[#A63B00] border border-amber-200/60">AICTE FDR PORTAL</span></div><p class="text-xs sm:text-sm text-slate-600 font-medium tracking-tight mt-0.5">Security Deposit &amp; FDR Lifecycle Management Portal | All India Council for Technical Education</p></div></div>
+<div class="flex items-center gap-4 py-1"><div class="flex items-center gap-2.5 shrink-0"><img src="/assets/saksham-logo.png" alt="Saksham Logo" class="h-11 w-auto object-contain"><div class="h-8 w-[1px] bg-slate-200"></div><img src="/assets/aicte-logo.png" alt="AICTE Logo" class="h-11 w-auto object-contain"><div class="h-8 w-[1px] bg-slate-200"></div><img src="/assets/national-emblem.png" alt="Government of India Emblem" class="h-11 w-auto object-contain"></div><div class="h-10 w-[1px] bg-slate-200 hidden sm:block"></div><div><div class="flex items-baseline gap-2"><span class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">SAKSHAM</span><span class="text-xs font-semibold px-2.5 py-0.5 rounded bg-blue-50 text-[#0B2545] border border-blue-200/80">AICTE Statutory Portal</span></div><p class="text-xs sm:text-sm text-slate-600 font-medium tracking-tight mt-0.5">Security Deposit &amp; FDR Lifecycle Management Portal | All India Council for Technical Education</p></div></div>
 <div class="hidden lg:flex items-center gap-6">
 <div class="flex items-center gap-2.5 text-right">
 <span class="material-symbols-outlined text-[#A63B00] text-[24px]">call</span>
@@ -216,10 +212,6 @@
             </h2>
 <p class="text-sm text-slate-500 mt-0.5">Instant online validation of statutory security deposit lien certificates</p>
 </div>
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full self-start sm:self-auto border border-emerald-200">
-<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Live Statutory Ledger
-          </span>
 </div>
 <!-- Search Bar -->
 <div class="flex flex-col sm:flex-row items-stretch gap-3 mb-6">
@@ -633,3 +625,4 @@
     })();
   </script>
 </body></html>
+
