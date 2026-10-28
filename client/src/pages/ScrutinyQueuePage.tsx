@@ -164,41 +164,41 @@ export default function ScrutinyQueuePage() {
 
         {/* ── Queue Metric Cards ─────────────────────────────────── */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#D97706]">
-            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm hover:border-slate-300 transition">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
               Pending Scrutiny
             </p>
-            <p className="mt-1 text-2xl font-bold text-[#D97706] font-mono">{meta.pendingCount}</p>
-            <p className="text-[11px] text-[#64748B] mt-0.5">
+            <p className="mt-2 text-2xl font-bold text-amber-700">{meta.pendingCount}</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">
               Newly submitted deposits awaiting review
             </p>
           </div>
 
-          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#1D4ED8]">
-            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm hover:border-slate-300 transition">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
               Under Active Scrutiny
             </p>
-            <p className="mt-1 text-2xl font-bold text-[#1D4ED8] font-mono">
+            <p className="mt-2 text-2xl font-bold text-blue-700">
               {meta.underScrutinyCount}
             </p>
-            <p className="text-[11px] text-[#64748B] mt-0.5">
+            <p className="text-[11px] text-slate-500 mt-0.5">
               Under examination by AICTE officers
             </p>
           </div>
 
-          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#0B192C]">
-            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm hover:border-slate-300 transition">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
               Total in Queue
             </p>
-            <p className="mt-1 text-2xl font-bold text-[#0F172A] font-mono">{meta.totalCount}</p>
-            <p className="text-[11px] text-[#64748B] mt-0.5">
+            <p className="mt-2 text-2xl font-bold text-slate-900">{meta.totalCount}</p>
+            <p className="text-[11px] text-slate-500 mt-0.5">
               Matching current filter conditions
             </p>
           </div>
         </div>
 
         {/* ── Filters & Search ───────────────────────────────────── */}
-        <div className="bg-white p-4 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+        <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
             <input
@@ -237,7 +237,7 @@ export default function ScrutinyQueuePage() {
         </div>
 
         {/* ── Queue Table ────────────────────────────────────────── */}
-        <div className="bg-white border border-[#CBD5E1] rounded-lg shadow-[0_1px_2px_rgba(0,0,0,0.05)] overflow-hidden">
+        <div className="bg-white border border-slate-200/70 rounded-2xl shadow-sm overflow-hidden">
           {loading ? (
             <div className="p-12 text-center text-slate-500">
               <RefreshCw className="h-8 w-8 animate-spin mx-auto text-blue-600 mb-3" />

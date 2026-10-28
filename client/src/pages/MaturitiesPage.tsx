@@ -147,7 +147,7 @@ export default function MaturitiesPage() {
     const totalAmount = list.reduce((sum, i) => sum + (Number(i.amount) || 0), 0);
 
     return (
-      <div className="bg-white border border-[#CBD5E1] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-0">
+      <div className="bg-white border border-slate-200/70 rounded-2xl overflow-hidden shadow-sm space-y-0">
         <div className="p-3.5 sm:p-4 bg-[#F8FAFC] border-b border-[#CBD5E1] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h3 className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">{title}</h3>
@@ -267,54 +267,54 @@ export default function MaturitiesPage() {
 
         {/* Summary Metric Ribbon */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          <div className="p-4 rounded-lg bg-white border border-[#CBD5E1] border-t-4 border-t-[#DC2626] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-1">
-            <span className="text-[10px] uppercase font-bold text-[#64748B] block tracking-wider">
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/70 shadow-sm hover:border-slate-300 transition space-y-1">
+            <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
               Past maturity
             </span>
-            <span className="text-2xl font-bold text-[#991B1B] font-mono block">
+            <span className="text-2xl font-bold text-red-700 block">
               {categorized.pastMaturity.length}
             </span>
-            <span className="text-[10px] text-[#64748B] block">Requires action</span>
+            <span className="text-[10px] text-slate-500 block">Requires action</span>
           </div>
 
-          <div className="p-4 rounded-lg bg-white border border-[#CBD5E1] border-t-4 border-t-[#D97706] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-1">
-            <span className="text-[10px] uppercase font-bold text-[#64748B] block tracking-wider">
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/70 shadow-sm hover:border-slate-300 transition space-y-1">
+            <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
               Within 30 days
             </span>
-            <span className="text-2xl font-bold text-[#D97706] font-mono block">
+            <span className="text-2xl font-bold text-amber-700 block">
               {categorized.within30.length}
             </span>
-            <span className="text-[10px] text-[#D97706] font-medium block">Urgent renewal</span>
+            <span className="text-[10px] text-amber-600 font-medium block">Urgent renewal</span>
           </div>
 
-          <div className="p-4 rounded-lg bg-white border border-[#CBD5E1] border-t-4 border-t-[#F59E0B] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-1">
-            <span className="text-[10px] uppercase font-bold text-[#64748B] block tracking-wider">
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/70 shadow-sm hover:border-slate-300 transition space-y-1">
+            <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
               31 to 90 days
             </span>
-            <span className="text-2xl font-bold text-[#B45309] font-mono block">
+            <span className="text-2xl font-bold text-amber-600 block">
               {categorized.within31To90.length}
             </span>
-            <span className="text-[10px] text-[#64748B] block">T-90 window open</span>
+            <span className="text-[10px] text-slate-500 block">T-90 window open</span>
           </div>
 
-          <div className="p-4 rounded-lg bg-white border border-[#CBD5E1] border-t-4 border-t-[#1D4ED8] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-1">
-            <span className="text-[10px] uppercase font-bold text-[#64748B] block tracking-wider">
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/70 shadow-sm hover:border-slate-300 transition space-y-1">
+            <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
               91 days to 1 year
             </span>
-            <span className="text-2xl font-bold text-[#1D4ED8] font-mono block">
+            <span className="text-2xl font-bold text-blue-700 block">
               {categorized.within91To365.length}
             </span>
-            <span className="text-[10px] text-[#64748B] block">Monitoring normal</span>
+            <span className="text-[10px] text-slate-500 block">Monitoring normal</span>
           </div>
 
-          <div className="p-4 rounded-lg bg-white border border-[#CBD5E1] border-t-4 border-t-[#16A34A] shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-1">
-            <span className="text-[10px] uppercase font-bold text-[#64748B] block tracking-wider">
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/70 shadow-sm hover:border-slate-300 transition space-y-1">
+            <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
               Beyond 1 year
             </span>
-            <span className="text-2xl font-bold text-[#166534] font-mono block">
+            <span className="text-2xl font-bold text-emerald-700 block">
               {categorized.beyond1Year.length}
             </span>
-            <span className="text-[10px] text-[#64748B] block">Active secure lien</span>
+            <span className="text-[10px] text-slate-500 block">Active secure lien</span>
           </div>
         </div>
 

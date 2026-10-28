@@ -284,7 +284,7 @@ export default function AuditLogPage() {
         )}
 
         {/* ── Filter Bar ─────────────────────────────────────────── */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-4">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-blue-700" />
@@ -457,7 +457,7 @@ export default function AuditLogPage() {
         </div>
 
         {/* ── Audit Events Table ─────────────────────────────────── */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-200/70 shadow-sm overflow-hidden">
           <div className="px-5 py-3.5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-slate-50/50">
             <span className="text-xs font-semibold text-slate-700">
               Showing{" "}

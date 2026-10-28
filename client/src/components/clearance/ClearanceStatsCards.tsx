@@ -87,10 +87,10 @@ export default function ClearanceStatsCards({
             key={card.id}
             type="button"
             onClick={() => onSelectStage(card.id)}
-            className={`text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer shadow-sm ${
+            className={`text-left p-3.5 rounded-2xl border-2 transition-all cursor-pointer shadow-sm ${
               isSelected
                 ? `${card.color} ring-2 ring-blue-500/30 font-semibold scale-[1.02]`
-                : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/60 text-slate-700"
+                : "bg-white border-slate-200/70 hover:border-slate-300 hover:bg-slate-50/60 text-slate-700"
             }`}
           >
             <div className="flex items-center justify-between mb-2">

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Saksham | Security Deposit &amp; FDR Management</title>
+    <!-- Tailwind CSS CDN with Forms & Container Queries plugins -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e5edff',
+                            200: '#cddbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+
+<body class="bg-[#f6f8fb] text-slate-700 min-h-screen flex flex-col antialiased text-sm">
+    <!-- BEGIN: TopHeader -->
+    <header
+        class="bg-white border-b border-slate-200/80 sticky top-0 z-40 px-6 py-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+        data-purpose="primary-header">
+        <div class="max-w-[1720px] mx-auto flex items-center justify-between">
+            <!-- Brand & Emblems -->
+            <div class="flex items-center space-x-3.5">
+                <img alt="State Emblem of India" class="h-9 w-auto object-contain"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRB3wVrh3OgTcWUQQ0_6gPALYMWos7nneoHbRo5l0gYynd2304fJytGkVVJZfNELOpLOlmQFVyNKJArszWEgotir1tbUs6uvfg3TBytFDk3ljn3XZYje3N2dCLjqRF77w3hfhnptPgnYeUuRrxchgkoONMReGB90rqn0AQk4ICVRsHUDKKnVDy0XmDp383ONt8d6CYuXMsRt4XG2McMAARK-bwjxScy45LoI98_J763IWbMGuYmjfCdw" />
+                <img alt="Saksham Logo" class="h-8 w-8 object-contain"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuATWa95Cwad65a239jVv5HZso7BzVC4rpyKDAoq9aukWDNX0zr2o4Sb1PmPdDrtXZy76eQmOUTPWnMCv0dDjyesDxziIqyqTEB_uVAAuIqVZIgvNrTbpdixegNc7h__4YiFF4lOqoWSo8bF3Kxmcu1PjCXlrI2D1fhZnt1f9J4aOo02GW5F2aT3Y25hWgSTMy07DL7UIGF-MdcqvUKSTXLpnN-lMdnZHzam--nH2R4_xnQnoP3eLNb5ug" />
+                <div class="border-l border-slate-200 pl-3">
+                    <div class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">SIH 2026 PS26265 • AICTE
+                        REGULATORY PORTAL</div>
+                    <div class="text-sm font-semibold text-slate-800 tracking-tight flex items-center gap-1.5">
+                        <span class="font-bold text-blue-800">Saksham</span>
+                        <span class="text-slate-300 font-normal">|</span>
+                        <span class="text-slate-600 font-medium">Security Deposit &amp; FDR Management</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Officer Profile & Session Header -->
+            <div class="flex items-center space-x-4">
+                <div class="text-right hidden sm:block">
+                    <div class="text-xs font-semibold text-slate-800">Dr. Sanjay Verma</div>
+                    <div class="text-[11px] text-slate-500">Approving Authority (Member Secretary)</div>
+                </div>
+                <div
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Ledger Synchronized
+                </div>
+                <button
+                    class="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 font-medium border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 rounded-xl transition shadow-sm"
+                    type="button">
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    Sign Out
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- END: TopHeader -->
+    <div class="max-w-[1720px] w-full mx-auto flex-1 flex px-4 sm:px-6 py-6 gap-6">
+        <!-- BEGIN: LeftSidebar -->
+        <aside class="w-64 flex-shrink-0 hidden lg:block" data-purpose="sidebar-navigation">
+            <div class="sticky top-20 space-y-5">
+                <!-- User Profile Card in Sidebar (SCREEN_7 style) -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-blue-100/80 text-blue-700 font-bold text-xs flex items-center justify-center border border-blue-200/60">
+                            SV
+                        </div>
+                        <div class="min-w-0">
+                            <h3 class="text-xs font-bold text-slate-900 truncate">Dr. Sanjay Verma</h3>
+                            <p class="text-[11px] text-slate-500 truncate">State Nodal Officer</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-slate-100">
+                        <label
+                            class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Jurisdiction</label>
+                        <div class="relative">
+                            <select
+                                class="w-full text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-xl py-1.5 pl-2.5 pr-7 focus:ring-1 focus:ring-blue-400 focus:border-blue-400 appearance-none cursor-pointer">
+                                <option>Central Oversight • All States</option>
+                                <option>Maharashtra Region</option>
+                                <option>Delhi NCT Region</option>
+                                <option>Karnataka Region</option>
+                            </select>
+                            <div
+                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                    <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Navigation Links -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-3 shadow-sm space-y-1">
+                    <div class="px-3 py-1.5 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                        Navigation
+                    </div>
+                    <nav class="space-y-1">
+                        <!-- Active Overview / Dashboard Link (Pill style matching SCREEN_7) -->
+                        <a class="flex items-center gap-3 px-3.5 py-2.5 text-xs font-semibold text-blue-800 bg-blue-50/90 rounded-xl border border-blue-100 transition"
+                            href="#">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <rect height="7" rx="1.5" stroke-width="2" width="7" x="3" y="3"></rect>
+                                <rect height="7" rx="1.5" stroke-width="2" width="7" x="14" y="3"></rect>
+                                <rect height="7" rx="1.5" stroke-width="2" width="7" x="14" y="14"></rect>
+                                <rect height="7" rx="1.5" stroke-width="2" width="7" x="3" y="14"></rect>
+                            </svg>
+                            Overview
+                        </a>
+                        <a class="flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition"
+                            href="#">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                            FDR Registry
+                        </a>
+                        <a class="flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition"
+                            href="#">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                            Maturities
+                        </a>
+                        <a class="flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition"
+                            href="#">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                            Scrutiny Queue
+                        </a>
+                        <a class="flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition"
+                            href="#">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                            Clearances
+                        </a>
+                        <a class="flex items-center gap-3 px-3.5 py-2.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition"
+                            href="#">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"></path>
+                            </svg>
+                            Progress Analytics
+                        </a>
+                    </nav>
+                </div>
+                <!-- Quick Access Card (Matching warm light-yellow style in reference screenshot) -->
+                <div class="p-4 bg-amber-50/70 rounded-2xl border border-amber-200/80">
+                    <div class="flex items-center gap-1.5 text-xs font-bold text-amber-900 mb-2">
+                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Quick Access
+                    </div>
+                    <ul class="text-xs space-y-1.5 text-amber-800/90 font-medium">
+                        <li>
+                            <a class="hover:text-amber-950 hover:underline flex items-center gap-1.5" href="#">
+                                <span class="text-amber-500 font-bold">•</span> Emergency Helpline
+                            </a>
+                        </li>
+                        <li>
+                            <a class="hover:text-amber-950 hover:underline flex items-center gap-1.5" href="#">
+                                <span class="text-amber-500 font-bold">•</span> Technical Support
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+        <!-- END: LeftSidebar -->
+        <!-- BEGIN: MainContentArea -->
+        <main class="flex-1 min-w-0 space-y-5" data-purpose="dashboard-main-view">
+            <!-- Welcome Authority Card (Soft & Airy, no harsh dark blocks) -->
+            <section
+                class="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
+                data-purpose="welcome-banner">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-700 font-bold text-sm flex items-center justify-center border border-blue-100 flex-shrink-0">
+                        SV
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h1 class="text-base font-bold text-slate-800">
+                                Welcome back, Dr. Sanjay Verma
+                            </h1>
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200/80">
+                                Regulatory Approver / Member Secretary
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1 text-xs text-slate-500">
+                            <span>Regulatory Authority Oversight</span>
+                            <span>•</span>
+                            <span>Central Cell</span>
+                            <span>•</span>
+                            <span class="inline-flex items-center gap-1 text-emerald-600 font-medium">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                Live Ledger State
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 text-right">
+                    <div>
+                        <div class="text-xs font-semibold text-slate-700">Thu, 29 Oct 2026</div>
+                        <div class="text-[11px] text-slate-400">Session Verified • TLS 1.3</div>
+                    </div>
+                    <button
+                        class="p-2 border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition shadow-2xs"
+                        title="Refresh state" type="button">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+            <!-- KPI Metrics Cards (4 Columns - Clean rounded-2xl, soft pastels, matching SCREEN_7) -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" data-purpose="kpi-metrics-grid">
+                <!-- Metric 1: Active Instruments -->
+                <div
+                    class="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Active
+                            Instruments</span>
+                        <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-baseline gap-1.5">
+                        <span class="text-2xl font-bold text-slate-900 tracking-tight">30</span>
+                        <span class="text-xs text-slate-500 font-medium">deposits</span>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500">Pledged security deposits under lien</p>
+                </div>
+                <!-- Metric 2: Total Value Secured -->
+                <div
+                    class="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Total Value
+                            Secured</span>
+                        <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <span class="text-2xl font-bold text-slate-900 tracking-tight">₹6,58,50,000.00</span>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500">Aggregated active tripartite principal</p>
+                </div>
+                <!-- Metric 3: Due Within 90 Days -->
+                <div
+                    class="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Due Within 90
+                            Days</span>
+                        <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <circle cx="12" cy="12" r="9" stroke-width="2"></circle>
+                                <path d="M12 7v5l3 2" stroke-linecap="round" stroke-width="2"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-baseline gap-1.5">
+                        <span class="text-2xl font-bold text-amber-700 tracking-tight">5</span>
+                        <span class="text-xs text-slate-500 font-medium">maturing</span>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500">Requires renewal or release review</p>
+                </div>
+                <!-- Metric 4: Pending Actions -->
+                <div
+                    class="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Pending
+                            Actions</span>
+                        <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-baseline gap-1.5">
+                        <span class="text-2xl font-bold text-slate-900 tracking-tight">29</span>
+                        <span class="text-xs text-slate-500 font-medium">in workflow</span>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500">Submissions, scrutiny &amp; releases</p>
+                </div>
+            </section>
+            <!-- Clearance Authority Banner (Light blue pastel card, zero harsh dark banners) -->
+            <section
+                class="bg-blue-50/70 border border-blue-200/70 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
+                data-purpose="authority-callout-action">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-white text-blue-600 border border-blue-200/60 flex items-center justify-center shadow-xs flex-shrink-0">
+                        <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewbox="0 0 24 24">
+                            <path d="M12 2L9.5 8.5L3 11L9.5 13.5L12 20L14.5 13.5L21 11L14.5 8.5L12 2Z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900 tracking-tight">Competent Clearance Authority</h2>
+                        <p class="text-xs text-slate-600">Review inter-departmental clearances and authorize digital
+                            Member Secretary e-NOC issuance.</p>
+                    </div>
+                </div>
+                <button
+                    class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-xs transition"
+                    type="button">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    Review Pending Clearances
+                </button>
+            </section>
+            <!-- Two Analytic Charts Grid Row -->
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-5" data-purpose="charts-row">
+                <!-- Left Chart: Where open FDRs currently sit in their lifecycle -->
+                <div
+                    class="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-bold text-slate-800">Where open FDRs currently sit in their
+                                lifecycle</h3>
+                            <button class="text-slate-400 hover:text-slate-600" title="Chart Information" type="button">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="9" stroke-width="2"></circle>
+                                    <path d="M12 16v-4m0-4h.01" stroke-linecap="round" stroke-width="2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <!-- Horizontal Bar Visualization -->
+                        <div class="mt-6 space-y-4">
+                            <!-- Submitted -->
+                            <div class="flex items-center text-xs">
+                                <span class="w-32 text-right pr-4 text-slate-500 font-medium">Submitted</span>
+                                <div
+                                    class="flex-1 bg-slate-100 rounded-lg h-6 relative flex items-center overflow-hidden">
+                                    <div class="bg-blue-500 h-6 rounded-lg text-white text-[11px] font-bold flex items-center justify-end pr-2 transition-all"
+                                        style="width: 26.6%;">
+                                        8
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Active -->
+                            <div class="flex items-center text-xs">
+                                <span class="w-32 text-right pr-4 text-slate-500 font-medium">Active</span>
+                                <div
+                                    class="flex-1 bg-slate-100 rounded-lg h-6 relative flex items-center overflow-hidden">
+                                    <div class="bg-emerald-500 h-6 rounded-lg text-white text-[11px] font-bold flex items-center justify-end pr-2 transition-all"
+                                        style="width: 100%;">
+                                        30
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Release requested -->
+                            <div class="flex items-center text-xs">
+                                <span class="w-32 text-right pr-4 text-slate-500 font-medium">Release requested</span>
+                                <div
+                                    class="flex-1 bg-slate-100 rounded-lg h-6 relative flex items-center overflow-hidden">
+                                    <div class="bg-amber-500 h-6 rounded-lg text-white text-[11px] font-bold flex items-center justify-end pr-2 transition-all"
+                                        style="width: 16.6%;">
+                                        5
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- X-Axis numbers -->
+                            <div class="flex text-[10px] text-slate-400 pl-32 justify-between pt-1">
+                                <span>0</span>
+                                <span>8</span>
+                                <span>15</span>
+                                <span>23</span>
+                                <span>30</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Legend -->
+                    <div
+                        class="mt-6 pt-3.5 border-t border-slate-100 flex items-center justify-center gap-6 text-xs text-slate-600">
+                        <span class="flex items-center gap-1.5 font-medium">
+                            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                            Submitted: 8
+                        </span>
+                        <span class="flex items-center gap-1.5 font-medium">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            Active: 30
+                        </span>
+                        <span class="flex items-center gap-1.5 font-medium">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                            Release requested: 5
+                        </span>
+                    </div>
+                </div>
+                <!-- Right Chart: Monthly Balance Bar Chart -->
+                <div
+                    class="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-bold text-slate-800">How FDR maturities balance monthly this year
+                            </h3>
+                            <span class="text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                    <path
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                                </svg>
+                            </span>
+                        </div>
+                        <!-- Vertical Bar Chart Area -->
+                        <div
+                            class="mt-6 h-36 flex items-end justify-between px-6 border-b border-slate-200 pb-1 relative">
+                            <div class="absolute inset-x-0 bottom-1/2 border-b border-dashed border-slate-100"></div>
+                            <!-- Oct 26 Bar -->
+                            <div class="flex flex-col items-center gap-1.5 z-10">
+                                <div class="w-7 bg-blue-600 rounded-t-md h-28"></div>
+                                <span class="text-[11px] font-medium text-slate-500">Oct 26</span>
+                            </div>
+                            <!-- Dec 26 Bar -->
+                            <div class="flex flex-col items-center gap-1.5 z-10">
+                                <div class="w-7 bg-blue-500/80 rounded-t-md h-12"></div>
+                                <span class="text-[11px] font-medium text-slate-500">Dec 26</span>
+                            </div>
+                            <!-- Feb 27 Bar -->
+                            <div class="flex flex-col items-center gap-1.5 z-10">
+                                <div class="w-7 bg-blue-500/80 rounded-t-md h-14"></div>
+                                <span class="text-[11px] font-medium text-slate-500">Feb 27</span>
+                            </div>
+                            <!-- Apr 27 Bar -->
+                            <div class="flex flex-col items-center gap-1.5 z-10">
+                                <div class="w-7 bg-slate-200 rounded-t-md h-1.5"></div>
+                                <span class="text-[11px] font-medium text-slate-500">Apr 27</span>
+                            </div>
+                            <!-- Jun 27 Bar -->
+                            <div class="flex flex-col items-center gap-1.5 z-10">
+                                <div class="w-7 bg-slate-200 rounded-t-md h-1.5"></div>
+                                <span class="text-[11px] font-medium text-slate-500">Jun 27</span>
+                            </div>
+                            <!-- Sept 27 Bar -->
+                            <div class="flex flex-col items-center gap-1.5 z-10">
+                                <div class="w-7 bg-slate-200 rounded-t-md h-1.5"></div>
+                                <span class="text-[11px] font-medium text-slate-500">Sept 27</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-3.5 border-t border-slate-100 text-center text-xs text-slate-400">
+                        Aggregated institutional deposit exposure in Lakhs (₹ L)
+                    </div>
+                </div>
+            </section>
+            <!-- BEGIN: TableSection (Due within 90 days) -->
+            <section class="bg-white rounded-2xl border border-slate-200/70 shadow-sm overflow-hidden"
+                data-purpose="due-maturities-table">
+                <div class="p-5 flex items-center justify-between border-b border-slate-100">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800">Due within 90 days</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Open deposits at or near maturity, soonest first.</p>
+                    </div>
+                    <a class="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1" href="#">
+                        View all maturities ›
+                    </a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-slate-50/60 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 tracking-wider uppercase">
+                                <th class="py-3 px-5">INSTRUMENT &amp; BANK</th>
+                                <th class="py-3 px-5">INSTITUTION</th>
+                                <th class="py-3 px-5">PRINCIPAL AMOUNT</th>
+                                <th class="py-3 px-5 text-center">STATUS</th>
+                                <th class="py-3 px-5">MATURITY DATE</th>
+                                <th class="py-3 px-5 text-right">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-xs text-slate-700">
+                            <!-- Row 1 -->
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <td class="py-3.5 px-5">
+                                    <div class="font-bold text-slate-900">FDR–DEL–MAT–007</div>
+                                    <div class="text-[11px] text-slate-400">State Bank of India • Dwarka Sector 14, New
+                                        Delhi</div>
+                                </td>
+                                <td class="py-3.5 px-5 font-medium text-slate-800">
+                                    Delhi Institute of Advanced Engineering
+                                </td>
+                                <td class="py-3.5 px-5 font-bold text-slate-900">
+                                    ₹12,00,000.00
+                                </td>
+                                <td class="py-3.5 px-5 text-center">
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        Active Deposit
+                                    </span>
+                                </td>
+                                <td class="py-3.5 px-5">
+                                    <div class="font-semibold text-slate-800">04 Nov 2026</div>
+                                    <div class="text-[11px] text-red-600 font-medium">Due in 6 days</div>
+                                </td>
+                                <td class="py-3.5 px-5 text-right">
+                                    <button
+                                        class="inline-flex items-center text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1 rounded-lg transition shadow-2xs"
+                                        type="button">
+                                        Dossier ›
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Row 2 -->
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <td class="py-3.5 px-5">
+                                    <div class="font-bold text-slate-900">FDR–BNG–MAT–010</div>
+                                    <div class="text-[11px] text-slate-400">State Bank of India • Dwarka Sector 14, New
+                                        Delhi</div>
+                                </td>
+                                <td class="py-3.5 px-5 font-medium text-slate-800">
+                                    Bangalore National Institute of Management &amp; Research
+                                </td>
+                                <td class="py-3.5 px-5 font-bold text-slate-900">
+                                    ₹18,00,000.00
+                                </td>
+                                <td class="py-3.5 px-5 text-center">
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        Active Deposit
+                                    </span>
+                                </td>
+                                <td class="py-3.5 px-5">
+                                    <div class="font-semibold text-slate-800">07 Nov 2026</div>
+                                    <div class="text-[11px] text-red-600 font-medium">Due in 9 days</div>
+                                </td>
+                                <td class="py-3.5 px-5 text-right">
+                                    <button
+                                        class="inline-flex items-center text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1 rounded-lg transition shadow-2xs"
+                                        type="button">
+                                        Dossier ›
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Row 3 -->
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <td class="py-3.5 px-5">
+                                    <div class="font-bold text-slate-900">FDR–PNB–2021–412</div>
+                                    <div class="text-[11px] text-slate-400">Punjab National Bank • Connaught Circus, New
+                                        Delhi</div>
+                                </td>
+                                <td class="py-3.5 px-5 font-medium text-slate-800">
+                                    Delhi Institute of Advanced Engineering
+                                </td>
+                                <td class="py-3.5 px-5 font-bold text-slate-900">
+                                    ₹25,00,000.00
+                                </td>
+                                <td class="py-3.5 px-5 text-center">
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        Active Deposit
+                                    </span>
+                                </td>
+                                <td class="py-3.5 px-5">
+                                    <div class="font-semibold text-slate-800">09 Nov 2026</div>
+                                    <div class="text-[11px] text-amber-600 font-medium">Due in 11 days</div>
+                                </td>
+                                <td class="py-3.5 px-5 text-right">
+                                    <button
+                                        class="inline-flex items-center text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1 rounded-lg transition shadow-2xs"
+                                        type="button">
+                                        Dossier ›
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Row 4 -->
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <td class="py-3.5 px-5">
+                                    <div class="font-bold text-slate-900">FDR–DEL–MAT–014</div>
+                                    <div class="text-[11px] text-slate-400">Punjab National Bank • Connaught Place, New
+                                        Delhi</div>
+                                </td>
+                                <td class="py-3.5 px-5 font-medium text-slate-800">
+                                    Delhi Institute of Advanced Engineering
+                                </td>
+                                <td class="py-3.5 px-5 font-bold text-slate-900">
+                                    ₹18,00,000.00
+                                </td>
+                                <td class="py-3.5 px-5 text-center">
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        Active Deposit
+                                    </span>
+                                </td>
+                                <td class="py-3.5 px-5">
+                                    <div class="font-semibold text-slate-800">11 Nov 2026</div>
+                                    <div class="text-[11px] text-amber-600 font-medium">Due in 13 days</div>
+                                </td>
+                                <td class="py-3.5 px-5 text-right">
+                                    <button
+                                        class="inline-flex items-center text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1 rounded-lg transition shadow-2xs"
+                                        type="button">
+                                        Dossier ›
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Row 5 -->
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <td class="py-3.5 px-5">
+                                    <div class="font-bold text-slate-900">FDR–PUN–MAT–015</div>
+                                    <div class="text-[11px] text-slate-400">Bank of Baroda • Nehru Place, New Delhi
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-5 font-medium text-slate-800">
+                                    Maharashtra Institute of Pharmaceutical Sciences
+                                </td>
+                                <td class="py-3.5 px-5 font-bold text-slate-900">
+                                    ₹10,00,000.00
+                                </td>
+                                <td class="py-3.5 px-5 text-center">
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        Active Deposit
+                                    </span>
+                                </td>
+                                <td class="py-3.5 px-5">
+                                    <div class="font-semibold text-slate-800">12 Nov 2026</div>
+                                    <div class="text-[11px] text-amber-600 font-medium">Due in 14 days</div>
+                                </td>
+                                <td class="py-3.5 px-5 text-right">
+                                    <button
+                                        class="inline-flex items-center text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1 rounded-lg transition shadow-2xs"
+                                        type="button">
+                                        Dossier ›
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <!-- END: TableSection -->
+            <!-- Statutory Advisory & T-90 Procedural Notes Banner (Soft cream-amber container) -->
+            <section class="bg-amber-50/50 border border-amber-200/80 rounded-2xl p-5 shadow-sm"
+                data-purpose="statutory-advisory-container">
+                <div class="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider mb-3">
+                    <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path
+                            d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    Statutory Advisory &amp; T-90 Procedural Notes
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-amber-900/90 leading-relaxed">
+                    <div class="bg-white/80 p-3 rounded-xl border border-amber-200/60 shadow-2xs">
+                        <strong class="font-semibold text-amber-950">• Tripartite Lien Mandate:</strong> Fixed deposit
+                        instruments must designate the regulatory authority as sole primary lienholder before scrutiny
+                        clearance.
+                    </div>
+                    <div class="bg-white/80 p-3 rounded-xl border border-amber-200/60 shadow-2xs">
+                        <strong class="font-semibold text-amber-950">• T-90 Renewal Window:</strong> Renewal
+                        certificates must be submitted at least 90 days before recorded maturity to avoid encashment
+                        flags.
+                    </div>
+                    <div class="bg-white/80 p-3 rounded-xl border border-amber-200/60 shadow-2xs">
+                        <strong class="font-semibold text-amber-950">• Tamper-Evident Ledger:</strong> All
+                        administrative scrutiny decisions, clearance approvals, and e-NOC releases are hash-chained.
+                    </div>
+                </div>
+            </section>
+            <!-- Bottom Workflow Panels (2 Columns - Clean white rounded cards) -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-4" data-purpose="workflow-engines">
+                <!-- Engine Card 1: APH Compliance Engine -->
+                <div
+                    class="bg-white rounded-2xl border border-slate-200/70 p-4.5 flex items-center justify-between shadow-sm hover:border-blue-300 transition">
+                    <div class="flex items-center gap-3.5">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800">APH Compliance Engine</h4>
+                            <p class="text-[11px] text-slate-500">Automated Table 1.4 regulatory deposit comparison
+                                &amp; shortfall detection.</p>
+                        </div>
+                    </div>
+                    <a class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 whitespace-nowrap pl-2"
+                        href="#">
+                        View Engine →
+                    </a>
+                </div>
+                <!-- Engine Card 2: Clearance Command Center -->
+                <div
+                    class="bg-white rounded-2xl border border-slate-200/70 p-4.5 flex items-center justify-between shadow-sm hover:border-emerald-300 transition">
+                    <div class="flex items-center gap-3.5">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800">Clearance Command Center</h4>
+                            <p class="text-[11px] text-slate-500">Multi-department Scrutiny, PGRC &amp; Vigilance
+                                clearance orchestration.</p>
+                        </div>
+                    </div>
+                    <a class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 whitespace-nowrap pl-2"
+                        href="#">
+                        Open Clearances →
+                    </a>
+                </div>
+            </section>
+        </main>
+        <!-- END: MainContentArea -->
+    </div>
+    <!-- BEGIN: PageFooter -->
+    <footer class="bg-white border-t border-slate-200/70 py-4 px-6 mt-8" data-purpose="global-footer">
+        <div
+            class="max-w-[1720px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+                <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-semibold bg-slate-100 text-slate-600 uppercase tracking-wider">
+                    Central Oversight Cell • ND-DELHI-01
+                </span>
+            </div>
+            <div class="flex items-center gap-2 text-center">
+                <img alt="Indian Emblem" class="h-4 w-auto object-contain opacity-70"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRB3wVrh3OgTcWUQQ0_6gPALYMWos7nneoHbRo5l0gYynd2304fJytGkVVJZfNELOpLOlmQFVyNKJArszWEgotir1tbUs6uvfg3TBytFDk3ljn3XZYje3N2dCLjqRF77w3hfhnptPgnYeUuRrxchgkoONMReGB90rqn0AQk4ICVRsHUDKKnVDy0XmDp383ONt8d6CYuXMsRt4XG2McMAARK-bwjxScy45LoI98_J763IWbMGuYmjfCdw" />
+                <span>Saksham • SIH 2026 PS26265 • Security Deposit &amp; FDR Management • Live Production Ledger</span>
+            </div>
+            <div class="text-[11px] text-slate-400">
+                Hosted on NIC Sovereign Cloud Infrastructure
+            </div>
+        </div>
+    </footer>
+    <!-- END: PageFooter -->
+</body>
+
+</html>

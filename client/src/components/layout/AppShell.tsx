@@ -93,7 +93,7 @@ export default function AppShell({ children }: AppShellProps) {
     user?.role === "SCRUTINY_OFFICER";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f9fb] text-slate-900 font-sans antialiased">
+    <div className="min-h-screen flex flex-col bg-[#f6f8fb] text-slate-900 font-sans antialiased">
       {/* ── 1. Top Masthead & Navigation Header ─────────────────────── */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         {/* Tricolor ribbon */}
@@ -196,184 +196,184 @@ export default function AppShell({ children }: AppShellProps) {
       {/* ── 2. Main Body: Sidebar + Content Canvas ────────────────────── */}
       <div className="flex flex-1 w-full">
         {/* Left Vertical Sidebar (Desktop) */}
-        <aside className="w-64 shrink-0 bg-white border-r border-slate-200 hidden lg:flex flex-col justify-between py-5 select-none shadow-[1px_0_4px_rgba(0,0,0,0.02)]">
-          <div className="space-y-6 px-3">
-            {/* Core Administration Section */}
-            <div>
-              <span className="block text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3.5 mb-2">
-                Core Administration
-              </span>
-              <nav className="space-y-1">
-                {primaryNavItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive =
-                    item.to === "/instruments"
-                      ? location.pathname.startsWith("/instruments") &&
-                        location.pathname !== "/instruments/new"
-                      : location.pathname === item.to;
+        <aside className="w-64 shrink-0 bg-[#f6f8fb] hidden lg:flex flex-col py-5 select-none gap-4 px-3">
 
-                  return (
-                    <NavLink
-                      key={item.to}
-                      to={item.to}
-                      className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
-                        isActive
-                          ? "bg-[#0e1c2f] text-white font-semibold shadow-xs"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                      }`}
-                    >
-                      {isActive && (
-                        <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-400 rounded-r" />
-                      )}
-                      <Icon
-                        className={`w-4 h-4 ${
-                          isActive ? "text-amber-400" : "text-slate-400"
-                        }`}
-                      />
-                      <span>{item.label}</span>
-                    </NavLink>
-                  );
-                })}
-              </nav>
+          {/* ── User Profile Card ─────────────────────────────────── */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div
+                onClick={() => navigate("/profile")}
+                className="w-10 h-10 rounded-xl bg-blue-100/80 text-blue-700 font-bold text-xs flex items-center justify-center border border-blue-200/60 cursor-pointer hover:ring-2 hover:ring-blue-300/40 transition shrink-0"
+                title="View Profile"
+              >
+                {initials}
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-xs font-bold text-slate-900 truncate">{user?.fullName || "Authorized User"}</h3>
+                <p className="text-[11px] text-slate-500 truncate">
+                  {user ? (roleLabels[user.role] || user.role) : "Stakeholder"}
+                </p>
+              </div>
             </div>
-
-            {/* Workflows & Modules Section */}
-            <div className="pt-2 border-t border-slate-100">
-              <span className="block text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3.5 mb-2">
-                Workflows &amp; Modules
-              </span>
-
-              <nav className="space-y-1">
-                {/* Register FDR (Institution only) */}
-                {canRegisterFdr && (
-                  <NavLink
-                    to="/instruments/new"
-                    className={({ isActive }) =>
-                      `relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
-                        isActive
-                          ? "bg-[#0e1c2f] text-white font-semibold shadow-xs"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {isActive && (
-                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-400 rounded-r" />
-                        )}
-                        <FilePlus
-                          className={`w-4 h-4 ${
-                            isActive ? "text-amber-400" : "text-slate-400"
-                          }`}
-                        />
-                        <span>Register FDR</span>
-                      </>
-                    )}
-                  </NavLink>
-                )}
-
-                {/* Scrutiny Queue (Officers) */}
-                {canScrutinize && (
-                  <NavLink
-                    to="/scrutiny"
-                    className={({ isActive }) =>
-                      `relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
-                        isActive
-                          ? "bg-[#0e1c2f] text-white font-semibold shadow-xs"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {isActive && (
-                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-400 rounded-r" />
-                        )}
-                        <FileCheck2
-                          className={`w-4 h-4 ${
-                            isActive ? "text-amber-400" : "text-slate-400"
-                          }`}
-                        />
-                        <span>Scrutiny Queue</span>
-                      </>
-                    )}
-                  </NavLink>
-                )}
-
-                {/* Clearances (All roles) */}
-                {canViewClearances && (
-                  <NavLink
-                    to="/clearances"
-                    className={({ isActive }) =>
-                      `relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
-                        isActive || location.pathname.startsWith("/clearances")
-                          ? "bg-[#0e1c2f] text-white font-semibold shadow-xs"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {(isActive || location.pathname.startsWith("/clearances")) && (
-                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-400 rounded-r" />
-                        )}
-                        <Award
-                          className={`w-4 h-4 ${
-                            isActive || location.pathname.startsWith("/clearances")
-                              ? "text-amber-400"
-                              : "text-slate-400"
-                          }`}
-                        />
-                        <span>Clearances</span>
-                      </>
-                    )}
-                  </NavLink>
-                )}
-
-                {/* Audit Log (Auditors & Admins) */}
-                {canViewAudit && (
-                  <NavLink
-                    to="/audit"
-                    className={({ isActive }) =>
-                      `relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition ${
-                        isActive
-                          ? "bg-[#0e1c2f] text-white font-semibold shadow-xs"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {isActive && (
-                          <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-amber-400 rounded-r" />
-                        )}
-                        <History
-                          className={`w-4 h-4 ${
-                            isActive ? "text-amber-400" : "text-slate-400"
-                          }`}
-                        />
-                        <span>Audit Log</span>
-                      </>
-                    )}
-                  </NavLink>
-                )}
-              </nav>
-            </div>
+            {user?.institution && (
+              <div className="mt-3 pt-3 border-t border-slate-100">
+                <label className="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Institution</label>
+                <p className="text-[11px] font-medium text-slate-700 truncate">{user.institution.name}</p>
+                <p className="text-[10px] text-slate-400 font-mono">{user.institution.aicteId}</p>
+              </div>
+            )}
           </div>
 
-          {/* Bottom node information box */}
-          <div className="p-3 bg-[#f1f4f8] m-3 rounded-lg border border-slate-200">
-            <div className="flex items-center justify-between text-slate-600 mb-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider">
-                SIH 2026 Prototype
-              </span>
-              <span className="font-mono text-[10px] font-semibold text-blue-700">
-                ND-DELHI-04
-              </span>
+          {/* ── Navigation Card ───────────────────────────────────── */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-3 shadow-sm flex-1">
+            <div className="px-3 py-1.5 text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-1">
+              Navigation
             </div>
-            <div className="text-[11px] text-slate-500 leading-tight">
-              Centralized Regulatory Deposit &amp; Lien Management Ledger
+            <nav className="space-y-0.5">
+              {/* Primary nav items */}
+              {primaryNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive =
+                  item.to === "/instruments"
+                    ? location.pathname.startsWith("/instruments") &&
+                      location.pathname !== "/instruments/new"
+                    : location.pathname === item.to;
+
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition ${
+                      isActive
+                        ? "bg-blue-50/90 text-blue-800 font-semibold border border-blue-100"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    }`}
+                  >
+                    <Icon
+                      className={`w-4 h-4 shrink-0 ${
+                        isActive ? "text-blue-600" : "text-slate-400"
+                      }`}
+                    />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+
+              {/* Separator */}
+              <div className="border-t border-slate-100 my-1.5" />
+
+              {/* Register FDR (Institution only) */}
+              {canRegisterFdr && (
+                <NavLink
+                  to="/instruments/new"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition ${
+                      isActive
+                        ? "bg-blue-50/90 text-blue-800 font-semibold border border-blue-100"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <FilePlus className={`w-4 h-4 shrink-0 ${isActive ? "text-blue-600" : "text-slate-400"}`} />
+                      <span>Register FDR</span>
+                    </>
+                  )}
+                </NavLink>
+              )}
+
+              {/* Scrutiny Queue (Officers) */}
+              {canScrutinize && (
+                <NavLink
+                  to="/scrutiny"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition ${
+                      isActive
+                        ? "bg-blue-50/90 text-blue-800 font-semibold border border-blue-100"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <FileCheck2 className={`w-4 h-4 shrink-0 ${isActive ? "text-blue-600" : "text-slate-400"}`} />
+                      <span>Scrutiny Queue</span>
+                    </>
+                  )}
+                </NavLink>
+              )}
+
+              {/* Clearances */}
+              {canViewClearances && (
+                <NavLink
+                  to="/clearances"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition ${
+                      isActive || location.pathname.startsWith("/clearances")
+                        ? "bg-blue-50/90 text-blue-800 font-semibold border border-blue-100"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <Award
+                        className={`w-4 h-4 shrink-0 ${
+                          isActive || location.pathname.startsWith("/clearances")
+                            ? "text-blue-600"
+                            : "text-slate-400"
+                        }`}
+                      />
+                      <span>Clearances</span>
+                    </>
+                  )}
+                </NavLink>
+              )}
+
+              {/* Audit Log */}
+              {canViewAudit && (
+                <NavLink
+                  to="/audit"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition ${
+                      isActive
+                        ? "bg-blue-50/90 text-blue-800 font-semibold border border-blue-100"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <History className={`w-4 h-4 shrink-0 ${isActive ? "text-blue-600" : "text-slate-400"}`} />
+                      <span>Audit Log</span>
+                    </>
+                  )}
+                </NavLink>
+              )}
+            </nav>
+          </div>
+
+          {/* ── Quick Access Amber Card ───────────────────────────── */}
+          <div className="p-4 bg-amber-50/70 rounded-2xl border border-amber-200/80">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900 mb-2">
+              <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+              </svg>
+              Quick Access
             </div>
+            <ul className="text-xs space-y-1.5 text-amber-800/90 font-medium">
+              <li>
+                <a href="tel:18001112026" className="hover:text-amber-950 hover:underline flex items-center gap-1.5">
+                  <span className="text-amber-500 font-bold">•</span> Portal Helpline
+                </a>
+              </li>
+              <li>
+                <a href="mailto:saksham-support@aicte.in" className="hover:text-amber-950 hover:underline flex items-center gap-1.5">
+                  <span className="text-amber-500 font-bold">•</span> Technical Support
+                </a>
+              </li>
+            </ul>
           </div>
         </aside>
 
@@ -384,8 +384,8 @@ export default function AppShell({ children }: AppShellProps) {
               className="fixed inset-0 bg-black/40 backdrop-blur-xs"
               onClick={() => setMobileMenuOpen(false)}
             />
-            <div className="relative w-64 bg-white h-full p-5 shadow-2xl flex flex-col justify-between z-50">
-              <div className="space-y-5">
+            <div className="relative w-72 bg-[#f6f8fb] h-full p-4 shadow-2xl flex flex-col justify-between z-50">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-200">
                   <div className="flex items-center gap-2">
                     <img
@@ -403,65 +403,114 @@ export default function AppShell({ children }: AppShellProps) {
                   </button>
                 </div>
 
-                <nav className="space-y-1">
-                  {primaryNavItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = location.pathname === item.to;
-                    return (
+                {user && (
+                  <div className="bg-white rounded-2xl border border-slate-200/80 p-3 shadow-sm flex items-center gap-3">
+                    <div
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate("/profile");
+                      }}
+                      className="w-9 h-9 rounded-xl bg-blue-100/80 text-blue-700 font-bold text-xs flex items-center justify-center border border-blue-200/60 cursor-pointer"
+                    >
+                      {initials}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-slate-900 truncate">{user.fullName}</p>
+                      <p className="text-[11px] text-slate-500 truncate">{roleLabels[user.role] || user.role}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="bg-white rounded-2xl border border-slate-200/80 p-2 shadow-sm">
+                  <nav className="space-y-0.5">
+                    {primaryNavItems.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = item.to === "/instruments"
+                        ? location.pathname.startsWith("/instruments") && location.pathname !== "/instruments/new"
+                        : location.pathname === item.to;
+                      return (
+                        <NavLink
+                          key={item.to}
+                          to={item.to}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium ${
+                            isActive
+                              ? "bg-blue-50/90 text-blue-800 font-semibold border border-blue-100"
+                              : "text-slate-600 hover:bg-slate-50"
+                          }`}
+                        >
+                          <Icon className={`w-4 h-4 ${isActive ? "text-blue-600" : "text-slate-400"}`} />
+                          <span>{item.label}</span>
+                        </NavLink>
+                      );
+                    })}
+                    <div className="border-t border-slate-100 my-1.5" />
+                    {canRegisterFdr && (
                       <NavLink
-                        key={item.to}
-                        to={item.to}
+                        to="/instruments/new"
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium ${
-                          isActive
-                            ? "bg-[#0e1c2f] text-white font-semibold"
-                            : "text-slate-600 hover:bg-slate-100"
-                        }`}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium ${
+                            isActive
+                              ? "bg-blue-50/90 text-blue-800 font-semibold border border-blue-100"
+                              : "text-slate-600 hover:bg-slate-50"
+                          }`
+                        }
                       >
-                        <Icon className="w-4 h-4" />
-                        <span>{item.label}</span>
+                        <FilePlus className="w-4 h-4 text-slate-400" />
+                        <span>Register FDR</span>
                       </NavLink>
-                    );
-                  })}
-                  {canRegisterFdr && (
-                    <NavLink
-                      to="/instruments/new"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
-                    >
-                      <FilePlus className="w-4 h-4" />
-                      <span>Register FDR</span>
-                    </NavLink>
-                  )}
-                  {canScrutinize && (
-                    <NavLink
-                      to="/scrutiny"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
-                    >
-                      <FileCheck2 className="w-4 h-4" />
-                      <span>Scrutiny Queue</span>
-                    </NavLink>
-                  )}
-                  <NavLink
-                    to="/clearances"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
-                  >
-                    <Award className="w-4 h-4" />
-                    <span>Clearances</span>
-                  </NavLink>
-                  {canViewAudit && (
-                    <NavLink
-                      to="/audit"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
-                    >
-                      <History className="w-4 h-4" />
-                      <span>Audit Log</span>
-                    </NavLink>
-                  )}
-                </nav>
+                    )}
+                    {canScrutinize && (
+                      <NavLink
+                        to="/scrutiny"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium ${
+                            isActive
+                              ? "bg-blue-50/90 text-blue-800 font-semibold border border-blue-100"
+                              : "text-slate-600 hover:bg-slate-50"
+                          }`
+                        }
+                      >
+                        <FileCheck2 className="w-4 h-4 text-slate-400" />
+                        <span>Scrutiny Queue</span>
+                      </NavLink>
+                    )}
+                    {canViewClearances && (
+                      <NavLink
+                        to="/clearances"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium ${
+                            isActive || location.pathname.startsWith("/clearances")
+                              ? "bg-blue-50/90 text-blue-800 font-semibold border border-blue-100"
+                              : "text-slate-600 hover:bg-slate-50"
+                          }`
+                        }
+                      >
+                        <Award className="w-4 h-4 text-slate-400" />
+                        <span>Clearances</span>
+                      </NavLink>
+                    )}
+                    {canViewAudit && (
+                      <NavLink
+                        to="/audit"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium ${
+                            isActive
+                              ? "bg-blue-50/90 text-blue-800 font-semibold border border-blue-100"
+                              : "text-slate-600 hover:bg-slate-50"
+                          }`
+                        }
+                      >
+                        <History className="w-4 h-4 text-slate-400" />
+                        <span>Audit Log</span>
+                      </NavLink>
+                    )}
+                  </nav>
+                </div>
               </div>
 
               <button
@@ -476,8 +525,8 @@ export default function AppShell({ children }: AppShellProps) {
         )}
 
         {/* ── 3. Main Content Canvas ─────────────────────────────────── */}
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 flex flex-col justify-between">
-          <div className="w-full space-y-6">
+        <main className="flex-1 min-w-0 p-4 sm:p-5 lg:p-6 flex flex-col justify-between">
+          <div className="w-full space-y-5">
             {children}
           </div>
 

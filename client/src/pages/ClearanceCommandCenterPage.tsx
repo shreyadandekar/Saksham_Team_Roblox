@@ -75,23 +75,23 @@ export default function ClearanceCommandCenterPage() {
     <AppShell>
       <div className="space-y-6 pb-12 animate-fade-in" id="clearance-command-center">
         {/* ── Page Header ────────────────────────────────────────── */}
-        <div className="bg-[#0B192C] border border-[#15284F] rounded-lg p-6 sm:p-7 text-white shadow-sm relative overflow-hidden">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-2">
+        <div className="bg-blue-50/70 border border-blue-200/70 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+            <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-semibold bg-[#15284F] text-amber-400 border border-blue-900/50">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white text-blue-700 border border-blue-200/60 shadow-sm">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                   Statutory Clearance Protocol
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500">
                   AICTE APH 2024–2027 Section 6.46
                 </span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-3">
-                <FileCheck2 className="w-6 h-6 text-amber-400 shrink-0" />
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
+                <FileCheck2 className="w-6 h-6 text-blue-600 shrink-0" />
                 FDR Clearance Command Center • AICTE Statutory Workflow
               </h1>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
                 Centralized multi-department scrutiny, vigilance clearance, and
                 regulatory release lifecycle management with cryptographic audit guarantees.
               </p>
@@ -100,11 +100,11 @@ export default function ClearanceCommandCenterPage() {
             {/* Quick Actions & Department Badge */}
             <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row items-start sm:items-center gap-3 shrink-0">
               {user?.department && (
-                <div className="px-3 py-1.5 rounded-md bg-[#15284F] border border-blue-900/50 text-xs">
+                <div className="px-3 py-1.5 rounded-xl bg-white border border-blue-200/60 text-xs shadow-sm">
                   <span className="text-slate-400 block text-[10px] uppercase tracking-wider font-semibold">
                     Assigned Unit
                   </span>
-                  <span className="font-bold text-amber-400">
+                  <span className="font-bold text-blue-700">
                     {user.department.replace("_", " ")}
                   </span>
                 </div>
@@ -113,11 +113,11 @@ export default function ClearanceCommandCenterPage() {
               <button
                 onClick={() => loadQueue(true)}
                 disabled={refreshing || loading}
-                className="px-4 py-2 rounded-md bg-[#15284F] hover:bg-[#1C355E] text-white border border-blue-900/50 text-xs font-semibold transition flex items-center gap-2 cursor-pointer disabled:opacity-50 shadow-xs"
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border border-blue-700/20 text-xs font-semibold transition flex items-center gap-2 cursor-pointer disabled:opacity-50 shadow-sm"
                 id="clearance-refresh-btn"
               >
                 <RefreshCw
-                  className={`w-3.5 h-3.5 text-amber-400 ${
+                  className={`w-3.5 h-3.5 ${
                     refreshing ? "animate-spin" : ""
                   }`}
                 />

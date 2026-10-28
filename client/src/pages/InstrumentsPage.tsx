@@ -144,37 +144,29 @@ export default function InstrumentsPage() {
 
         {/* ── Metric Summary Cards ───────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#0B192C]">
-            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
-              Total Records
-            </p>
-            <p className="mt-1 text-2xl font-bold text-[#0F172A] font-mono">{meta.totalCount}</p>
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm hover:border-slate-300 transition">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Records</p>
+            <p className="mt-2 text-2xl font-bold text-slate-900">{meta.totalCount}</p>
           </div>
 
-          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#94A3B8]">
-            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
-              Drafts
-            </p>
-            <p className="mt-1 text-2xl font-bold text-[#475569] font-mono">{meta.draftCount ?? 0}</p>
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm hover:border-slate-300 transition">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Drafts</p>
+            <p className="mt-2 text-2xl font-bold text-slate-500">{meta.draftCount ?? 0}</p>
           </div>
 
-          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#D97706]">
-            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
-              Submitted for Scrutiny
-            </p>
-            <p className="mt-1 text-2xl font-bold text-[#B45309] font-mono">{meta.submittedCount ?? 0}</p>
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm hover:border-slate-300 transition">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Submitted for Scrutiny</p>
+            <p className="mt-2 text-2xl font-bold text-amber-700">{meta.submittedCount ?? 0}</p>
           </div>
 
-          <div className="bg-white p-4.5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-t-4 border-t-[#16A34A]">
-            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
-              Active Deposits
-            </p>
-            <p className="mt-1 text-2xl font-bold text-[#15803D] font-mono">{meta.activeCount ?? 0}</p>
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm hover:border-slate-300 transition">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Active Deposits</p>
+            <p className="mt-2 text-2xl font-bold text-emerald-700">{meta.activeCount ?? 0}</p>
           </div>
         </div>
 
         {/* ── Filters & Search Controls ───────────────────────────── */}
-        <div className="bg-white p-4 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+        <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
             <input
@@ -244,7 +236,7 @@ export default function InstrumentsPage() {
         </div>
 
         {/* ── Table & Record List ─────────────────────────────────── */}
-        <div className="bg-white border border-[#CBD5E1] rounded-lg shadow-[0_1px_2px_rgba(0,0,0,0.05)] overflow-hidden">
+        <div className="bg-white border border-slate-200/70 rounded-2xl shadow-sm overflow-hidden">
           {loading ? (
             <div className="p-12 text-center text-slate-500">
               <RefreshCw className="h-8 w-8 animate-spin mx-auto text-blue-600 mb-3" />

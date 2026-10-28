@@ -69,20 +69,20 @@ export default function ProfilePage() {
         </div>
 
         {/* ── 1. User Hero Identity Card ─────────────────────────────── */}
-        <div className="bg-white border border-[#CBD5E1] rounded-lg p-6 shadow-[0_1px_2px_rgba(0,0,0,0.05)] flex items-center gap-5">
-          <div className="w-14 h-14 rounded-lg bg-[#0B192C] text-amber-400 font-bold text-lg flex items-center justify-center border border-[#15284F] shrink-0 select-none shadow-xs">
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-6 shadow-sm flex items-center gap-5">
+          <div className="w-14 h-14 rounded-2xl bg-blue-100/80 text-blue-700 font-bold text-lg flex items-center justify-center border border-blue-200/60 shrink-0 select-none">
             {initials}
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-base font-bold text-[#0F172A] leading-tight">
+            <h2 className="text-base font-bold text-slate-900 leading-tight">
               {user?.fullName || "Authenticated Officer"}
             </h2>
-            <p className="text-xs text-[#64748B] font-mono">
+            <p className="text-xs text-slate-500 font-mono">
               {user?.email || "user@saksham.gov.in"}
             </p>
             <div className="pt-1">
-              <span className="inline-block px-2.5 py-0.5 rounded text-xs font-semibold bg-[#EFF6FF] text-[#1E40AF] border border-[#BFDBFE]">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200/80">
                 {roleTitle}
               </span>
             </div>
@@ -90,29 +90,29 @@ export default function ProfilePage() {
         </div>
 
         {/* ── 2. Access & Permissions Card ───────────────────────────── */}
-        <div className="bg-white border border-[#CBD5E1] rounded-lg p-6 shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-4">
-          <h3 className="text-sm font-bold text-[#0F172A] uppercase tracking-wider">
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-6 shadow-sm space-y-4">
+          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
             Jurisdiction &amp; Access Scope
           </h3>
 
-          <div className="divide-y divide-[#E2E8F0] text-xs">
+          <div className="divide-y divide-slate-100 text-xs">
             <div className="py-3 grid grid-cols-1 sm:grid-cols-4 gap-2">
-              <span className="text-[#64748B] font-medium">Designated Role</span>
-              <span className="sm:col-span-3 text-[#0F172A] font-semibold">
+              <span className="text-slate-500 font-medium">Designated Role</span>
+              <span className="sm:col-span-3 text-slate-900 font-semibold">
                 {roleTitle}
               </span>
             </div>
 
             <div className="py-3 grid grid-cols-1 sm:grid-cols-4 gap-2">
-              <span className="text-[#64748B] font-medium">Record Scope</span>
-              <span className="sm:col-span-3 text-[#334155] font-normal leading-relaxed">
+              <span className="text-slate-500 font-medium">Record Scope</span>
+              <span className="sm:col-span-3 text-slate-600 font-normal leading-relaxed">
                 {recordScope}
               </span>
             </div>
 
             <div className="py-3 grid grid-cols-1 sm:grid-cols-4 gap-2">
-              <span className="text-[#64748B] font-medium">Institution &amp; AICTE PID</span>
-              <span className="sm:col-span-3 text-[#0F172A] font-semibold">
+              <span className="text-slate-500 font-medium">Institution &amp; AICTE PID</span>
+              <span className="sm:col-span-3 text-slate-900 font-semibold">
                 {user?.institution
                   ? `${user.institution.name} (PID: ${user.institution.aicteId})`
                   : user?.institutionId
@@ -124,36 +124,36 @@ export default function ProfilePage() {
         </div>
 
         {/* ── 3. Security and Preferences Card ───────────────────────── */}
-        <div className="bg-white border border-[#CBD5E1] rounded-lg p-6 shadow-[0_1px_2px_rgba(0,0,0,0.05)] space-y-4">
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-6 shadow-sm space-y-4">
           <div>
-            <h3 className="text-sm font-bold text-[#0F172A] uppercase tracking-wider">
+            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
               Security &amp; Cryptographic Attestation
             </h3>
-            <p className="text-xs text-[#64748B] mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Multi-factor session binding and cryptographic hash guarantees.
             </p>
           </div>
 
           <div className="space-y-3 pt-1">
-            <div className="p-3.5 rounded-md border border-[#CBD5E1] bg-[#F8FAFC] flex items-start gap-3">
-              <Key className="w-4 h-4 text-[#64748B] mt-0.5 shrink-0" />
+            <div className="p-3.5 rounded-xl border border-slate-200/60 bg-slate-50/60 flex items-start gap-3">
+              <Key className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
               <div className="text-xs">
-                <span className="font-semibold text-[#0F172A] block">
+                <span className="font-semibold text-slate-800 block">
                   Session Credential Security
                 </span>
-                <span className="text-[#64748B] text-[11px]">
+                <span className="text-slate-500 text-[11px]">
                   HttpOnly SameSite authenticated session tokens protected against client-side script inspection.
                 </span>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-md border border-[#CBD5E1] bg-[#F8FAFC] flex items-start gap-3">
-              <Settings className="w-4 h-4 text-[#64748B] mt-0.5 shrink-0" />
+            <div className="p-3.5 rounded-xl border border-slate-200/60 bg-slate-50/60 flex items-start gap-3">
+              <Settings className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
               <div className="text-xs">
-                <span className="font-semibold text-[#0F172A] block">
+                <span className="font-semibold text-slate-800 block">
                   Digital Signature &amp; DSC Attestation
                 </span>
-                <span className="text-[#64748B] text-[11px]">
+                <span className="text-slate-500 text-[11px]">
                   Digital Signature Certificate (DSC) e-Sign tokens for approving officers and issuing authorities.
                 </span>
               </div>

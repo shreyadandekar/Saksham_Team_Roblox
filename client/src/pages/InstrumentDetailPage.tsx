@@ -293,7 +293,7 @@ export default function InstrumentDetailPage() {
         )}
 
         {/* ── Instrument Header Card ─────────────────────────────── */}
-        <div className="bg-white p-6 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/70 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <span className="text-[10px] uppercase font-bold text-[#64748B] tracking-wider">
@@ -324,23 +324,23 @@ export default function InstrumentDetailPage() {
         </div>
 
         {/* ── Workflow Action Panel ──────────────────────────────── */}
-        <div className="bg-[#0B192C] text-white p-5 rounded-lg border border-[#15284F] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-blue-50/70 border border-blue-200/70 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-md bg-[#15284F] flex items-center justify-center shrink-0 border border-blue-900/50">
+            <div className="h-10 w-10 rounded-xl bg-blue-100/80 flex items-center justify-center shrink-0 border border-blue-200/60">
               {instrument.status === "DRAFT" ? (
-                <Send className="h-5 w-5 text-amber-400" />
+                <Send className="h-5 w-5 text-amber-600" />
               ) : instrument.status === "ACTIVE" ? (
-                <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                <CheckCircle2 className="h-5 w-5 text-emerald-600" />
               ) : instrument.status === "UNDER_SCRUTINY" ? (
-                <Eye className="h-5 w-5 text-sky-400" />
+                <Eye className="h-5 w-5 text-blue-700" />
               ) : instrument.status === "CORRECTION_REQUIRED" ? (
-                <AlertTriangle className="h-5 w-5 text-amber-400" />
+                <AlertTriangle className="h-5 w-5 text-amber-600" />
               ) : (
-                <Eye className="h-5 w-5 text-white" />
+                <Eye className="h-5 w-5 text-blue-700" />
               )}
             </div>
             <div>
-              <p className="font-bold text-sm text-white">
+              <p className="font-bold text-sm text-slate-800">
                 {instrument.status === "DRAFT"
                   ? "Draft Saved in Registry"
                   : instrument.status === "SUBMITTED"
@@ -359,7 +359,7 @@ export default function InstrumentDetailPage() {
                   ? "Deposit Released & Approved"
                   : `Instrument Status: ${instrument.status}`}
               </p>
-              <p className="text-xs text-slate-300 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 {instrument.status === "DRAFT"
                   ? isOwner
                     ? "Submit this draft to dispatch it to AICTE officer scrutiny queues."
@@ -481,7 +481,7 @@ export default function InstrumentDetailPage() {
         {/* ── Instrument Particulars Grid ─────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Card 1: Banking Details */}
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-4">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
             <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
               <Building2 className="h-4 w-4 text-blue-700" />
               Banking Particulars
@@ -520,7 +520,7 @@ export default function InstrumentDetailPage() {
           </div>
 
           {/* Card 2: Validity & Dates */}
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-4">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
             <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">
               <Calendar className="h-4 w-4 text-blue-700" />
               Validity & Schedule

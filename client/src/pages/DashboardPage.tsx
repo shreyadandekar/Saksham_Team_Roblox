@@ -26,9 +26,7 @@ import {
   RefreshCw,
   Award,
   Sparkles,
-  ArrowRight,
   Calendar,
-  ChevronRight,
   Info,
   Plus,
   ShieldCheck,
@@ -217,10 +215,10 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* ── 1. Sovereign Government Header & Stakeholder Strip ───── */}
-          <div className="bg-white rounded-lg p-5 sm:p-6 border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-4 min-w-0">
-              <div className="w-12 h-12 rounded-lg bg-[#0B192C] text-amber-400 flex items-center justify-center shrink-0 border border-[#15284F] font-bold text-base shadow-xs">
+          {/* ── 1. Welcome / Authority Card ─────────────────────────── */}
+          <div className="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="w-11 h-11 rounded-2xl bg-blue-50 text-blue-700 font-bold text-sm flex items-center justify-center border border-blue-100 flex-shrink-0 select-none">
                 {user?.fullName
                   ? user.fullName
                       .split(" ")
@@ -231,54 +229,49 @@ export default function DashboardPage() {
                   : "GO"}
               </div>
               <div className="flex flex-col min-w-0">
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <h1 className="font-bold text-lg sm:text-xl text-[#0F172A] tracking-tight">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-base font-bold text-slate-800 tracking-tight">
                     Welcome back, {user?.fullName || "Officer"}
                   </h1>
-                  <span className="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-[#EFF6FF] text-[#1E40AF] border border-[#BFDBFE]">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200/80">
                     {user ? roleNameMap[user.role] || user.role : "Authorized Stakeholder"}
                   </span>
                 </div>
-                <p className="text-xs text-[#64748B] mt-1 flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 flex-wrap">
                   <span>
                     {user?.institution
-                      ? `${user.institution.name} (AICTE PID: ${user.institution.aicteId})`
+                      ? `${user.institution.name} · AICTE PID: ${user.institution.aicteId}`
                       : "Regulatory Authority • Central Oversight Cell"}
                   </span>
-                  <span className="text-[#CBD5E1]">•</span>
-                  <span className="text-emerald-700 font-medium flex items-center gap-1">
+                  <span className="text-slate-300">•</span>
+                  <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     Ledger Synchronized
                   </span>
-                </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap shrink-0">
               <div className="hidden sm:flex flex-col items-end text-right">
-                <span className="text-[11px] text-[#64748B] font-medium">
+                <div className="text-xs font-semibold text-slate-700">
                   {new Date().toLocaleDateString("en-IN", {
                     weekday: "short",
                     day: "numeric",
                     month: "short",
                     year: "numeric",
                   })}
-                </span>
-                <span className="text-[11px] font-mono text-[#0F172A] font-semibold">
-                  Session Verified • TLS 1.3
-                </span>
+                </div>
+                <div className="text-[11px] text-slate-400">Session Verified • TLS 1.3</div>
               </div>
-
               <button
                 type="button"
                 onClick={loadData}
                 disabled={loading}
-                className="p-2 rounded-md border border-[#CBD5E1] text-[#334155] hover:text-[#0F172A] hover:bg-[#F8FAFC] transition cursor-pointer"
-                title="Reload Metrics"
+                className="p-2 border border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition shadow-sm cursor-pointer"
+                title="Refresh state"
               >
-                <RefreshCw
-                  className={`w-4 h-4 ${loading ? "animate-spin text-[#1D4ED8]" : ""}`}
-                />
+                <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-blue-600" : ""}`} />
               </button>
             </div>
           </div>
@@ -286,89 +279,89 @@ export default function DashboardPage() {
           {/* ── 2. Primary KPI Metric Cards Strip ───────────────────────── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Card 1: Total Active Instruments */}
-            <div className="bg-white p-5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#1D4ED8] flex flex-col justify-between">
-              <div className="flex items-center justify-between text-[#64748B]">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#334155]">
+            <div className="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm hover:border-slate-300 transition flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold tracking-wider uppercase text-slate-400">
                   Active Instruments
                 </span>
-                <ShieldCheck className="w-4 h-4 text-[#1D4ED8]" />
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
               </div>
-              <div className="mt-2">
-                <span className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] font-mono tracking-tight">
+              <div className="mt-3 flex items-baseline gap-1.5">
+                <span className="text-2xl font-bold text-slate-900 tracking-tight">
                   {statusCounts.active}
                 </span>
-                <span className="text-xs text-[#64748B] ml-2 font-medium">deposits</span>
+                <span className="text-xs text-slate-500 font-medium">deposits</span>
               </div>
-              <p className="mt-1 text-[11px] text-[#64748B]">
-                Pledged security deposits under lien
-              </p>
+              <p className="mt-1 text-xs text-slate-500">Pledged security deposits under lien</p>
             </div>
 
             {/* Card 2: Total Value Secured */}
-            <div className="bg-white p-5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#16A34A] flex flex-col justify-between">
-              <div className="flex items-center justify-between text-[#64748B]">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#334155]">
+            <div className="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm hover:border-slate-300 transition flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold tracking-wider uppercase text-slate-400">
                   Total Value Secured
                 </span>
-                <TrendingUp className="w-4 h-4 text-[#16A34A]" />
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4" />
+                </div>
               </div>
-              <div className="mt-2">
-                <span className="text-xl sm:text-2xl font-extrabold text-[#0F172A] font-mono tracking-tight">
+              <div className="mt-3">
+                <span className="text-xl font-bold text-slate-900 tracking-tight">
                   {formatINR(totalValueSecured)}
                 </span>
               </div>
-              <p className="mt-1 text-[11px] text-[#64748B]">
-                Aggregated active tripartite principal
-              </p>
+              <p className="mt-1 text-xs text-slate-500">Aggregated active tripartite principal</p>
             </div>
 
-            {/* Card 3: Due for Maturity (90 Days) - Lil yellowish tint from landing page */}
-            <div className="bg-[#fbf7ed] p-5 rounded-lg border border-[#e2d5bc] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#D97706] flex flex-col justify-between">
-              <div className="flex items-center justify-between text-[#92400E]">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#92400E]">
-                  Due within 90 Days
+            {/* Card 3: Due for Maturity (90 Days) - amber tint */}
+            <div className="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm hover:border-slate-300 transition flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold tracking-wider uppercase text-slate-400">
+                  Due Within 90 Days
                 </span>
-                <Clock className="w-4 h-4 text-[#D97706]" />
+                <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Clock className="w-4 h-4" />
+                </div>
               </div>
-              <div className="mt-2">
-                <span className="text-2xl sm:text-3xl font-extrabold text-[#78350F] font-mono tracking-tight">
+              <div className="mt-3 flex items-baseline gap-1.5">
+                <span className="text-2xl font-bold text-amber-700 tracking-tight">
                   {dueWithin90Days.length}
                 </span>
-                <span className="text-xs text-[#92400E] ml-2 font-medium">maturing</span>
+                <span className="text-xs text-slate-500 font-medium">maturing</span>
               </div>
-              <p className="mt-1 text-[11px] text-[#B45309] font-medium">
-                Requires renewal or release review
-              </p>
+              <p className="mt-1 text-xs text-slate-500">Requires renewal or release review</p>
             </div>
 
             {/* Card 4: Pending Scrutiny & Actions */}
-            <div className="bg-white p-5 rounded-lg border border-[#CBD5E1] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#9333EA] flex flex-col justify-between">
-              <div className="flex items-center justify-between text-[#64748B]">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#334155]">
+            <div className="bg-white rounded-2xl border border-slate-200/70 p-5 shadow-sm hover:border-slate-300 transition flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold tracking-wider uppercase text-slate-400">
                   Pending Actions
                 </span>
-                <FileText className="w-4 h-4 text-[#9333EA]" />
+                <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                  <FileText className="w-4 h-4" />
+                </div>
               </div>
-              <div className="mt-2">
-                <span className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] font-mono tracking-tight">
+              <div className="mt-3 flex items-baseline gap-1.5">
+                <span className="text-2xl font-bold text-slate-900 tracking-tight">
                   {pendingActionsCount}
                 </span>
-                <span className="text-xs text-[#64748B] ml-2 font-medium">in workflow</span>
+                <span className="text-xs text-slate-500 font-medium">in workflow</span>
               </div>
-              <p className="mt-1 text-[11px] text-[#64748B]">
-                Submissions, scrutiny &amp; releases
-              </p>
+              <p className="mt-1 text-xs text-slate-500">Submissions, scrutiny &amp; releases</p>
             </div>
           </div>
 
-          {/* ── 3. Role-Specific Action Strip ───────────────────────────── */}
-          <div className="bg-[#0B192C] text-white p-4 sm:p-5 rounded-lg border border-[#15284F] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-[#15284F] text-amber-400 flex items-center justify-center shrink-0 border border-blue-900/50">
-                <Sparkles className="w-5 h-5" />
+          {/* ── 3. Role-Specific Action Banner (Light-blue, matches dashboard-v2.html) ── */}
+          <div className="bg-blue-50/70 border border-blue-200/70 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-white text-blue-600 border border-blue-200/60 flex items-center justify-center shadow-sm flex-shrink-0">
+                <Sparkles className="w-5 h-5 text-amber-500" />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-white tracking-wide">
+                <h2 className="text-sm font-bold text-slate-900 tracking-tight">
                   {user?.role === "INSTITUTION_USER"
                     ? "Institutional FDR Compliance Desk"
                     : user?.role === "SCRUTINY_OFFICER" || user?.role === "AICTE_OFFICER"
@@ -377,7 +370,7 @@ export default function DashboardPage() {
                     ? "Competent Clearance Authority"
                     : "Statutory Governance & Oversight Console"}
                 </h2>
-                <p className="text-xs text-slate-300 mt-0.5">
+                <p className="text-xs text-slate-600 mt-0.5">
                   {user?.role === "INSTITUTION_USER"
                     ? "Register security deposits, upload tripartite documents, and request statutory e-NOC discharges."
                     : user?.role === "SCRUTINY_OFFICER" || user?.role === "AICTE_OFFICER"
@@ -393,7 +386,7 @@ export default function DashboardPage() {
               {user?.role === "INSTITUTION_USER" && (
                 <Link
                   to="/instruments/new"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#1D4ED8] hover:bg-[#2563EB] text-white text-xs font-semibold rounded-md shadow-xs transition"
+                  className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-sm transition"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Register New FDR</span>
@@ -405,19 +398,17 @@ export default function DashboardPage() {
                 user?.role === "SYSTEM_ADMIN") && (
                 <Link
                   to="/scrutiny"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#D97706] hover:bg-[#B45309] text-white text-xs font-semibold rounded-md shadow-xs transition"
+                  className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-sm transition"
                 >
                   <ShieldCheck className="w-4 h-4" />
-                  <span>
-                    Open Scrutiny Queue ({statusCounts.submitted} pending)
-                  </span>
+                  <span>Open Scrutiny Queue ({statusCounts.submitted} pending)</span>
                 </Link>
               )}
 
               {user?.role === "APPROVER" && (
                 <Link
                   to="/clearances"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#1D4ED8] hover:bg-[#2563EB] text-white text-xs font-semibold rounded-md shadow-xs transition"
+                  className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-sm transition"
                 >
                   <Award className="w-4 h-4" />
                   <span>Review Pending Clearances</span>
@@ -427,7 +418,7 @@ export default function DashboardPage() {
               {(user?.role === "AUDITOR" || user?.role === "ADMIN") && (
                 <Link
                   to="/audit"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#334155] hover:bg-[#475569] text-white text-xs font-semibold rounded-md shadow-xs transition"
+                  className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-sm transition"
                 >
                   <FileText className="w-4 h-4" />
                   <span>Inspect Audit Trail</span>
@@ -436,15 +427,15 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* ── TOP ROW: TWO REFERENCE MATCHED CARDS (dashboard_page.html) ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* ── CARD 1: Lifecycle Status Horizontal Bar Chart ──────── */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-5 sm:p-6 flex flex-col justify-between">
+          {/* ── TOP ROW: TWO REFERENCE MATCHED CARDS ────────────────────── */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* ── CARD 1: Lifecycle Status Horizontal Bar Chart ──────────── */}
+            <div className="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-semibold text-slate-800">
+                  <h3 className="text-sm font-bold text-slate-800">
                     Where open FDRs currently sit in their lifecycle
-                  </h2>
+                  </h3>
                   <Info className="w-4 h-4 text-slate-400" />
                 </div>
               </div>
@@ -465,35 +456,29 @@ export default function DashboardPage() {
               )}
 
               {/* Bottom Legend */}
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-center gap-6 text-xs text-slate-600">
+              <div className="mt-6 pt-3.5 border-t border-slate-100 flex items-center justify-center gap-6 text-xs text-slate-600">
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#1d4ed8]" />
-                  <span>
-                    Submitted: <strong>{statusCounts.submitted}</strong>
-                  </span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                  <span>Submitted: <strong>{statusCounts.submitted}</strong></span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#059669]" />
-                  <span>
-                    Active: <strong>{statusCounts.active}</strong>
-                  </span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                  <span>Active: <strong>{statusCounts.active}</strong></span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#d97706]" />
-                  <span>
-                    Release requested: <strong>{statusCounts.releaseRequested}</strong>
-                  </span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                  <span>Release requested: <strong>{statusCounts.releaseRequested}</strong></span>
                 </div>
               </div>
             </div>
 
-            {/* ── CARD 2: Monthly Maturity Vertical Bar Chart ─────────── */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-5 sm:p-6 flex flex-col justify-between">
+            {/* ── CARD 2: Monthly Maturity Vertical Bar Chart ──────────────── */}
+            <div className="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-semibold text-slate-800">
+                  <h3 className="text-sm font-bold text-slate-800">
                     How FDR maturities balance monthly this year
-                  </h2>
+                  </h3>
                   <Calendar className="w-4 h-4 text-slate-400" />
                 </div>
               </div>
@@ -510,30 +495,24 @@ export default function DashboardPage() {
               )}
 
               {/* Note / Caption */}
-              <div className="pt-3 border-t border-slate-100 text-center text-[11px] text-slate-400">
+              <div className="mt-6 pt-3.5 border-t border-slate-100 text-center text-[11px] text-slate-400">
                 Aggregated institutional deposit exposure in Lakhs (₹ L)
               </div>
             </div>
           </div>
 
-          {/* ── BOTTOM ROW: DUE WITHIN 90 DAYS (dashboard_page.html) ───── */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          {/* ── BOTTOM ROW: DUE WITHIN 90 DAYS ──────────────────────────── */}
+          <div className="bg-white rounded-2xl border border-slate-200/70 shadow-sm overflow-hidden">
+            <div className="p-5 flex items-center justify-between border-b border-slate-100">
               <div>
-                <h2 className="text-base font-semibold text-slate-900">
-                  Due within 90 days
-                </h2>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Open deposits at or near maturity, soonest first.
-                </p>
+                <h3 className="text-sm font-bold text-slate-800">Due within 90 days</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Open deposits at or near maturity, soonest first.</p>
               </div>
-
               <Link
                 to="/maturities"
-                className="text-xs font-semibold text-blue-700 hover:text-blue-900 transition flex items-center gap-1"
+                className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
               >
-                <span>View all maturities</span>
-                <ChevronRight className="w-3.5 h-3.5" />
+                View all maturities ›
               </Link>
             </div>
 
@@ -548,18 +527,18 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
+                <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-500 font-semibold uppercase text-[10px] tracking-wider">
-                      <th className="py-2.5 px-3">Instrument &amp; Bank</th>
-                      <th className="py-2.5 px-3">Institution</th>
-                      <th className="py-2.5 px-3 text-right">Principal Amount</th>
-                      <th className="py-2.5 px-3 text-center">Status</th>
-                      <th className="py-2.5 px-3 text-right">Maturity Date</th>
-                      <th className="py-2.5 px-3 text-center">Action</th>
+                    <tr className="bg-slate-50/60 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 tracking-wider uppercase">
+                      <th className="py-3 px-5">Instrument &amp; Bank</th>
+                      <th className="py-3 px-5">Institution</th>
+                      <th className="py-3 px-5">Principal Amount</th>
+                      <th className="py-3 px-5 text-center">Status</th>
+                      <th className="py-3 px-5">Maturity Date</th>
+                      <th className="py-3 px-5 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
                     {dueWithin90Days.map((inst) => {
                       const daysRemaining =
                         inst.attention?.daysRemaining ??
@@ -572,69 +551,55 @@ export default function DashboardPage() {
                       return (
                         <tr
                           key={inst.id}
-                          className="hover:bg-slate-50/80 transition"
+                          className="hover:bg-slate-50/70 transition"
                         >
-                          <td className="py-3 px-3">
+                          <td className="py-3.5 px-5">
                             <Link
                               to={`/instruments/${inst.id}`}
-                              className="font-semibold text-slate-900 hover:text-blue-700 font-mono block"
+                              className="font-bold text-slate-900 hover:text-blue-700 block"
                             >
                               {inst.instrumentNumber}
                             </Link>
-                            <span className="text-[11px] text-slate-500">
-                              {inst.bankName}
-                              {inst.branchName ? ` · ${inst.branchName}` : ""}
+                            <span className="text-[11px] text-slate-400">
+                              {inst.bankName}{inst.branchName ? ` • ${inst.branchName}` : ""}
                             </span>
                           </td>
 
-                          <td className="py-3 px-3">
-                            <span className="text-slate-800 font-medium truncate block max-w-xs">
-                              {inst.institutionName || "AICTE Registered Institution"}
-                            </span>
+                          <td className="py-3.5 px-5 font-medium text-slate-800">
+                            {inst.institutionName || "AICTE Registered Institution"}
                           </td>
 
-                          <td className="py-3 px-3 text-right font-mono font-semibold text-slate-900">
+                          <td className="py-3.5 px-5 font-bold text-slate-900">
                             {formatINR(inst.amount)}
                           </td>
 
-                          <td className="py-3 px-3 text-center">
+                          <td className="py-3.5 px-5 text-center">
                             <StatusBadge status={inst.status as InstrumentStatus} />
                           </td>
 
-                          <td className="py-3 px-3 text-right">
-                            <div className="font-mono text-slate-800 font-medium">
-                              {formatDate(inst.maturityDate)}
-                            </div>
+                          <td className="py-3.5 px-5">
+                            <div className="font-semibold text-slate-800">{formatDate(inst.maturityDate)}</div>
                             <div className="text-[11px] mt-0.5">
                               {daysRemaining < 0 ? (
-                                <span className="text-red-700 font-semibold">
+                                <span className="text-red-600 font-medium">
                                   Matured {Math.abs(daysRemaining)}d ago
                                 </span>
                               ) : daysRemaining === 0 ? (
-                                <span className="text-rose-700 font-bold">
-                                  Matures Today
-                                </span>
+                                <span className="text-rose-700 font-bold">Matures Today</span>
                               ) : (
-                                <span
-                                  className={
-                                    daysRemaining <= 30
-                                      ? "text-amber-700 font-semibold"
-                                      : "text-slate-500"
-                                  }
-                                >
+                                <span className={daysRemaining <= 30 ? "text-red-600 font-medium" : "text-amber-600 font-medium"}>
                                   Due in {daysRemaining} days
                                 </span>
                               )}
                             </div>
                           </td>
 
-                          <td className="py-3 px-3 text-center">
+                          <td className="py-3.5 px-5 text-right">
                             <Link
                               to={`/instruments/${inst.id}`}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-blue-700 rounded text-xs font-semibold transition"
+                              className="inline-flex items-center text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1 rounded-lg transition"
                             >
-                              <span>Dossier</span>
-                              <ChevronRight className="w-3 h-3" />
+                              Dossier ›
                             </Link>
                           </td>
                         </tr>
@@ -646,47 +611,37 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* ── STATUTORY ADVISORY PANEL (Warm Yellowish Tint as on Landing Page) ──────── */}
-          <div className="bg-[#fbf7ed] border border-[#e2d5bc] rounded-lg p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-900 mb-2.5">
-              <Scale className="w-4 h-4 text-amber-800 shrink-0" />
-              <span className="uppercase tracking-wider text-[11px] font-bold text-slate-900">
-                Statutory Advisory &amp; T-90 Procedural Notes
-              </span>
+          {/* ── STATUTORY ADVISORY PANEL (matches dashboard-v2.html amber container) ── */}
+          <div className="bg-amber-50/50 border border-amber-200/80 rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider mb-3">
+              <Scale className="w-4 h-4 text-amber-600" />
+              Statutory Advisory &amp; T-90 Procedural Notes
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-700">
-              <div className="flex items-start gap-2">
-                <span className="text-amber-800 font-bold text-sm leading-none">•</span>
-                <span>
-                  <strong className="text-slate-900">Tripartite Lien Mandate:</strong> Fixed deposit instruments must designate the regulatory authority as sole primary lienholder before scrutiny clearance.
-                </span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-amber-900/90 leading-relaxed">
+              <div className="bg-white/80 p-3 rounded-xl border border-amber-200/60">
+                <strong className="font-semibold text-amber-950">• Tripartite Lien Mandate:</strong>{" "}
+                Fixed deposit instruments must designate the regulatory authority as sole primary lienholder before scrutiny clearance.
               </div>
-              <div className="flex items-start gap-2">
-                <span className="text-amber-800 font-bold text-sm leading-none">•</span>
-                <span>
-                  <strong className="text-slate-900">T-90 Renewal Window:</strong> Renewal certificates must be submitted at least 90 days before recorded maturity to avoid encashment flags.
-                </span>
+              <div className="bg-white/80 p-3 rounded-xl border border-amber-200/60">
+                <strong className="font-semibold text-amber-950">• T-90 Renewal Window:</strong>{" "}
+                Renewal certificates must be submitted at least 90 days before recorded maturity to avoid encashment flags.
               </div>
-              <div className="flex items-start gap-2">
-                <span className="text-amber-800 font-bold text-sm leading-none">•</span>
-                <span>
-                  <strong className="text-slate-900">Tamper-Evident Ledger:</strong> All administrative scrutiny decisions, clearance approvals, and e-NOC releases are hash-chained.
-                </span>
+              <div className="bg-white/80 p-3 rounded-xl border border-amber-200/60">
+                <strong className="font-semibold text-amber-950">• Tamper-Evident Ledger:</strong>{" "}
+                All administrative scrutiny decisions, clearance approvals, and e-NOC releases are hash-chained.
               </div>
             </div>
           </div>
 
-          {/* ── WORKFLOWS & STATUTORY COMPLIANCE QUICK NAVIGATION ──────── */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-            <div className="bg-white rounded-xl border border-slate-200 p-4.5 shadow-xs flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4.5 h-4.5 text-blue-600" />
+          {/* ── WORKFLOW SHORTCUT PANELS (2 columns) ───────────────────── */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white rounded-2xl border border-slate-200/70 p-4 flex items-center justify-between shadow-sm hover:border-blue-300 transition">
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-slate-900">
-                    APH Compliance Engine
-                  </h3>
+                  <h4 className="text-xs font-bold text-slate-800">APH Compliance Engine</h4>
                   <p className="text-[11px] text-slate-500 mt-0.5">
                     Automated Table 1.4 regulatory deposit comparison &amp; shortfall detection.
                   </p>
@@ -694,22 +649,19 @@ export default function DashboardPage() {
               </div>
               <Link
                 to="/clearances"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-900 shrink-0 ml-3"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 whitespace-nowrap pl-2"
               >
-                <span>View Engine</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                View Engine →
               </Link>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-4.5 shadow-xs flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                  <Award className="w-4.5 h-4.5 text-emerald-600" />
+            <div className="bg-white rounded-2xl border border-slate-200/70 p-4 flex items-center justify-between shadow-sm hover:border-emerald-300 transition">
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                  <Award className="w-5 h-5 text-emerald-600" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-slate-900">
-                    Clearance Command Center
-                  </h3>
+                  <h4 className="text-xs font-bold text-slate-800">Clearance Command Center</h4>
                   <p className="text-[11px] text-slate-500 mt-0.5">
                     Multi-department Scrutiny, PGRC &amp; Vigilance clearance orchestration.
                   </p>
@@ -717,10 +669,9 @@ export default function DashboardPage() {
               </div>
               <Link
                 to="/clearances"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:text-emerald-900 shrink-0 ml-3"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 whitespace-nowrap pl-2"
               >
-                <span>Open Clearances</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                Open Clearances →
               </Link>
             </div>
           </div>
