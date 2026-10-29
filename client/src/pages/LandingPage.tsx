@@ -365,6 +365,41 @@ export default function LandingPage() {
           {/* Deep Sovereign Navy/Slate Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/90 to-slate-950/85 backdrop-blur-[1px]" />
 
+          {/* PM Narendra Modi Hero Portrait Layer */}
+          <div
+            className="absolute right-0 bottom-0 top-0 w-full md:w-[38%] lg:w-[40%] xl:w-[38%] 2xl:w-[35%] pointer-events-none select-none z-[2] overflow-hidden hidden md:flex items-end justify-end pr-1 md:pr-2 lg:pr-6 xl:pr-12 2xl:pr-20"
+            aria-hidden="true"
+          >
+            {/* Outer gradient mask: smooth horizontal fade from left edge into dark navy */}
+            <div
+              className="relative w-full h-full flex items-end justify-end"
+              style={{
+                maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 10%, black 28%, black 100%)",
+                WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 10%, black 28%, black 100%)",
+              }}
+            >
+              {/* Inner gradient mask: soft bottom fade to merge naturally with hero base */}
+              <div
+                className="relative w-full h-full flex items-end justify-end"
+                style={{
+                  maskImage: "linear-gradient(to top, transparent 0%, rgba(0,0,0,0.2) 3%, black 14%, black 100%)",
+                  WebkitMaskImage: "linear-gradient(to top, transparent 0%, rgba(0,0,0,0.2) 3%, black 14%, black 100%)",
+                }}
+              >
+                <img
+                  src="/assets/pm-modi-hero.png"
+                  alt="Hon'ble Prime Minister Narendra Modi"
+                  className="h-[72%] md:h-[78%] lg:h-[92%] xl:h-[96%] max-h-[570px] w-auto max-w-none object-contain object-bottom opacity-40 md:opacity-45 lg:opacity-100 contrast-[1.02] brightness-[1.01] transition-all duration-300"
+                  loading="eager"
+                />
+
+                {/* Subtle sovereign atmospheric ambient light to harmonize with hero gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/60 via-transparent to-transparent pointer-events-none" />
+              </div>
+            </div>
+          </div>
+
           {/* Hero Content */}
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-16 sm:py-20 w-full">
             <div className="max-w-3xl">
